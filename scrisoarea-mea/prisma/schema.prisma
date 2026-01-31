@@ -3,60 +3,15 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
-}
-
-enum UserRole {
-  ADMIN
-  PARTNER
-  DONOR
-}
-
-enum ScrisoareStatus {
-  NOU
-  MODERARE
-  RESPINS
-  ACTIV
-  FINANTAT
-  IN_ACHIZITIE
-  LIVRAT
-  FINALIZAT
-  ANULAT
-}
-
-enum Category {
-  EDUCATIE
-  IMBRACAMINTE
-  JUCARII
-  SPORT
-  ARTISTIC
-  ALTCEVA
-}
-
-enum ProofType {
-  VIDEO
-  PHOTO
-}
-
-enum ProofStatus {
-  PENDING
-  APPROVED
-  REJECTED
-}
-
-enum DonationStatus {
-  SUCCEEDED
-  OMITTED
-  REFUNDED
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
 model Profile {
   id        String   @id @default(uuid())
   authId    String   @unique
   email     String   @unique
-  role      UserRole @default(DONOR)
+  role      String   @default("DONOR")
   firstName String?
   lastName  String?
   
@@ -74,7 +29,7 @@ model Institution {
   name        String
   cui         String   @unique
   verified    Boolean  @default(false)
-  county      String
+  county      String   
   city        String
   
   users     Profile[]
@@ -91,20 +46,20 @@ model Scrisoare {
   childFirstName  String
   childAge        Int
   childGender     String?
-  childStory      String?
-  originalImgUrl  String
-  wishList        String
+  childStory      String?         
+  originalImgUrl  String          
+  wishList        String          
   
-  category        Category        @default(ALTCEVA)
+  category        String          @default("ALTCEVA")
+
+  targetAmount    Decimal
+  collectedAmount Decimal         @default(0)
   
-  targetAmount    Decimal         @db.Decimal(10, 2)
-  collectedAmount Decimal         @db.Decimal(10, 2) @default(0)
-  
-  status          ScrisoareStatus @default(NOU)
+  status          String          @default("NOU")
   rejectionReason String?
   
-  childLastName   String
-  childCnpHash    String?
+  childLastName   String          
+  childCnpHash    String?         
   
   institution     Institution     @relation(fields: [institutionId], references: [id])
   institutionId   String
@@ -123,13 +78,14 @@ model Scrisoare {
 
 model Donation {
   id                   String         @id @default(uuid())
-  stripePaymentIntentId String        @unique
-  amount               Decimal        @db.Decimal(10, 2)
+  stripePaymentIntentId String?       @unique
+  stripeSessionId      String?        @unique
+  amount               Decimal
   donorEmail           String
   donorName            String?
   isAnonymous          Boolean        @default(false)
   
-  status               DonationStatus @default(SUCCEEDED)
+  status               String         @default("SUCCEEDED")
   
   scrisoare            Scrisoare      @relation(fields: [scrisoareId], references: [id])
   scrisoareId          String
@@ -141,9 +97,11 @@ model Donation {
 
 model Reservation {
   id                   String   @id @default(uuid())
-  stripePaymentIntentId String  @unique
-  amount               Decimal  @db.Decimal(10, 2)
+  stripePaymentIntentId String? @unique
+  stripeSessionId      String?  @unique
+  amount               Decimal
   expiresAt            DateTime
+  status               String   @default("PENDING") // PENDING, CONSUMED, EXPIRED, CANCELLED
   
   scrisoare            Scrisoare @relation(fields: [scrisoareId], references: [id])
   scrisoareId          String
@@ -152,13 +110,14 @@ model Reservation {
 
   @@index([expiresAt])
   @@index([scrisoareId])
+  @@index([status])
 }
 
 model ProofMedia {
   id          String      @id @default(uuid())
   url         String
-  type        ProofType   
-  status      ProofStatus @default(PENDING)
+  type        String      
+  status      String      @default("PENDING")
   
   scrisoare   Scrisoare   @relation(fields: [scrisoareId], references: [id])
   scrisoareId String

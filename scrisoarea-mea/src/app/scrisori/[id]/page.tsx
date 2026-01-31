@@ -1,96 +1,170 @@
 import prisma from "@/lib/prisma"
 import { notFound } from "next/navigation"
-import { formatCurrency } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { formatCurrency, calculateAgeBucket } from "@/lib/utils"
 import Link from "next/link"
 import { Progress } from "@/components/ui/progress"
+import DonationModule from "@/components/donation-module"
+import { Badge } from "@/components/ui/badge"
 
 export default async function ScrisoareDetailPage({ params }: { params: { id: string } }) {
     const { id } = params
 
+    // 1. Fetch Data with fresh reservations
     const letter = await prisma.scrisoare.findUnique({
         where: { id },
         include: {
             institution: true,
-            reservations: { where: { expiresAt: { gt: new Date() } } }
+            reservations: {
+                where: {
+                    status: 'PENDING',
+                    expiresAt: { gt: new Date() }
+                }
+            }
         }
     })
 
-    // Basic compute logic duplicata
     if (!letter) notFound()
 
-    const reserved = letter.reservations.reduce((acc, r) => acc + Number(r.amount), 0)
+    // 2. Calculation Logic
+    // Paid = collectedAmount (from DB, updated via webhook)
+    // Reserved = sum of PENDING valid reservations
     const paid = Number(letter.collectedAmount)
+    const reserved = letter.reservations.reduce((acc, r) => acc + Number(r.amount), 0)
     const target = Number(letter.targetAmount)
-    const totalFunded = paid + reserved
-    const remaining = Math.max(0, target - totalFunded)
-    const percentage = Math.min(100, Math.round((totalFunded / target) * 100))
+
+    // Remaining = Cap - Paid - Reserved
+    // We clamp at 0
+    const totalOccupied = paid + reserved
+    const remaining = Math.max(0, target - totalOccupied)
+    const percentage = Math.min(100, Math.round((totalOccupied / target) * 100))
+    const isFullyFunded = totalOccupied >= target || letter.status === 'FINANTAT' || letter.status === 'INCHIS'
+
+    // Safety: If letter is closed logistically, disable donation even if math says otherwise
+    const isDonationDisabled = ['IN_ACHIZITIE', 'LIVRAT', 'FINALIZAT', 'ANULAT', 'RESPINS'].includes(letter.status)
+
+    if (isDonationDisabled) {
+        // Maybe specific UI for closed letters?
+    }
 
     return (
         <main className="min-h-screen bg-white pb-20">
             <div className="container mx-auto px-4 py-8">
-                <Link href="/scrisori" className="text-sm text-neutral-500 hover:text-neutral-900 mb-6 block">
+                <Link href="/scrisori" className="text-sm text-neutral-500 hover:text-neutral-900 mb-6 inline-block">
                     &larr; Înapoi la listă
                 </Link>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-                    {/* Left: Scrisoare Viewer */}
-                    <div className="lg:col-span-2 space-y-8">
-                        <h1 className="text-4xl font-light text-neutral-900 leading-tight">
-                            Dorința lui {letter.childFirstName}: <span className="font-semibold">{letter.wishList}</span>
-                        </h1>
-
-                        <div className="bg-neutral-100 p-4 rounded-lg overflow-hidden border">
-                            {/* Image Placeholder */}
-                            <img
-                                src={letter.originalImgUrl}
-                                alt="Scrisoare Originala"
-                                className="w-full h-auto object-contain max-h-[800px]"
-                            />
-                        </div>
-
-                        <div className="prose prose-neutral max-w-none">
-                            <h3 className="text-lg font-medium">Transcriere</h3>
-                            <p className="text-neutral-600 bg-neutral-50 p-6 rounded italic">
-                                "{letter.childStory || "Text indisponibil."}"
-                            </p>
-                        </div>
+                {/* A) Header */}
+                <div className="mb-8 border-b pb-8">
+                    <div className="flex gap-2 mb-4">
+                        <Badge variant="outline" className="text-neutral-500">{letter.category}</Badge>
+                        {letter.status === 'FINANTAT' && <Badge className="bg-green-100 text-green-800 border-none">Finanțat</Badge>}
                     </div>
+                    <h1 className="text-4xl font-light text-neutral-900 mb-2">
+                        {letter.childFirstName}, {calculateAgeBucket(letter.childAge)} ani
+                    </h1>
+                    <p className="text-xl text-neutral-500">
+                        {letter.institution.county} • Centru Partener Verificat
+                    </p>
+                </div>
 
-                    {/* Right: Donation Module Stick */}
-                    <div className="lg:col-span-1">
-                        <div className="sticky top-8 bg-white border border-neutral-200 shadow-xl rounded-xl p-8 space-y-6">
-                            <div>
-                                <p className="text-sm font-medium text-neutral-500 uppercase tracking-widest mb-1">Stadiu Finanțare</p>
-                                <div className="flex items-baseline gap-2">
-                                    <span className="text-3xl font-bold text-neutral-900">{formatCurrency(totalFunded)}</span>
-                                    <span className="text-neutral-500">din {formatCurrency(target)}</span>
-                                </div>
-                                <Progress value={percentage} className="h-3 mt-4" />
-                                <p className="text-sm text-neutral-500 mt-2 text-right">
-                                    Mai sunt necesari <strong>{formatCurrency(remaining)}</strong>
-                                </p>
-                            </div>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                    {/* Left Column: Content */}
+                    <div className="lg:col-span-2 space-y-12">
 
-                            <div className="border-t pt-6 space-y-4">
-                                <div className="bg-yellow-50 text-yellow-800 text-sm p-3 rounded">
-                                    <strong>Cum funcționează?</strong> Suma ta este blocată temporar (rezervată) până la confirmarea plății pentru a evita dubla finanțare.
-                                </div>
-
-                                {letter.status === 'ACTIV' && remaining > 0 ? (
-                                    <Button className="w-full text-lg py-6 bg-blue-600 hover:bg-blue-700" disabled>
-                                        Donează (Coming Soon)
-                                    </Button>
+                        {/* B) Letter Image */}
+                        <section className="bg-neutral-50 p-4 rounded-xl border border-neutral-100">
+                            <div className="aspect-[3/4] relative w-full flex items-center justify-center bg-white shadow-sm overflow-hidden rounded-lg">
+                                {letter.originalImgUrl.includes('placehold') ? (
+                                    <div className="text-neutral-300 text-center p-10">
+                                        <span className="block text-4xl mb-2">✉</span>
+                                        Imagine Scrisoare
+                                    </div>
                                 ) : (
-                                    <Button disabled className="w-full text-lg py-6" variant="secondary">
-                                        Fonduri Colectate Integral
-                                    </Button>
+                                    <img src={letter.originalImgUrl} alt="Scrisoare" className="object-contain w-full h-full" />
                                 )}
                             </div>
+                        </section>
 
-                            <div className="text-xs text-neutral-400 text-center">
-                                Verificat de {letter.institution.name} • {letter.institution.county}
+                        {/* C) Items List */}
+                        <section>
+                            <h3 className="text-xl font-medium text-neutral-900 mb-4 border-l-4 border-blue-500 pl-3">
+                                Lista de dorințe
+                            </h3>
+                            <div className="bg-white border rounded-lg overflow-hidden">
+                                <table className="w-full text-left">
+                                    <thead className="bg-neutral-50 text-xs uppercase text-neutral-500">
+                                        <tr>
+                                            <th className="p-4 font-medium">Obiect</th>
+                                            <th className="p-4 font-medium text-right">Valoare est.</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y">
+                                        {/* In MVP wishList is a string, assuming it might be comma separated or single item. 
+                                Ideally we parse it. For now, display as single row description. 
+                            */}
+                                        <tr>
+                                            <td className="p-4 text-neutral-800">{letter.wishList}</td>
+                                            <td className="p-4 text-right text-neutral-600">{formatCurrency(Number(letter.targetAmount))}</td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot className="bg-neutral-50 font-medium">
+                                        <tr>
+                                            <td className="p-4">Total Necesar</td>
+                                            <td className="p-4 text-right">{formatCurrency(Number(letter.targetAmount))}</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
                             </div>
+                        </section>
+
+                        {/* Context Story */}
+                        <section className="prose prose-neutral max-w-none">
+                            <h3 className="text-lg font-medium">Povestea (Transcrisă)</h3>
+                            <p className="text-neutral-600 italic">
+                                "{letter.childStory || "Text indisponibil."}"
+                            </p>
+                        </section>
+
+                        {/* F) Safety Note inside Left Column as well? Or separate? 
+                 User asked for F safety note at end.
+             */}
+                        <div className="bg-blue-50 text-blue-800 p-6 rounded-lg text-sm flex gap-4 items-start">
+                            <div className="text-2xl">🛡</div>
+                            <div>
+                                <strong>Siguranță garantată:</strong> Nu facilităm contactul direct. Identitatea donatorilor este protejată.
+                                Dovada livrării va fi încărcată anonimizat după achiziție.
+                            </div>
+                        </div>
+
+                    </div>
+
+                    {/* Right Column: Donation */}
+                    <div className="lg:col-span-1">
+                        <div className="sticky top-8 space-y-6">
+                            {/* D) Progress Widget */}
+                            <div className="bg-white p-6 border rounded-xl shadow-sm">
+                                <div className="flex justify-between items-end mb-2">
+                                    <span className="text-2xl font-bold">{formatCurrency(totalOccupied)}</span>
+                                    <span className="text-sm text-neutral-500 mb-1">din {formatCurrency(target)}</span>
+                                </div>
+                                <Progress value={percentage} className="h-2 mb-2" />
+                                <div className="flex justify-between text-xs text-neutral-400">
+                                    <span>{percentage}% acoperit</span>
+                                </div>
+                            </div>
+
+                            {/* E) Donation Module */}
+                            {isDonationDisabled ? (
+                                <div className="bg-neutral-100 p-8 rounded-xl text-center text-neutral-500">
+                                    Această cerere nu mai acceptă donații (Status: {letter.status}).
+                                </div>
+                            ) : (
+                                <DonationModule
+                                    scrisoareId={letter.id}
+                                    remainingAmount={remaining}
+                                    isFullyFunded={isFullyFunded}
+                                />
+                            )}
                         </div>
                     </div>
                 </div>

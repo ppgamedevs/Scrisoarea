@@ -1,6 +1,21 @@
-import { PrismaClient, Category, ScrisoareStatus } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
+
+// Local constants instead of Enums
+const Category = {
+  EDUCATIE: 'EDUCATIE',
+  IMBRACAMINTE: 'IMBRACAMINTE',
+  JUCARII: 'JUCARII',
+  SPORT: 'SPORT',
+  ARTISTIC: 'ARTISTIC',
+  ALTCEVA: 'ALTCEVA'
+}
+
+const ScrisoareStatus = {
+  ACTIV: 'ACTIV',
+  FINANTAT: 'FINANTAT'
+}
 
 async function main() {
   console.log('Seeding database...')
@@ -33,33 +48,33 @@ async function main() {
   // 2. Create Letters
   const lettersData = [
     {
-      name: 'Andrei', age: 9, category: Category.EDUCATIE, 
-      wish: 'Ghiozdan complet si rechizite pentru scoala', 
+      name: 'Andrei', age: 9, category: Category.EDUCATIE,
+      wish: 'Ghiozdan complet si rechizite pentru scoala',
       target: 250, status: ScrisoareStatus.ACTIV, paid: 50
     },
     {
-      name: 'Maria', age: 14, category: Category.IMBRACAMINTE, 
-      wish: 'O geaca de iarna calduroasa si ghete marimea 38', 
+      name: 'Maria', age: 14, category: Category.IMBRACAMINTE,
+      wish: 'O geaca de iarna calduroasa si ghete marimea 38',
       target: 400, status: ScrisoareStatus.ACTIV, paid: 150
     },
     {
-      name: 'Ionut', age: 12, category: Category.SPORT, 
-      wish: 'Minge de fotbal si echipament', 
+      name: 'Ionut', age: 12, category: Category.SPORT,
+      wish: 'Minge de fotbal si echipament',
       target: 150, status: ScrisoareStatus.FINANTAT, paid: 150
     },
     {
-      name: 'Elena', age: 7, category: Category.JUCARII, 
-      wish: 'Papusa si set de colorat', 
+      name: 'Elena', age: 7, category: Category.JUCARII,
+      wish: 'Papusa si set de colorat',
       target: 120, status: ScrisoareStatus.ACTIV, paid: 0
     },
     {
-      name: 'Cristian', age: 16, category: Category.EDUCATIE, 
-      wish: 'Curs optional de informatica', 
+      name: 'Cristian', age: 16, category: Category.EDUCATIE,
+      wish: 'Curs optional de informatica',
       target: 500, status: ScrisoareStatus.ACTIV, paid: 450
     },
     {
-      name: 'Ana', age: 10, category: Category.ARTISTIC, 
-      wish: 'Set pictura profesional', 
+      name: 'Ana', age: 10, category: Category.ARTISTIC,
+      wish: 'Set pictura profesional',
       target: 300, status: ScrisoareStatus.ACTIV, paid: 0
     }
   ]
@@ -69,7 +84,7 @@ async function main() {
     const template = lettersData[i % lettersData.length]
     const institution = i % 2 === 0 ? inst1 : inst2
     const publicCode = `SCR-${2024}-${1000 + i}`
-    
+
     // Slight random variations
     const actualTarget = Math.min(500, template.target + (i * 10) % 50)
     const actualPaid = template.status === ScrisoareStatus.FINANTAT ? actualTarget : Math.min(template.paid, actualTarget)

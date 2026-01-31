@@ -2,7 +2,6 @@ import { getLetters } from "@/lib/letters"
 import { ScrisoareCard } from "@/components/ui/scrisoare-card"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Category } from "@prisma/client"
 
 // Server Component
 export default async function ScrisoriPage({
@@ -11,7 +10,7 @@ export default async function ScrisoriPage({
     searchParams: { [key: string]: string | string[] | undefined }
 }) {
     // Parse params
-    const category = typeof searchParams.category === 'string' ? (searchParams.category as Category) : undefined
+    const category = typeof searchParams.category === 'string' ? searchParams.category : undefined
     const county = typeof searchParams.county === 'string' ? searchParams.county : undefined
     const age = typeof searchParams.age === 'string' ? searchParams.age : undefined
     const page = typeof searchParams.page === 'string' ? parseInt(searchParams.page) : 1
@@ -23,9 +22,10 @@ export default async function ScrisoriPage({
         page
     })
 
-    // Basic Filter UI Helpers (Hardcoded for MVP)
-    const categories = Object.values(Category)
-    const counties = ["Bucuresti", "Iasi", "Cluj", "Timis"] // Should ideally come from DB GroupBy
+    const categories = ['EDUCATIE', 'IMBRACAMINTE', 'JUCARII', 'SPORT', 'ARTISTIC', 'ALTCEVA']
+
+    // Counties - Hardcoded list for MVP to avoid extra DB "GroupBy" call
+    const counties = ["Bucuresti", "Iasi", "Cluj", "Timis", "Brasov"]
 
     return (
         <main className="min-h-screen bg-neutral-50 pb-20">
@@ -36,11 +36,11 @@ export default async function ScrisoriPage({
 
                     <div className="flex flex-wrap gap-3 items-center">
                         {/* Filter Categories */}
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 flex-wrap">
                             <Link href="/scrisori">
                                 <Button variant={!category ? "default" : "outline"} size="sm">Toate</Button>
                             </Link>
-                            {categories.slice(0, 4).map(c => (
+                            {categories.map(c => (
                                 <Link key={c} href={`/scrisori?category=${c}`}>
                                     <Button variant={category === c ? "default" : "outline"} size="sm" className="capitalize">
                                         {c.toLowerCase()}
