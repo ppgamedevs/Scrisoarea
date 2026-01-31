@@ -3,16 +3,16 @@ import prisma from "@/lib/prisma"
 import { log } from "@/lib/logger"
 
 export async function GET() {
-    const result = await prisma.fulfillmentClaim.updateMany({
+    const result = await prisma.matchingRule.updateMany({
         where: {
-            status: 'PENDING',
-            expiresAt: { lt: new Date() }
+            active: true,
+            endsAt: { lt: new Date() }
         },
-        data: { status: 'EXPIRED' }
+        data: { active: false }
     })
 
     if (result.count > 0) {
-        log(`Cron: Cleaned ${result.count} expired fulfillment claims.`, 'INFO')
+        log(`Cron: Disabled ${result.count} expired matching rules.`, 'INFO')
     }
 
     return NextResponse.json({ processed: result.count })

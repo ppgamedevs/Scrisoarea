@@ -45,7 +45,7 @@ model Campaign {
   startsAt         DateTime
   endsAt           DateTime?
   status           String   @default("DRAFT") // DRAFT, ACTIVE, ENDED
-  category         String?  // Optional filter by category
+  category         String?  
   
   scrisori         Scrisoare[]
   matchingRules    MatchingRule[]
@@ -73,10 +73,10 @@ model MatchingRule {
   campaign            Campaign? @relation(fields: [campaignId], references: [id])
   campaignId          String?
   
-  matchType           String   @default("PERCENT_100") // PERCENT_100, PERCENT_50, FIXED_CAP
-  maxMatchTotal       Decimal // Total Budget
-  maxMatchPerDonation Decimal? // Cap per tx
-  currentMatchTotal   Decimal  @default(0) // Used so far
+  matchType           String   @default("PERCENT_100") 
+  maxMatchTotal       Decimal 
+  maxMatchPerDonation Decimal? 
+  currentMatchTotal   Decimal  @default(0) 
   
   active              Boolean  @default(true)
   startsAt            DateTime
@@ -143,15 +143,14 @@ model Donation {
   stripePaymentIntentId String?       @unique
   stripeSessionId      String?        @unique
   
-  amount               Decimal // User paid amount
+  amount               Decimal 
   donorEmail           String
   donorName            String?
   isAnonymous          Boolean        @default(false)
   status               String         @default("SUCCEEDED")
   
-  // Matching Fields
   matchedAmount        Decimal        @default(0)
-  totalCreditedAmount  Decimal        @default(0) // amount + matchedAmount
+  totalCreditedAmount  Decimal        @default(0) 
   
   sponsor              Sponsor?       @relation(fields: [sponsorId], references: [id])
   sponsorId            String?
@@ -207,4 +206,18 @@ model FulfillmentClaim {
   updatedAt   DateTime  @updatedAt
   @@index([scrisoareId])
   @@index([status])
+}
+
+model ActionLog {
+  id          String   @id @default(uuid())
+  actorType   String   // ADMIN, PARTNER, SYSTEM
+  actorId     String
+  actionType  String   // APPROVED_SCRISOARE, REJECTED_SCRISOARE, APPROVED_PROOF, REJECTED_PROOF, CREATED_MATCHING, FULFILLMENT_CLAIM, DONATION_PAID
+  targetType  String   // SCRISOARE, PROOF, DONATION
+  targetId    String
+  metadata    String?  // JSON
+  createdAt   DateTime @default(now())
+  @@index([actionType])
+  @@index([actorId])
+  @@index([targetId])
 }

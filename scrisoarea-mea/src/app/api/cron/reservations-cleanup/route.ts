@@ -3,7 +3,10 @@ import prisma from "@/lib/prisma"
 import { log } from "@/lib/logger"
 
 export async function GET() {
-    const result = await prisma.fulfillmentClaim.updateMany({
+    // Basic security check (use CRON_SECRET in prod)
+    // if (request.headers.get('Authorization') !== `Bearer ${process.env.CRON_SECRET}`) ...
+
+    const result = await prisma.reservation.updateMany({
         where: {
             status: 'PENDING',
             expiresAt: { lt: new Date() }
@@ -12,7 +15,7 @@ export async function GET() {
     })
 
     if (result.count > 0) {
-        log(`Cron: Cleaned ${result.count} expired fulfillment claims.`, 'INFO')
+        log(`Cron: Cleaned ${result.count} expired reservations.`, 'INFO')
     }
 
     return NextResponse.json({ processed: result.count })
