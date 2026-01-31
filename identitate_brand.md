@@ -32,15 +32,13 @@ Comunicarea noastră este **matură, funcțională și calmă**.
 
 ## 5. Limite Etice (Ce NU facem)
 1. **Nu facilităm contactul:** Interzicem orice comunicare directă, fizică sau digitală, între donator și copil.
-2. **Nu acceptăm bani:** Nu colectăm fonduri pentru nevoi generale; totul se rezumă la achiziția sau finanțarea exactă a produsului cerut.
+2. **Destinație Clară a Fondurilor:** Nu colectăm fonduri generale. Fiecare donație este alocată unei solicitări concrete, cu destinație clară (pooling sau achiziție directă).
 3. **Nu expunem minori:** Nu publicăm fețe, nume complete sau localizarea exactă a copiilor.
 4. **Nu comercializăm date:** Datele donatorilor rămân strict pentru confirmarea comenzii și nu sunt folosite pentru marketing agresiv.
 5. **Nu acceptăm derogări:** Nu aprobăm scrisori care depășesc bugetul sau care cer produse inadecvate vârstei, indiferent de context.
 
-## 6. Propuneri Nume Alternative
-Dacă "Scrisoarea mea" este considerat prea personal sau copilăros, propunem variante care sugerează procesul și corectitudinea:
+## 6. Naming
+**Nume public:** Scrisoarea mea
+**Nume intern proiect / Fallback:** Gest Concret (pentru documentație tehnică sau uz intern)
 
-1.  **Dorința Corectă**
-    *   *Motivație:* Subliniază respectarea regulilor și lipsa de artificii. Este un nume care promite etică.
-2.  **Gest Concret**
-    *   *Motivație:* Elimină abstracția și emoția, concentrându-se pe acțiunea pragmatică de a rezolva o nevoie specifică.
+Reținem "Gest Concret" ca filozofie de lucru: elimină abstracția și emoția, concentrându-se pe acțiunea pragmatică de a rezolva o nevoie specifică.
