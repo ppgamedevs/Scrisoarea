@@ -25,11 +25,27 @@ export default async function ScrisoareDetailPage({ params }: { params: Promise<
                     status: { in: ['PENDING', 'SHIPPED', 'COMPLETED'] },
                     expiresAt: { gt: new Date() }
                 }
+            },
+            campaign: {
+                include: {
+                    matchingRules: {
+                        include: { sponsor: true }
+                    }
+                }
             }
         }
     })
 
     if (!letter) notFound()
+
+    // Matching Logic (View Only)
+    const now = new Date()
+    const activeRule = letter.campaign?.matchingRules.find(r =>
+        r.active &&
+        r.startsAt <= now &&
+        (!r.endsAt || r.endsAt >= now) &&
+        Number(r.currentMatchTotal) < Number(r.maxMatchTotal)
+    )
 
     // Calc Logic
     const paid = Number(letter.collectedAmount)
@@ -42,7 +58,7 @@ export default async function ScrisoareDetailPage({ params }: { params: Promise<
     const remaining = Math.max(0, target - totalOccupied)
     const percentage = Math.min(100, Math.round((totalOccupied / target) * 100))
     const isFullyFunded = totalOccupied >= target || letter.status === 'FINANTAT' || letter.status === 'INCHIS'
-    const isDonationDisabled = ['IN_ACHIZITIE', 'LIVRAT', 'FINALIZAT', 'ANULAT', 'RESPINS'].includes(letter.status)
+    const isDonationDisabled = ['IN_ACHIZITIE', 'LIVRAT', 'FINALIZAT', 'ANULAT', 'RESPINS', 'INCHIS'].includes(letter.status)
 
     return (
         <main className="min-h-screen bg-white pb-20">
@@ -55,11 +71,30 @@ export default async function ScrisoareDetailPage({ params }: { params: Promise<
                     <div className="flex gap-2 mb-4">
                         <Badge variant="outline" className="text-neutral-500">{letter.category}</Badge>
                         {letter.status === 'FINANTAT' && <Badge className="bg-green-100 text-green-800 border-none">Finanțat</Badge>}
+                        {letter.status === 'INCHIS' && <Badge className="bg-emerald-100 text-emerald-800 border-none">Închis</Badge>}
                         {activeClaim && <Badge className="bg-amber-100 text-amber-800 border-none">În curs de îndeplinire</Badge>}
+                        {activeRule && <Badge className="bg-purple-100 text-purple-800 border-none">Matching 1:1 Activ</Badge>}
                     </div>
                     <h1 className="text-4xl font-light text-neutral-900 mb-2">
                         {letter.childFirstName}, {calculateAgeBucket(letter.childAge)} ani
                     </h1>
+// ... (rest of file content implied, only replaced Header and Logic)
+                    // ... but replace_file_content needs contiguous block.
+
+                    // I will try to target the exact block from finding `const letter` to `return (`.
+
+                    // WAIT. I need to insert the Matching Info Box in the RIGHT COLUMN.
+                    // So I should replace the Right Column rendering part too.
+
+                    // Let's replace the whole component body for safety to inject data correctly.
+                    // But that's large.
+
+                    // Let's do 2 edits.
+                    // 1. Fetch logic + Badge.
+                    // 2. Right column info box.
+
+                    // EDIT 1: Fetch + Badge.
+
                     <p className="text-xl text-neutral-500">
                         {letter.institution.county} • Centru Partener Verificat
                     </p>
@@ -138,6 +173,17 @@ export default async function ScrisoareDetailPage({ params }: { params: Promise<
                                     <span>{percentage}% acoperit</span>
                                 </div>
                             </div>
+
+                            {activeRule && (
+                                <div className="bg-purple-50 border border-purple-100 p-4 rounded-xl mb-4 text-sm">
+                                    <div className="font-bold text-purple-900 mb-1 flex items-center gap-2">
+                                        <span>⚡ Matching Activ</span>
+                                    </div>
+                                    <p className="text-purple-800">
+                                        Orice donație este dublată de <strong>{activeRule.sponsor.name}</strong> în limita bugetului disponibil.
+                                    </p>
+                                </div>
+                            )}
 
                             {!isDonationDisabled && !isFullyFunded && (
                                 <FulfillmentModule
