@@ -1,14 +1,167 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum UserRole {
+  ADMIN
+  PARTNER
+  DONOR
+}
+
+enum ScrisoareStatus {
+  NOU
+  MODERARE
+  RESPINS
+  ACTIV
+  FINANTAT
+  IN_ACHIZITIE
+  LIVRAT
+  FINALIZAT
+  ANULAT
+}
+
+enum Category {
+  EDUCATIE
+  IMBRACAMINTE
+  JUCARII
+  SPORT
+  ARTISTIC
+  ALTCEVA
+}
+
+enum ProofType {
+  VIDEO
+  PHOTO
+}
+
+enum ProofStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum DonationStatus {
+  SUCCEEDED
+  OMITTED
+  REFUNDED
+}
+
+model Profile {
+  id        String   @id @default(uuid())
+  authId    String   @unique
+  email     String   @unique
+  role      UserRole @default(DONOR)
+  firstName String?
+  lastName  String?
+  
+  institution   Institution? @relation(fields: [institutionId], references: [id])
+  institutionId String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([authId])
+}
+
+model Institution {
+  id          String   @id @default(uuid())
+  name        String
+  cui         String   @unique
+  verified    Boolean  @default(false)
+  county      String
+  city        String
+  
+  users     Profile[]
+  scrisori  Scrisoare[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Scrisoare {
+  id              String          @id @default(uuid())
+  publicCode      String          @unique
+  
+  childFirstName  String
+  childAge        Int
+  childGender     String?
+  childStory      String?
+  originalImgUrl  String
+  wishList        String
+  
+  category        Category        @default(ALTCEVA)
+  
+  targetAmount    Decimal         @db.Decimal(10, 2)
+  collectedAmount Decimal         @db.Decimal(10, 2) @default(0)
+  
+  status          ScrisoareStatus @default(NOU)
+  rejectionReason String?
+  
+  childLastName   String
+  childCnpHash    String?
+  
+  institution     Institution     @relation(fields: [institutionId], references: [id])
+  institutionId   String
+  
+  donations       Donation[]
+  reservations    Reservation[]
+  proofs          ProofMedia[]
+
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([status])
+  @@index([institutionId])
+  @@index([category])
+}
+
+model Donation {
+  id                   String         @id @default(uuid())
+  stripePaymentIntentId String        @unique
+  amount               Decimal        @db.Decimal(10, 2)
+  donorEmail           String
+  donorName            String?
+  isAnonymous          Boolean        @default(false)
+  
+  status               DonationStatus @default(SUCCEEDED)
+  
+  scrisoare            Scrisoare      @relation(fields: [scrisoareId], references: [id])
+  scrisoareId          String
+
+  createdAt            DateTime       @default(now())
+
+  @@index([scrisoareId])
+}
+
+model Reservation {
+  id                   String   @id @default(uuid())
+  stripePaymentIntentId String  @unique
+  amount               Decimal  @db.Decimal(10, 2)
+  expiresAt            DateTime
+  
+  scrisoare            Scrisoare @relation(fields: [scrisoareId], references: [id])
+  scrisoareId          String
+
+  createdAt            DateTime @default(now())
+
+  @@index([expiresAt])
+  @@index([scrisoareId])
+}
+
+model ProofMedia {
+  id          String      @id @default(uuid())
+  url         String
+  type        ProofType   
+  status      ProofStatus @default(PENDING)
+  
+  scrisoare   Scrisoare   @relation(fields: [scrisoareId], references: [id])
+  scrisoareId String
+
+  createdAt   DateTime    @default(now())
 }
