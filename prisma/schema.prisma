@@ -1,0 +1,175 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// -----------------------------------------------------------------------------
+// ENUMS
+// -----------------------------------------------------------------------------
+
+enum UserRole {
+  ADMIN
+  PARTNER
+  DONOR
+}
+
+enum ScrisoareStatus {
+  NOU             // Draft created by partner
+  MODERARE        // Submitted for admin review
+  RESPINS         // Rejected by admin (needs edit)
+  ACTIV           // Published, accepting donations
+  FINANTAT        // 100% funds collected
+  IN_ACHIZITIE    // Partner is buying the items
+  LIVRAT          // Partner uploaded proof
+  FINALIZAT       // Admin confirmed proof
+  ANULAT          // Cancelled
+}
+
+enum ProofType {
+  VIDEO
+  PHOTO
+}
+
+enum ProofStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum DonationStatus {
+  SUCCEEDED
+  OMITTED  // If we want to hide it
+  REFUNDED
+}
+
+// -----------------------------------------------------------------------------
+// MODELS
+// -----------------------------------------------------------------------------
+
+// Profile extends the Supabase Auth User
+model Profile {
+  id        String   @id @default(uuid())
+  authId    String   @unique // Links to Supabase Auth UID
+  email     String   @unique
+  role      UserRole @default(DONOR)
+  firstName String?
+  lastName  String?
+  
+  // Relations
+  institution   Institution? @relation(fields: [institutionId], references: [id])
+  institutionId String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([authId])
+}
+
+model Institution {
+  id          String   @id @default(uuid())
+  name        String
+  cui         String   @unique // Registration code
+  verified    Boolean  @default(false)
+  county      String   // Județ
+  city        String
+  
+  // Relations
+  users     Profile[] // Staff members
+  scrisori  Scrisoare[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Scrisoare {
+  id              String          @id @default(uuid())
+  publicCode      String          @unique // Friendly ID (e.g., PH-234)
+  
+  // Content
+  childFirstName  String
+  childAge        Int
+  childGender     String?
+  childStory      String?         // Transcribed text (sanitized)
+  originalImgUrl  String          // Path to storage
+  wishList        String          // Summarized wish
+  
+  // Financials
+  targetAmount    Decimal         @db.Decimal(10, 2) // Max 500.00
+  collectedAmount Decimal         @db.Decimal(10, 2) @default(0)
+  
+  // Meta
+  status          ScrisoareStatus @default(NOU)
+  rejectionReason String?
+  
+  // Internal Privacy
+  childLastName   String          // Protected
+  childCnpHash    String?         // Deduplication logic intent
+  
+  // Relations
+  institution     Institution     @relation(fields: [institutionId], references: [id])
+  institutionId   String
+  
+  donations       Donation[]
+  reservations    Reservation[]
+  proofs          ProofMedia[]
+
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([status])
+  @@index([institutionId])
+}
+
+model Donation {
+  id                   String         @id @default(uuid())
+  stripePaymentIntentId String        @unique
+  amount               Decimal        @db.Decimal(10, 2)
+  donorEmail           String
+  donorName            String?
+  isAnonymous          Boolean        @default(false)
+  
+  status               DonationStatus @default(SUCCEEDED)
+  
+  scrisoare            Scrisoare      @relation(fields: [scrisoareId], references: [id])
+  scrisoareId          String
+
+  createdAt            DateTime       @default(now())
+
+  @@index([scrisoareId])
+}
+
+// Temporary lock on funds to prevent overfunding
+model Reservation {
+  id                   String   @id @default(uuid())
+  stripePaymentIntentId String  @unique
+  amount               Decimal  @db.Decimal(10, 2)
+  expiresAt            DateTime
+  
+  scrisoare            Scrisoare @relation(fields: [scrisoareId], references: [id])
+  scrisoareId          String
+
+  createdAt            DateTime @default(now())
+
+  @@index([expiresAt])
+  @@index([scrisoareId])
+}
+
+model ProofMedia {
+  id          String      @id @default(uuid())
+  url         String
+  type        ProofType   
+  status      ProofStatus @default(PENDING)
+  
+  scrisoare   Scrisoare   @relation(fields: [scrisoareId], references: [id])
+  scrisoareId String
+
+  createdAt   DateTime    @default(now())
+}
