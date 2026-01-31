@@ -4,19 +4,25 @@ import { formatCurrency, calculateAgeBucket } from "@/lib/utils"
 import Link from "next/link"
 import { Progress } from "@/components/ui/progress"
 import DonationModule from "@/components/donation-module"
+import FulfillmentModule from "@/components/fulfillment-module"
 import { Badge } from "@/components/ui/badge"
 
-export default async function ScrisoareDetailPage({ params }: { params: { id: string } }) {
-    const { id } = params
+export default async function ScrisoareDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id: slugOrId } = await params
 
-    // 1. Fetch Data with fresh reservations
-    const letter = await prisma.scrisoare.findUnique({
-        where: { id },
+    const letter = await prisma.scrisoare.findFirst({
+        where: {
+            OR: [
+                { id: slugOrId },
+                { slug: slugOrId }
+            ]
+        },
         include: {
             institution: true,
-            reservations: {
+            reservations: { where: { status: 'PENDING', expiresAt: { gt: new Date() } } },
+            fulfillmentClaims: {
                 where: {
-                    status: 'PENDING',
+                    status: { in: ['PENDING', 'SHIPPED', 'COMPLETED'] },
                     expiresAt: { gt: new Date() }
                 }
             }
@@ -25,26 +31,18 @@ export default async function ScrisoareDetailPage({ params }: { params: { id: st
 
     if (!letter) notFound()
 
-    // 2. Calculation Logic
-    // Paid = collectedAmount (from DB, updated via webhook)
-    // Reserved = sum of PENDING valid reservations
+    // Calc Logic
     const paid = Number(letter.collectedAmount)
     const reserved = letter.reservations.reduce((acc, r) => acc + Number(r.amount), 0)
     const target = Number(letter.targetAmount)
 
-    // Remaining = Cap - Paid - Reserved
-    // We clamp at 0
+    const activeClaim = letter.fulfillmentClaims[0] || null
+
     const totalOccupied = paid + reserved
     const remaining = Math.max(0, target - totalOccupied)
     const percentage = Math.min(100, Math.round((totalOccupied / target) * 100))
     const isFullyFunded = totalOccupied >= target || letter.status === 'FINANTAT' || letter.status === 'INCHIS'
-
-    // Safety: If letter is closed logistically, disable donation even if math says otherwise
     const isDonationDisabled = ['IN_ACHIZITIE', 'LIVRAT', 'FINALIZAT', 'ANULAT', 'RESPINS'].includes(letter.status)
-
-    if (isDonationDisabled) {
-        // Maybe specific UI for closed letters?
-    }
 
     return (
         <main className="min-h-screen bg-white pb-20">
@@ -53,11 +51,11 @@ export default async function ScrisoareDetailPage({ params }: { params: { id: st
                     &larr; Înapoi la listă
                 </Link>
 
-                {/* A) Header */}
                 <div className="mb-8 border-b pb-8">
                     <div className="flex gap-2 mb-4">
                         <Badge variant="outline" className="text-neutral-500">{letter.category}</Badge>
                         {letter.status === 'FINANTAT' && <Badge className="bg-green-100 text-green-800 border-none">Finanțat</Badge>}
+                        {activeClaim && <Badge className="bg-amber-100 text-amber-800 border-none">În curs de îndeplinire</Badge>}
                     </div>
                     <h1 className="text-4xl font-light text-neutral-900 mb-2">
                         {letter.childFirstName}, {calculateAgeBucket(letter.childAge)} ani
@@ -68,10 +66,8 @@ export default async function ScrisoareDetailPage({ params }: { params: { id: st
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-                    {/* Left Column: Content */}
+                    {/* Left Column */}
                     <div className="lg:col-span-2 space-y-12">
-
-                        {/* B) Letter Image */}
                         <section className="bg-neutral-50 p-4 rounded-xl border border-neutral-100">
                             <div className="aspect-[3/4] relative w-full flex items-center justify-center bg-white shadow-sm overflow-hidden rounded-lg">
                                 {letter.originalImgUrl.includes('placehold') ? (
@@ -85,7 +81,6 @@ export default async function ScrisoareDetailPage({ params }: { params: { id: st
                             </div>
                         </section>
 
-                        {/* C) Items List */}
                         <section>
                             <h3 className="text-xl font-medium text-neutral-900 mb-4 border-l-4 border-blue-500 pl-3">
                                 Lista de dorințe
@@ -99,9 +94,6 @@ export default async function ScrisoareDetailPage({ params }: { params: { id: st
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y">
-                                        {/* In MVP wishList is a string, assuming it might be comma separated or single item. 
-                                Ideally we parse it. For now, display as single row description. 
-                            */}
                                         <tr>
                                             <td className="p-4 text-neutral-800">{letter.wishList}</td>
                                             <td className="p-4 text-right text-neutral-600">{formatCurrency(Number(letter.targetAmount))}</td>
@@ -117,7 +109,6 @@ export default async function ScrisoareDetailPage({ params }: { params: { id: st
                             </div>
                         </section>
 
-                        {/* Context Story */}
                         <section className="prose prose-neutral max-w-none">
                             <h3 className="text-lg font-medium">Povestea (Transcrisă)</h3>
                             <p className="text-neutral-600 italic">
@@ -125,9 +116,6 @@ export default async function ScrisoareDetailPage({ params }: { params: { id: st
                             </p>
                         </section>
 
-                        {/* F) Safety Note inside Left Column as well? Or separate? 
-                 User asked for F safety note at end.
-             */}
                         <div className="bg-blue-50 text-blue-800 p-6 rounded-lg text-sm flex gap-4 items-start">
                             <div className="text-2xl">🛡</div>
                             <div>
@@ -135,13 +123,11 @@ export default async function ScrisoareDetailPage({ params }: { params: { id: st
                                 Dovada livrării va fi încărcată anonimizat după achiziție.
                             </div>
                         </div>
-
                     </div>
 
-                    {/* Right Column: Donation */}
+                    {/* Right Column */}
                     <div className="lg:col-span-1">
                         <div className="sticky top-8 space-y-6">
-                            {/* D) Progress Widget */}
                             <div className="bg-white p-6 border rounded-xl shadow-sm">
                                 <div className="flex justify-between items-end mb-2">
                                     <span className="text-2xl font-bold">{formatCurrency(totalOccupied)}</span>
@@ -153,17 +139,31 @@ export default async function ScrisoareDetailPage({ params }: { params: { id: st
                                 </div>
                             </div>
 
-                            {/* E) Donation Module */}
-                            {isDonationDisabled ? (
-                                <div className="bg-neutral-100 p-8 rounded-xl text-center text-neutral-500">
-                                    Această cerere nu mai acceptă donații (Status: {letter.status}).
+                            {!isDonationDisabled && !isFullyFunded && (
+                                <FulfillmentModule
+                                    scrisoareId={letter.id}
+                                    activeClaim={activeClaim}
+                                />
+                            )}
+
+                            {activeClaim ? (
+                                <div className="text-center text-sm text-neutral-500 bg-neutral-50 p-4 rounded">
+                                    <p>Opțiunea de donație în bani este dezactivată deoarece există o cerere de îndeplinire în curs.</p>
                                 </div>
                             ) : (
-                                <DonationModule
-                                    scrisoareId={letter.id}
-                                    remainingAmount={remaining}
-                                    isFullyFunded={isFullyFunded}
-                                />
+                                <>
+                                    {isDonationDisabled ? (
+                                        <div className="bg-neutral-100 p-8 rounded-xl text-center text-neutral-500">
+                                            Această cerere nu mai acceptă donații (Status: {letter.status}).
+                                        </div>
+                                    ) : (
+                                        <DonationModule
+                                            scrisoareId={letter.id}
+                                            remainingAmount={remaining}
+                                            isFullyFunded={isFullyFunded}
+                                        />
+                                    )}
+                                </>
                             )}
                         </div>
                     </div>

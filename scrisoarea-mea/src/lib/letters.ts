@@ -34,7 +34,13 @@ export async function getLetters(filter: LetterFilter) {
             where,
             include: {
                 institution: { select: { county: true } },
-                reservations: { where: { status: 'PENDING', expiresAt: { gt: new Date() } } }
+                reservations: { where: { status: 'PENDING', expiresAt: { gt: new Date() } } },
+                fulfillmentClaims: {
+                    where: {
+                        status: { in: ['PENDING', 'SHIPPED', 'COMPLETED'] },
+                        expiresAt: { gt: new Date() }
+                    }
+                }
             },
             orderBy: { createdAt: 'desc' },
             skip,
@@ -48,13 +54,18 @@ export async function getLetters(filter: LetterFilter) {
         const paid = Number(letter.collectedAmount)
         const target = Number(letter.targetAmount)
         const total = paid + reserved
+
+        // Active claim check
+        const hasActiveClaim = letter.fulfillmentClaims.length > 0
+
         return {
             ...letter,
             targetAmount: target,
             collectedAmount: paid,
             reservedAmount: reserved,
             remainingAmount: Math.max(0, target - total),
-            percentage: Math.min(100, Math.round((total / target) * 100))
+            percentage: Math.min(100, Math.round((total / target) * 100)),
+            hasActiveClaim
         }
     })
 

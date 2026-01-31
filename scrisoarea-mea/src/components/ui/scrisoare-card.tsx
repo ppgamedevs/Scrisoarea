@@ -11,7 +11,10 @@ export function ScrisoareCard({ letter }: { letter: LetterWithMeta }) {
     let statusLabel = "Nou"
     let statusColor = "bg-blue-100 text-blue-800"
 
-    if (letter.percentage >= 100) {
+    if (letter.hasActiveClaim) {
+        statusLabel = "În curs de îndeplinire"
+        statusColor = "bg-amber-100 text-amber-800"
+    } else if (letter.percentage >= 100) {
         statusLabel = "Complet"
         statusColor = "bg-green-100 text-green-800"
     } else if (letter.percentage > 75) {
@@ -73,7 +76,7 @@ export function ScrisoareCard({ letter }: { letter: LetterWithMeta }) {
 
             <CardFooter className="p-5 pt-0">
                 <Button asChild className="w-full bg-neutral-900 hover:bg-neutral-800 text-white">
-                    <Link href={`/scrisori/${letter.id}`}>
+                    <Link href={`/scrisori/${(letter as any).slug || letter.id}`}>
                         Vezi cererea
                     </Link>
                 </Button>

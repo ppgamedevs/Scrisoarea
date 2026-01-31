@@ -41,7 +41,8 @@ model Institution {
 
 model Scrisoare {
   id              String          @id @default(uuid())
-  publicCode      String          @unique
+  publicCode      String          @unique // e.g. "A24-BUC"
+  slug            String          @unique @default(cuid()) // New cleaner URL param e.g. "andrei-6-ani-bucuresti-x8s9"
   
   childFirstName  String
   childAge        Int
@@ -67,6 +68,7 @@ model Scrisoare {
   donations       Donation[]
   reservations    Reservation[]
   proofs          ProofMedia[]
+  fulfillmentClaims FulfillmentClaim[]
 
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
@@ -74,6 +76,7 @@ model Scrisoare {
   @@index([status])
   @@index([institutionId])
   @@index([category])
+  @@index([slug])
 }
 
 model Donation {
@@ -101,7 +104,7 @@ model Reservation {
   stripeSessionId      String?  @unique
   amount               Decimal
   expiresAt            DateTime
-  status               String   @default("PENDING") // PENDING, CONSUMED, EXPIRED, CANCELLED
+  status               String   @default("PENDING") 
   
   scrisoare            Scrisoare @relation(fields: [scrisoareId], references: [id])
   scrisoareId          String
@@ -123,4 +126,27 @@ model ProofMedia {
   scrisoareId String
 
   createdAt   DateTime    @default(now())
+}
+
+model FulfillmentClaim {
+  id          String    @id @default(uuid())
+  
+  status      String    @default("PENDING") 
+  expiresAt   DateTime
+  
+  donorEmail  String?
+  awbProvider String?
+  awbNumber   String?
+  awbFileUrl  String?
+  notes       String?
+
+  scrisoare   Scrisoare @relation(fields: [scrisoareId], references: [id])
+  scrisoareId String
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([scrisoareId])
+  @@index([status])
+  @@index([expiresAt])
 }
