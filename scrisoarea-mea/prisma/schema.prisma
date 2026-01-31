@@ -37,6 +37,58 @@ model Institution {
   updatedAt      DateTime @updatedAt
 }
 
+model Campaign {
+  id               String   @id @default(uuid())
+  slug             String   @unique
+  title            String
+  descriptionShort String?
+  startsAt         DateTime
+  endsAt           DateTime?
+  status           String   @default("DRAFT") // DRAFT, ACTIVE, ENDED
+  category         String?  // Optional filter by category
+  
+  scrisori         Scrisoare[]
+  matchingRules    MatchingRule[]
+  
+  createdAt        DateTime @default(now())
+}
+
+model Sponsor {
+  id          String   @id @default(uuid())
+  name        String
+  website     String?
+  logoUrl     String?
+  
+  matchingRules MatchingRule[]
+  donations     Donation[]
+  
+  createdAt   DateTime @default(now())
+}
+
+model MatchingRule {
+  id                  String   @id @default(uuid())
+  sponsor             Sponsor  @relation(fields: [sponsorId], references: [id])
+  sponsorId           String
+  
+  campaign            Campaign? @relation(fields: [campaignId], references: [id])
+  campaignId          String?
+  
+  matchType           String   @default("PERCENT_100") // PERCENT_100, PERCENT_50, FIXED_CAP
+  maxMatchTotal       Decimal // Total Budget
+  maxMatchPerDonation Decimal? // Cap per tx
+  currentMatchTotal   Decimal  @default(0) // Used so far
+  
+  active              Boolean  @default(true)
+  startsAt            DateTime
+  endsAt              DateTime?
+  
+  donations           Donation[]
+
+  createdAt           DateTime @default(now())
+  @@index([sponsorId])
+  @@index([campaignId])
+}
+
 model Scrisoare {
   id              String          @id @default(uuid())
   publicCode      String          @unique 
@@ -56,18 +108,19 @@ model Scrisoare {
   collectedAmount Decimal         @default(0)
   
   status          String          @default("NOU") 
-                 // Public Status: NOU, ACTIV, FINANTAT, IN_ACHIZITIE, LIVRAT, INCHIS, ANULAT
-
   moderationStatus String         @default("DRAFT") 
   rejectionReason String?
 
-  proofApproved   Boolean         @default(false) // New field
+  proofApproved   Boolean         @default(false) 
   
   childLastName   String          
   childCnpHash    String?         
   
   institution     Institution     @relation(fields: [institutionId], references: [id])
   institutionId   String
+
+  campaign        Campaign?       @relation(fields: [campaignId], references: [id])
+  campaignId      String?
   
   donations       Donation[]
   reservations    Reservation[]
@@ -82,21 +135,35 @@ model Scrisoare {
   @@index([institutionId])
   @@index([category])
   @@index([slug])
+  @@index([campaignId])
 }
 
 model Donation {
   id                   String         @id @default(uuid())
   stripePaymentIntentId String?       @unique
   stripeSessionId      String?        @unique
-  amount               Decimal
+  
+  amount               Decimal // User paid amount
   donorEmail           String
   donorName            String?
   isAnonymous          Boolean        @default(false)
   status               String         @default("SUCCEEDED")
+  
+  // Matching Fields
+  matchedAmount        Decimal        @default(0)
+  totalCreditedAmount  Decimal        @default(0) // amount + matchedAmount
+  
+  sponsor              Sponsor?       @relation(fields: [sponsorId], references: [id])
+  sponsorId            String?
+  
+  matchingRule         MatchingRule?  @relation(fields: [matchingRuleId], references: [id])
+  matchingRuleId       String?
+
   scrisoare            Scrisoare      @relation(fields: [scrisoareId], references: [id])
   scrisoareId          String
   createdAt            DateTime       @default(now())
   @@index([scrisoareId])
+  @@index([sponsorId])
 }
 
 model Reservation {
@@ -116,15 +183,12 @@ model Reservation {
 model ProofMedia {
   id            String      @id @default(uuid())
   url           String
-  type          String      // VIDEO, PHOTO
+  type          String      
   thumbnailUrl  String?
-  
-  moderationStatus String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  moderationStatus String   @default("PENDING") 
   rejectReason     String?
-
   scrisoare     Scrisoare   @relation(fields: [scrisoareId], references: [id])
   scrisoareId   String
-
   createdAt     DateTime    @default(now())
 }
 
