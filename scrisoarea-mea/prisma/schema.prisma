@@ -9,44 +9,37 @@ datasource db {
 
 model Profile {
   id            String   @id @default(uuid())
-  // Auth ID (Supabase UID or internal ID)
   authId        String   @unique
   email         String   @unique
-  role          String   @default("DONOR") // ADMIN, PARTNER, DONOR
+  role          String   @default("DONOR")
   firstName     String?
   lastName      String?
-  
   institution   Institution? @relation(fields: [institutionId], references: [id])
   institutionId String?
-  
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-
   @@index([authId])
 }
 
 model Institution {
   id             String   @id @default(uuid())
-  name           String   // Private name, only seen by Admin/Partner
+  name           String   
   cui            String   @unique
   verified       Boolean  @default(false)
-  
-  county         String   // Public info e.g. "Vaslui"
+  county         String   
   city           String
-  addressPrivate String?  // MVP: Private address for shipping/pickup internal usage
+  addressPrivate String?  
   contactName    String?
   contactEmail   String?
-  
   users          Profile[]
   scrisori       Scrisoare[]
-
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
 
 model Scrisoare {
   id              String          @id @default(uuid())
-  publicCode      String          @unique // e.g. "A24-BUC"
+  publicCode      String          @unique 
   slug            String          @unique @default(cuid()) 
   
   childFirstName  String
@@ -54,25 +47,21 @@ model Scrisoare {
   childGender     String?
   childStory      String?         
   
-  // New fields for Partner Portal MVP
-  items           String?         // JSON string or comma list for MVP. Ideally normalized relation but let's keep it simple string for Seed compat? 
-                                  // Prompt asks for items 1-5 with estimatedValue. 
-                                  // Let's store as JSON string: [{name, size, value}, ...]
-  
+  items           String?         
   originalImgUrl  String          
-  wishList        String          // Keeping for backward compat/simple display
-  
+  wishList        String          
   category        String          @default("ALTCEVA")
 
   targetAmount    Decimal
   collectedAmount Decimal         @default(0)
   
   status          String          @default("NOU") 
-                 // Public Status: NOU, ACTIV (Public), FINANTAT, IN_ACHIZITIE, LIVRAT, ANULAT
+                 // Public Status: NOU, ACTIV, FINANTAT, IN_ACHIZITIE, LIVRAT, INCHIS, ANULAT
 
   moderationStatus String         @default("DRAFT") 
-                 // DRAFT, SUBMITTED, APPROVED, REJECTED
   rejectionReason String?
+
+  proofApproved   Boolean         @default(false) // New field
   
   childLastName   String          
   childCnpHash    String?         
@@ -89,7 +78,7 @@ model Scrisoare {
   updatedAt       DateTime        @updatedAt
 
   @@index([status])
-  @@index([moderationStatus]) // New index
+  @@index([moderationStatus]) 
   @@index([institutionId])
   @@index([category])
   @@index([slug])
@@ -104,11 +93,9 @@ model Donation {
   donorName            String?
   isAnonymous          Boolean        @default(false)
   status               String         @default("SUCCEEDED")
-  
   scrisoare            Scrisoare      @relation(fields: [scrisoareId], references: [id])
   scrisoareId          String
   createdAt            DateTime       @default(now())
-
   @@index([scrisoareId])
 }
 
@@ -119,24 +106,26 @@ model Reservation {
   amount               Decimal
   expiresAt            DateTime
   status               String   @default("PENDING") 
-  
   scrisoare            Scrisoare @relation(fields: [scrisoareId], references: [id])
   scrisoareId          String
-
   createdAt            DateTime @default(now())
-
   @@index([expiresAt])
   @@index([scrisoareId])
 }
 
 model ProofMedia {
-  id          String      @id @default(uuid())
-  url         String
-  type        String      
-  status      String      @default("PENDING")
-  scrisoare   Scrisoare   @relation(fields: [scrisoareId], references: [id])
-  scrisoareId String
-  createdAt   DateTime    @default(now())
+  id            String      @id @default(uuid())
+  url           String
+  type          String      // VIDEO, PHOTO
+  thumbnailUrl  String?
+  
+  moderationStatus String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  rejectReason     String?
+
+  scrisoare     Scrisoare   @relation(fields: [scrisoareId], references: [id])
+  scrisoareId   String
+
+  createdAt     DateTime    @default(now())
 }
 
 model FulfillmentClaim {
@@ -152,7 +141,6 @@ model FulfillmentClaim {
   scrisoareId String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-
   @@index([scrisoareId])
   @@index([status])
 }
