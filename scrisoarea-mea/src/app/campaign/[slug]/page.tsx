@@ -3,7 +3,8 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { formatCurrency, calculateAgeBucket } from "@/lib/utils"
+import { formatCurrency } from "@/lib/utils"
+import { ScrisoareCard } from "@/components/ui/scrisoare-card"
 
 export default async function CampaignDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params
@@ -13,14 +14,14 @@ export default async function CampaignDetailPage({ params }: { params: Promise<{
             matchingRules: { include: { sponsor: true } },
             scrisori: {
                 where: { status: { in: ['NOU', 'ACTIV', 'FINANTAT'] } }, // Show these public statuses
-                include: { institution: true }
+                include: { institution: true, campaign: true }
             }
         }
     })
 
     if (!campaign) notFound()
 
-    const activeRule = campaign.matchingRules.find(r => r.active)
+    const activeRule = campaign.matchingRules.find((r: any) => r.active)
 
     return (
         <main className="min-h-screen bg-neutral-50 pb-20">
@@ -49,26 +50,9 @@ export default async function CampaignDetailPage({ params }: { params: Promise<{
                 <h2 className="text-2xl font-bold mb-8">Scrisori în Campanie ({campaign.scrisori.length})</h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {campaign.scrisori.map(letter => (
-                        <div key={letter.id} className="bg-white rounded-xl shadow-sm border overflow-hidden hover:shadow-md transition-shadow flex flex-col">
-                            <div className="h-48 bg-neutral-100 relative">
-                                <img src={letter.originalImgUrl} className="w-full h-full object-cover opacity-90" alt="Cover" />
-                                <div className="absolute top-4 right-4">
-                                    <Badge className="bg-white/90 text-black hover:bg-white">{letter.category}</Badge>
-                                </div>
-                            </div>
-                            <div className="p-6 flex-1 flex flex-col space-y-4">
-                                <div>
-                                    <h3 className="text-xl font-bold">{letter.childFirstName}, {calculateAgeBucket(letter.childAge)} ani</h3>
-                                    <p className="text-sm text-neutral-500">{letter.institution.county}</p>
-                                </div>
-                                <div className="mt-auto pt-4 border-t flex justify-between items-center">
-                                    <span className="font-mono font-bold text-lg">{formatCurrency(Number(letter.targetAmount))}</span>
-                                    <Button asChild size="sm">
-                                        <Link href={`/scrisori/${letter.slug || letter.id}`}>Vezi Povestea</Link>
-                                    </Button>
-                                </div>
-                            </div>
+                    {campaign.scrisori.map((letter: any) => (
+                        <div key={letter.id} className="h-full">
+                            <ScrisoareCard letter={letter} />
                         </div>
                     ))}
                 </div>

@@ -1,10 +1,10 @@
 import prisma from "@/lib/prisma"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { formatCurrency, calculateAgeBucket } from "@/lib/utils"
-// import { FAQ_ITEMS } from "@/lib/constants" // Defined in Step 861, reusing logic but customizing list for prompt
-// Actually, let's redefine specific FAQs for this refined request inside the component to be precise.
-import { CheckCircle2, Shield, Eye, TrendingUp, FileText, BarChart3, ArrowRight } from "lucide-react"
+import { formatCurrency } from "@/lib/utils"
+// import { FAQ_ITEMS } from "@/lib/constants"
+import { CheckCircle2, Heart, Sparkles, TrendingUp, FileText, BarChart3, ArrowRight } from "lucide-react"
+import { ScrisoareCard } from "@/components/ui/scrisoare-card"
 
 async function getStats() {
     const activeLetters = await prisma.scrisoare.count({ where: { status: 'ACTIV' } })
@@ -19,7 +19,7 @@ async function getStats() {
 
 async function getFeaturedLetters() {
     return prisma.scrisoare.findMany({
-        where: { status: 'ACTIV' }, // 'ACTIV' means verified and ready for funding in our logic
+        where: { status: 'ACTIV' },
         take: 6,
         orderBy: { createdAt: 'desc' },
         include: { institution: true, campaign: true }
@@ -35,14 +35,12 @@ async function getLatestUpdates() {
 }
 
 const FAQ_ITEMS_REFINED = [
-    { q: "Cum știu că ajunge?", a: "Fiecare cerere închisă trebuie să aibă o dovadă foto/video a predării încărcată de instituția parteneră și verificată de noi." },
-    { q: "De ce nu apar detalii despre copii?", a: "Protejăm identitatea beneficiarilor. Folosim prenume sau pseudonime și nu publicăm niciodată adrese exacte sau imagini sensibile." },
-    { q: "Cum funcționează îndeplinirea personală?", a: "Puteți rezerva o scrisoare și trimite pachetul fizic la sediul asociației partenere. Detaliile de livrare se primesc după rezervare." },
-    { q: "Ce înseamnă matching?", a: "Un sponsor corporate dublează donațiile individuale pentru anumite campanii, mărind impactul fiecărui leu donat." },
-    { q: "Pot dona lunar?", a: "Da. Puteți activa o contribuție recurentă care susține costurile operaționale ale platformei și fondul de urgență." },
-    { q: "Ce se întâmplă dacă o cerere este rezervată?", a: "Ea devine indisponibilă altor donatori timp de 5 zile. Dacă pachetul nu este confirmat expediat, revine în lista publică." },
-    { q: "Cum verificați instituțiile?", a: "Solicităm CUI, statut și istoric. Validăm persoanele de contact și monitorizăm constant rata de succes a livrărilor." },
-    { q: "Cum pot deveni partener?", a: "Accesând secțiunea Contact sau Parteneri din meniu și completând formularul de acreditare." }
+    { q: "Ajunge cadoul la copil?", a: "Absolut! Partenerii noștri (asociații verificate) încarcă o poză sau un video când înmânează cadoul tău. Vei primi notificarea pe email." },
+    { q: "Sunt datele copiilor sigure?", a: "Da. Folosim doar prenumele și nu publicăm niciodată locația exactă. Siguranța lor este prioritatea noastră zero." },
+    { q: "Pot cumpăra eu cadoul?", a: "Sigur! Poți rezerva o dorință și să trimiți pachetul personal. Noi îți dăm detaliile de livrare imediat după rezervare." },
+    { q: "Ce este un 'Matching'?", a: "E magie! ✨ O companie sponsor alege să dubleze donațiile. Dacă tu donezi 50 lei, ei pun încă 50 lei." },
+    { q: "Pot ajuta lunar?", a: "Chiar ne-ar ajuta enorm. O sumă mică lunară ne permite să funcționăm și să acoperim urgențele." },
+    { q: "Ce fac dacă am o întrebare?", a: "Scrie-ne oricând. Suntem doar doi oameni, dar răspundem cât de repede putem!" }
 ]
 
 export default async function HomePage() {
@@ -51,201 +49,127 @@ export default async function HomePage() {
     const updates = await getLatestUpdates()
 
     return (
-        <main className="bg-white">
+        <main className="bg-slate-50/50">
             {/* Hero */}
-            <section className="relative pt-24 pb-20 px-4 text-center border-b">
+            <section className="relative pt-24 pb-20 px-4 text-center border-b bg-white">
                 <div className="max-w-4xl mx-auto space-y-8">
-                    <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-slate-900 leading-tight">
-                        Dorințe concrete. <br />
-                        <span className="text-slate-400">Proces verificabil.</span>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-sm font-medium mb-4">
+                        <Sparkles className="w-4 h-4" />
+                        <span>Fă o faptă bună azi</span>
+                    </div>
+                    <h1 className="text-5xl md:text-6xl font-black tracking-tight text-slate-900 leading-[1.1]">
+                        Fii motivul <br />
+                        <span className="text-blue-600">zâmbetului lor.</span>
                     </h1>
-                    <p className="text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed">
-                        Un sistem unde donațiile sunt transparente, scrisorile sunt reale, iar dovezile îndeplinirii sunt garantate.
+                    <p className="text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed font-light">
+                        Citește scrisorile copiilor către Moș Crăciun sau Iepuraș și ajută-i să primească exact ce își doresc. Simplu, direct și verificat.
                     </p>
 
                     {/* Trust Microcopy */}
                     <div className="flex flex-wrap justify-center gap-6 text-sm text-slate-600 font-medium py-2">
-                        <div className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-600" /> Scrisori verificate</div>
-                        <div className="flex items-center gap-2"><TrendingUp className="w-4 h-4 text-emerald-600" /> Progres vizibil</div>
-                        <div className="flex items-center gap-2"><Shield className="w-4 h-4 text-emerald-600" /> Dovada livrării</div>
+                        <div className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-600" /> Copii verificati</div>
+                        <div className="flex items-center gap-2"><Heart className="w-4 h-4 text-rose-500" /> 100% Impact</div>
+                        <div className="flex items-center gap-2"><Sparkles className="w-4 h-4 text-amber-500" /> Transparență totală</div>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-2">
-                        <Button asChild size="lg" className="h-12 px-8 text-base bg-slate-900 hover:bg-slate-800 text-white rounded-full">
-                            <Link href="/scrisori">Vezi Scrisorile</Link>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
+                        <Button asChild size="lg" className="h-14 px-8 text-lg bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-xl shadow-blue-200 transition-all hover:scale-105">
+                            <Link href="/scrisori">Găsește o dorință 🎁</Link>
                         </Button>
-                        <Button asChild size="lg" variant="outline" className="h-12 px-8 text-base rounded-full">
-                            <Link href="/cum-functioneaza">Cum funcționează</Link>
+                        <Button asChild size="lg" variant="ghost" className="h-14 px-8 text-lg rounded-full text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+                            <Link href="/cum-functioneaza">Cum funcționează?</Link>
                         </Button>
                     </div>
                 </div>
             </section>
 
             {/* Metrics Strip */}
-            <section className="py-8 bg-slate-50 border-b text-center">
+            <section className="py-10 bg-white border-b border-slate-100 text-center shadow-sm z-10 relative">
                 <div className="container mx-auto grid grid-cols-3 gap-8 text-slate-900">
                     <div>
-                        <span className="block text-2xl font-bold">{stats.active}</span>
-                        <span className="text-xs uppercase tracking-wider text-slate-500">Scrisori Active</span>
+                        <span className="block text-3xl font-black text-slate-800">{stats.active}</span>
+                        <span className="text-xs uppercase tracking-wider text-slate-500 font-semibold">Dorințe Așteaptă</span>
                     </div>
                     <div>
-                        <span className="block text-2xl font-bold text-emerald-600">{stats.fulfilled}</span>
-                        <span className="text-xs uppercase tracking-wider text-slate-500">Dorințe Îndeplinite</span>
+                        <span className="block text-3xl font-black text-emerald-500">{stats.fulfilled}</span>
+                        <span className="text-xs uppercase tracking-wider text-slate-500 font-semibold">Visuri Împlinite</span>
                     </div>
                     <div>
-                        <span className="block text-2xl font-bold text-blue-600">{formatCurrency(stats.raised)}</span>
-                        <span className="text-xs uppercase tracking-wider text-slate-500">Direcționat</span>
+                        <span className="block text-3xl font-black text-blue-600">{formatCurrency(stats.raised)}</span>
+                        <span className="text-xs uppercase tracking-wider text-slate-500 font-semibold">Donați cu Drag</span>
                     </div>
                 </div>
             </section>
 
-            {/* Highlights Cards */}
-            <section className="py-20 container mx-auto px-4">
-                <div className="grid md:grid-cols-3 gap-8">
-                    <Link href="/scrisori" className="group">
-                        <div className="bg-white p-8 rounded-2xl shadow-sm border hover:shadow-md transition-all h-full">
-                            <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-6 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                                <FileText className="w-6 h-6" />
-                            </div>
-                            <h3 className="text-xl font-bold mb-2">Cazuri Individuale</h3>
-                            <p className="text-slate-500 text-sm leading-relaxed">Explorează scrisorile copiilor. Fiecare caz are propriul progres financiar și necesar logistic.</p>
-                        </div>
-                    </Link>
+            {/* Featured Letters */}
+            <section className="py-24 container mx-auto px-4">
+                <div className="text-center mb-16 max-w-2xl mx-auto">
+                    <h2 className="text-3xl md:text-4xl font-bold mb-4 text-slate-900">Urgențe și Povesti Noi</h2>
+                    <p className="text-slate-500 text-lg">Câteva dintre scrisorile care au nevoie de ajutor chiar acum. Alege o poveste care rezonează cu tine.</p>
+                </div>
 
-                    <Link href="/update-uri" className="group">
-                        <div className="bg-white p-8 rounded-2xl shadow-sm border hover:shadow-md transition-all h-full">
-                            <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center mb-6 group-hover:bg-purple-600 group-hover:text-white transition-colors">
-                                <TrendingUp className="w-6 h-6" />
-                            </div>
-                            <h3 className="text-xl font-bold mb-2">Progres & Update-uri</h3>
-                            <p className="text-slate-500 text-sm leading-relaxed">Urmărește fluxul live al acțiunilor: finanțări, livrări și dovezi încărcate de parteneri.</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {letters.map((l: any) => (
+                        <div key={l.id} className="h-full">
+                            <ScrisoareCard letter={l} />
                         </div>
-                    </Link>
+                    ))}
+                </div>
 
-                    <Link href="/transparenta" className="group">
-                        <div className="bg-white p-8 rounded-2xl shadow-sm border hover:shadow-md transition-all h-full">
-                            <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center mb-6 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                                <BarChart3 className="w-6 h-6" />
-                            </div>
-                            <h3 className="text-xl font-bold mb-2">Transparență Totală</h3>
-                            <p className="text-slate-500 text-sm leading-relaxed">Accesează registrul public de tranzacții și rapoartele de activitate ale platformei.</p>
-                        </div>
-                    </Link>
+                <div className="text-center mt-16">
+                    <Button asChild variant="outline" size="lg" className="rounded-full border-slate-300 text-slate-700 hover:border-slate-800 hover:bg-slate-50 px-8 h-12">
+                        <Link href="/scrisori">Vezi toate dorințele &rarr;</Link>
+                    </Button>
                 </div>
             </section>
 
-            {/* Recent Updates Feed (Mini) */}
-            {updates.length > 0 && (
-                <section className="py-16 bg-slate-50 border-y">
-                    <div className="container mx-auto px-4">
-                        <div className="flex justify-between items-center mb-8">
-                            <h2 className="text-2xl font-bold">Activitate Recentă</h2>
-                            <Link href="/update-uri" className="text-sm font-medium hover:underline text-blue-600">Vezi tot fluxul &rarr;</Link>
-                        </div>
-                        <div className="grid md:grid-cols-1 gap-4 max-w-3xl mx-auto">
-                            {updates.map(u => (
-                                <div key={u.id} className="bg-white p-4 rounded-lg border shadow-sm flex gap-4 items-start">
-                                    <div className={`w-2 h-2 rounded-full mt-2 shrink-0 ${u.type === 'PROOF' ? 'bg-purple-500' : 'bg-blue-500'}`}></div>
-                                    <div>
-                                        <p className="text-sm font-medium text-slate-900">{u.title}</p>
-                                        <p className="text-xs text-slate-500 mt-1">{u.body}</p>
-                                        <p className="text-[10px] text-slate-400 mt-2 uppercase tracking-wide">{u.createdAt.toLocaleDateString()} • {u.type}</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-            )}
-
-
-            {/* Featured Letters with Better Cards */}
-            <section className="py-24 bg-white">
-                <div className="container mx-auto px-4">
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl font-bold mb-4">Urgențe și Cazuri Noi</h2>
-                        <p className="text-slate-500">Scrisori care au nevoie de ajutor acum.</p>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {letters.map(l => {
-                            const percent = Math.min(100, Math.round((Number(l.collectedAmount) / Number(l.targetAmount)) * 100))
-                            return (
-                                <Link href={`/scrisori/${l.slug || l.id}`} key={l.id} className="group block h-full">
-                                    <article className="bg-white rounded-xl shadow-sm border overflow-hidden hover:shadow-md transition-all h-full flex flex-col relative">
-                                        <div className="aspect-[16/10] bg-neutral-100 relative overflow-hidden">
-                                            <img src={l.originalImgUrl} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Cover" />
-                                            {l.campaign && (
-                                                <div className="absolute top-2 right-2 bg-purple-600 text-white text-[10px] font-bold px-2 py-1 rounded">
-                                                    Matching Activ
-                                                </div>
-                                            )}
-                                        </div>
-                                        <div className="p-5 flex-1 flex flex-col">
-                                            <div className="mb-4">
-                                                <div className="flex justify-between items-start mb-2">
-                                                    <h3 className="font-bold text-lg">{l.childFirstName}, {calculateAgeBucket(l.childAge)} ani</h3>
-                                                    <span className="text-xs font-mono bg-slate-100 px-2 py-1 rounded text-slate-600">{l.category}</span>
-                                                </div>
-                                                <p className="text-slate-600 text-sm line-clamp-2 mb-4">{l.childStory || "Povestea copilului..."}</p>
-
-                                                {/* Progress Bar */}
-                                                <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-1">
-                                                    <div className="bg-emerald-500 h-full transition-all duration-1000" style={{ width: `${percent}%` }}></div>
-                                                </div>
-                                                <div className="flex justify-between text-xs font-medium text-slate-500">
-                                                    <span>{formatCurrency(Number(l.collectedAmount))}</span>
-                                                    <span>din {formatCurrency(Number(l.targetAmount))}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </article>
-                                </Link>
-                            )
-                        })}
-                    </div>
-
-                    <div className="text-center mt-12">
-                        <Button asChild variant="outline" size="lg" className="rounded-full">
-                            <Link href="/scrisori">Vezi toate cazurile</Link>
-                        </Button>
-                    </div>
+            {/* Recurring Donation Block */}
+            <section className="py-24 bg-slate-900 text-white text-center relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+                    <div className="absolute -top-20 -left-20 w-96 h-96 bg-blue-500 rounded-full blur-3xl"></div>
+                    <div className="absolute bottom-20 right-20 w-80 h-80 bg-purple-500 rounded-full blur-3xl"></div>
                 </div>
-            </section>
 
-            {/* Recurring Donation Block (Placeholder) */}
-            <section className="py-20 bg-slate-900 text-white text-center">
-                <div className="container mx-auto px-4 max-w-2xl space-y-8">
-                    <span className="inline-block bg-blue-600/20 text-blue-300 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border border-blue-500/30">
-                        Sustine Platforma
+                <div className="container mx-auto px-4 max-w-2xl space-y-8 relative z-10">
+                    <span className="inline-flex items-center gap-2 bg-white/10 text-white px-4 py-1.5 rounded-full text-sm font-bold backdrop-blur-md border border-white/10">
+                        <Heart className="w-4 h-4 text-rose-400 fill-rose-400" />
+                        Devino Eroul Nostru
                     </span>
-                    <h2 className="text-3xl font-bold">Devino donator recurent</h2>
-                    <p className="text-slate-300">
-                        Contribuția ta lunară asigură continuitatea platformei și acoperă cazurile urgente care nu sunt finanțate la timp.
+                    <h2 className="text-3xl md:text-4xl font-bold">Ajută-ne să ținem lumina aprinsă</h2>
+                    <p className="text-slate-300 text-lg leading-relaxed">
+                        Suntem o echipă mică cu visuri mari. Contribuția ta lunară ne ajută să găsim copiii, să verificăm poveștile și să livrăm bucurie constant.
                     </p>
 
-                    <div className="grid grid-cols-3 gap-4 max-w-md mx-auto">
-                        <Button variant="outline" className="border-slate-700 hover:bg-slate-800 hover:text-white h-12">10 Lei/lună</Button>
-                        <Button variant="outline" className="border-slate-700 hover:bg-slate-800 hover:text-white h-12 bg-slate-800">25 Lei/lună</Button>
-                        <Button variant="outline" className="border-slate-700 hover:bg-slate-800 hover:text-white h-12">50 Lei/lună</Button>
+                    <div className="grid grid-cols-3 gap-4 max-w-md mx-auto pt-4">
+                        <Button variant="outline" className="border-slate-700 bg-slate-800/50 hover:bg-slate-700 hover:text-white h-14 text-lg border-2 hover:border-blue-500 transition-all">10 Lei</Button>
+                        <Button variant="outline" className="border-slate-700 bg-slate-800/50 hover:bg-slate-700 hover:text-white h-14 text-lg border-2 hover:border-purple-500 transition-all">25 Lei</Button>
+                        <Button variant="outline" className="border-slate-700 bg-slate-800/50 hover:bg-slate-700 hover:text-white h-14 text-lg border-2 hover:border-emerald-500 transition-all">50 Lei</Button>
                     </div>
 
-                    <Button size="lg" className="h-14 px-12 text-lg bg-emerald-600 hover:bg-emerald-700 text-white rounded-full font-bold shadow-lg shadow-emerald-900/20">
-                        Activează Donația
-                    </Button>
-                    <p className="text-xs text-slate-500">Serviciu securizat prin Stripe. Poți anula oricând.</p>
+                    <div className="pt-4">
+                        <Button size="lg" className="h-14 px-12 text-lg bg-white text-slate-900 hover:bg-slate-100 rounded-full font-bold shadow-lg shadow-white/10 hover:shadow-white/20">
+                            Activează Donația Lunară
+                        </Button>
+                        <p className="text-xs text-slate-500 mt-4 opacity-70">Securizat prin Stripe • Poți anula oricând</p>
+                    </div>
                 </div>
             </section>
 
-            {/* FAQ */}
-            <section className="py-24 bg-slate-50">
+            {/* Trust/FAQ */}
+            <section className="py-24 bg-white">
                 <div className="container mx-auto px-4 max-w-3xl">
-                    <h2 className="text-3xl font-bold mb-12 text-center">Întrebări Frecvente</h2>
-                    <div className="space-y-4">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl font-bold mb-4 text-slate-900">Totul e simplu și curat</h2>
+                        <p className="text-slate-500">Răspundem la ce contează.</p>
+                    </div>
+
+                    <div className="grid gap-6">
                         {FAQ_ITEMS_REFINED.map((item, idx) => (
-                            <div key={idx} className="bg-white p-6 rounded-xl border shadow-sm">
-                                <h3 className="font-bold text-lg mb-2 text-slate-900">{item.q}</h3>
-                                <p className="text-slate-600 text-sm leading-relaxed">{item.a}</p>
+                            <div key={idx} className="bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:border-slate-200 transition-colors">
+                                <h3 className="font-bold text-lg mb-2 text-slate-900 flex items-start gap-2">
+                                    <span className="text-blue-500 mt-1">?</span> {item.q}
+                                </h3>
+                                <p className="text-slate-600 leading-relaxed pl-6">{item.a}</p>
                             </div>
                         ))}
                     </div>

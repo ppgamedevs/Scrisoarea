@@ -99,17 +99,19 @@ export default function FulfillmentModule({
     // 2. Initial View (No Claims)
     if (view === 'INITIAL') {
         return (
-            <div className="bg-white border text-neutral-900 border-neutral-200 shadow-xl rounded-xl p-8 space-y-6">
+            <div className="bg-white border text-slate-800 border-slate-200 shadow-xl shadow-slate-200/50 rounded-2xl p-8 space-y-6">
                 <div className="text-center">
-                    <h3 className="text-xl font-bold mb-2">Îndeplinește tu dorința</h3>
-                    <p className="text-sm text-neutral-500 mb-6">
-                        Poți cumpăra și expedia chiar tu cadoul. Vei primi adresa de livrare (un centru partener) după confirmare.
+                    <h3 className="text-xl font-bold mb-2 flex items-center justify-center gap-2">
+                        <span>🎁</span> Pregătești tu pachetul?
+                    </h3>
+                    <p className="text-sm text-slate-500 mb-6 leading-relaxed">
+                        Poți cumpăra și expedia personal cadoul. Îți vom oferi adresa centrului partener și instrucțiuni pas cu pas. Este o experiență magică!
                     </p>
-                    <Button onClick={() => setView('EMAIL_FORM')} className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-6 text-lg">
-                        Vreau să trimit pachetul
+                    <Button onClick={() => setView('EMAIL_FORM')} className="w-full bg-white border-2 border-slate-200 hover:border-blue-600 hover:text-blue-600 text-slate-700 py-6 text-lg transition-colors font-bold">
+                        Vreau să pregătesc cadoul
                     </Button>
-                    <p className="text-xs text-neutral-400 mt-2">
-                        Ai la dispoziție 48h să confirmi expedierea (AWB).
+                    <p className="text-xs text-slate-400 mt-2">
+                        Ai la dispoziție 48h să confirmi expedierea.
                     </p>
                 </div>
             </div>

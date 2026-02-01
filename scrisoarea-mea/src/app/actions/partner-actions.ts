@@ -12,10 +12,15 @@ export async function createScrisoare(formData: FormData) {
     const itemsJson = formData.get('items') as string
     const items = JSON.parse(itemsJson)
 
+    // Handle Campaign & Limits
+    const campaignIdRaw = formData.get('campaignId') as string
+    const campaignId = campaignIdRaw && campaignIdRaw !== 'NONE' ? campaignIdRaw : undefined
+    const limit = campaignId ? 1500 : 500
+
     // Calculate total
     const total = items.reduce((acc: number, item: any) => acc + Number(item.estimatedValue || 0), 0)
 
-    if (total > 500) throw new Error("Suma totală depășește limita de 500 RON.")
+    if (total > limit) throw new Error(`Suma totală depășește limita de ${limit} RON pentru tipul de cerere selectat.`)
 
     // Random simple public code
     const publicCode = `REQ-${Date.now().toString().slice(-6)}`
@@ -31,6 +36,7 @@ export async function createScrisoare(formData: FormData) {
             publicCode,
             slug,
             institutionId: session.institutionId,
+            campaignId: campaignId,
             childFirstName: childName,
             childLastName: 'P.', // Hidden
             childAge: Number(age),

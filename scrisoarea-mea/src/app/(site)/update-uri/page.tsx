@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { formatCurrency, calculateAgeBucket } from "@/lib/utils"
+import { formatCurrency } from "@/lib/utils"
 import Link from "next/link"
 import { ExternalLink } from "lucide-react"
 
@@ -22,7 +22,7 @@ export default async function UpdatesPage() {
                 </div>
 
                 <div className="space-y-6 relative border-l-2 border-slate-200 ml-4 md:ml-0 md:pl-8">
-                    {updates.map((update) => (
+                    {updates.map((update: any) => (
                         <div key={update.id} className="relative pl-6 md:pl-0">
                             {/* Dot */}
                             <div className="absolute -left-[31px] md:-left-[41px] top-6 w-4 h-4 rounded-full border-2 border-white bg-blue-500 shadow-sm z-10"></div>
@@ -48,7 +48,7 @@ export default async function UpdatesPage() {
                                     <div className="bg-slate-50 p-3 rounded-lg flex items-center justify-between text-sm">
                                         <div>
                                             <span className="text-slate-500 block text-xs uppercase tracking-wide">Caz asociat</span>
-                                            <span className="font-medium">{update.scrisoare.childFirstName}, {calculateAgeBucket(update.scrisoare.childAge)} ani</span>
+                                            <span className="font-medium">{update.scrisoare.childFirstName}, {update.scrisoare.childAge} ani</span>
                                         </div>
                                         <Button asChild size="sm" variant="ghost" className="h-8">
                                             <Link href={`/scrisori/${update.scrisoare.slug || update.scrisoare.id}`}>

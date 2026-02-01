@@ -2,7 +2,7 @@ import prisma from "@/lib/prisma"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { formatCurrency, calculateAgeBucket } from "@/lib/utils"
+import { formatCurrency } from "@/lib/utils"
 import { LetterFilters } from "@/components/letters/letter-filters"
 import { ScrisoareCard } from "@/components/ui/scrisoare-card"
 
@@ -59,7 +59,7 @@ export default async function ScrisoriPage({ searchParams }: { searchParams: Pro
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {letters.map(l => (
+                        {letters.map((l: any) => (
                             <ScrisoareCard key={l.id} letter={l} />
                         ))}
                     </div>

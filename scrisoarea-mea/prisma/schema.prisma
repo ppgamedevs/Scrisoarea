@@ -92,6 +92,11 @@ model MatchingRule {
   @@index([campaignId])
 }
 
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
 model Scrisoare {
   id              String          @id @default(uuid())
   publicCode      String          @unique 
@@ -103,6 +108,7 @@ model Scrisoare {
   childStory      String?         
   items           String?         
   originalImgUrl  String          
+  mediaType       MediaType       @default(IMAGE)
   wishList        String          
   category        String          @default("ALTCEVA")
 
