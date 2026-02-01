@@ -1,5 +1,8 @@
-import prisma from "@/lib/prisma"
-import { formatCurrency } from "@/lib/utils"
+import { PrismaClient } from '@prisma/client'
+const prisma = new PrismaClient()
+
+// removed utils dependency for seeding simplicity
+const formatCurrency = (n: number) => n.toString()
 
 async function seedCampaigns() {
     console.log("Seeding Campaigns & Matching...")
