@@ -9,8 +9,8 @@ import { Badge } from "@/components/ui/badge"
 import { Metadata } from 'next'
 import { generateLetterSchema, BASE_URL } from "@/lib/seo/jsonld"
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-    const { id } = params
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+    const { id } = await params
     const letter = await prisma.scrisoare.findFirst({
         where: { id: id.length < 20 ? undefined : id, slug: id.length < 20 ? id : undefined }
     })
@@ -29,8 +29,8 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     }
 }
 
-export default async function ScrisoarePage({ params }: { params: { id: string } }) {
-    const { id } = params
+export default async function ScrisoarePage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params
     let letter = await prisma.scrisoare.findFirst({
         where: { slug: id },
         include: {
@@ -71,7 +71,7 @@ export default async function ScrisoarePage({ params }: { params: { id: string }
 
     // Matching Logic (View Only)
     const now = new Date()
-    const activeRule = letter.campaign?.matchingRules.find(r =>
+    const activeRule = letter.campaign?.matchingRules.find((r: any) =>
         r.active &&
         r.startsAt <= now &&
         (!r.endsAt || r.endsAt >= now) &&
@@ -80,7 +80,7 @@ export default async function ScrisoarePage({ params }: { params: { id: string }
 
     // Calc Logic
     const paid = Number(letter.collectedAmount)
-    const reserved = letter.reservations.reduce((acc, r) => acc + Number(r.amount), 0)
+    const reserved = letter.reservations.reduce((acc: number, r: any) => acc + Number(r.amount), 0)
     const target = Number(letter.targetAmount)
 
     const activeClaim = letter.fulfillmentClaims[0] || null
