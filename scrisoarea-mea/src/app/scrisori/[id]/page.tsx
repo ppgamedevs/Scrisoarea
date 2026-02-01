@@ -6,17 +6,33 @@ import { Progress } from "@/components/ui/progress"
 import DonationModule from "@/components/donation-module"
 import FulfillmentModule from "@/components/fulfillment-module"
 import { Badge } from "@/components/ui/badge"
+import { Metadata } from 'next'
+import { generateLetterSchema, BASE_URL } from "@/lib/seo/jsonld"
 
-export default async function ScrisoareDetailPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id: slugOrId } = await params
-
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+    const { id } = params
     const letter = await prisma.scrisoare.findFirst({
-        where: {
-            OR: [
-                { id: slugOrId },
-                { slug: slugOrId }
-            ]
-        },
+        where: { id: id.length < 20 ? undefined : id, slug: id.length < 20 ? id : undefined }
+    })
+
+    if (!letter) return { title: 'Scrisoare Inexistentă' }
+
+    const percent = Math.min(100, Math.round((Number(letter.collectedAmount) / Number(letter.targetAmount)) * 100))
+    const ogUrl = `${BASE_URL}/og?title=${encodeURIComponent(`Dorința lui ${letter.childFirstName}`)}&subtitle=${encodeURIComponent(letter.childStory?.substring(0, 50) || '')}&label=Donație&progress=${percent}`
+
+    return {
+        title: `Ajută-l pe ${letter.childFirstName} - ${letter.category} | Scrisoarea Mea`,
+        description: `Donează pentru ${letter.childFirstName}, ${letter.childAge} ani. Îi poți îndeplini visul de a primi ${letter.category.toLowerCase()}. Platformă verificată și transparentă.`,
+        openGraph: {
+            images: [ogUrl]
+        }
+    }
+}
+
+export default async function ScrisoarePage({ params }: { params: { id: string } }) {
+    const { id } = params
+    let letter = await prisma.scrisoare.findFirst({
+        where: { slug: id },
         include: {
             institution: true,
             reservations: { where: { status: 'PENDING', expiresAt: { gt: new Date() } } },
@@ -26,17 +42,32 @@ export default async function ScrisoareDetailPage({ params }: { params: Promise<
                     expiresAt: { gt: new Date() }
                 }
             },
-            campaign: {
-                include: {
-                    matchingRules: {
-                        include: { sponsor: true }
-                    }
-                }
-            }
+            campaign: { include: { matchingRules: { include: { sponsor: true } } } },
+            proofs: true
         }
     })
 
+    if (!letter) {
+        letter = await prisma.scrisoare.findFirst({
+            where: { id },
+            include: {
+                institution: true,
+                reservations: { where: { status: 'PENDING', expiresAt: { gt: new Date() } } },
+                fulfillmentClaims: {
+                    where: {
+                        status: { in: ['PENDING', 'SHIPPED', 'COMPLETED'] },
+                        expiresAt: { gt: new Date() }
+                    }
+                },
+                campaign: { include: { matchingRules: { include: { sponsor: true } } } },
+                proofs: true
+            }
+        })
+    }
+
     if (!letter) notFound()
+
+    const jsonLd = generateLetterSchema(letter)
 
     // Matching Logic (View Only)
     const now = new Date()
@@ -61,7 +92,12 @@ export default async function ScrisoareDetailPage({ params }: { params: Promise<
     const isDonationDisabled = ['IN_ACHIZITIE', 'LIVRAT', 'FINALIZAT', 'ANULAT', 'RESPINS', 'INCHIS'].includes(letter.status)
 
     return (
-        <main className="min-h-screen bg-white pb-20">
+        <main className="min-h-screen bg-neutral-50 pb-20">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
+            {/* Header Status Bar */}
             <div className="container mx-auto px-4 py-8">
                 <Link href="/scrisori" className="text-sm text-neutral-500 hover:text-neutral-900 mb-6 inline-block">
                     &larr; Înapoi la listă
