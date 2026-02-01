@@ -4,10 +4,13 @@ import prisma from "@/lib/prisma"
 import { stripe } from "@/lib/stripe"
 import { redirect } from "next/navigation"
 
+import { getSession } from "@/lib/auth"
+
 export async function createReservationAndCheckout(scrisoareId: string, amount: number) {
     // Validate basic input
     if (amount < 5) throw new Error("Suma minimă este 5 RON.")
 
+    const userSession = await getSession()
     let sessionUrl = ''
 
     // Transaction: Check availability -> Lock funds -> Create Intent
@@ -36,13 +39,6 @@ export async function createReservationAndCheckout(scrisoareId: string, amount: 
         }
 
         // Create Metadata Reservation
-        // We update this with session ID later or create it now with temp ID?
-        // Better to generate a UUID first or use a temp placeholder.
-        // Actually we can create the Checkout Session first? No, we need to hold the lock.
-        // If we create Checkout Session in the transaction it takes time (HTTP request), slowing down DB lock.
-        // Ideally: Create Reservation (PENDING) -> Return ID -> (Outside Transaction) Create Stripe Session -> Update Reservation.
-        // BUT: If step 2 fails, we have a zombie reservation for 20 mins. acceptable for MVP.
-
         const reservation = await tx.reservation.create({
             data: {
                 amount,
@@ -52,23 +48,18 @@ export async function createReservationAndCheckout(scrisoareId: string, amount: 
             }
         })
 
-        // Create Stripe Session (we do this INSIDE actions normally, but strict DB transaction is better kept short)
-        // For MVP simplicy, we'll do it sequentially in this wrapper function, but outside the prisma transaction 
-        // to avoid timeout on DB lock if Stripe is slow. 
-        // Wait, the block above IS the transaction. So we need to return the reservation and do stripe after.
-
         return reservation
     }).then(async (reservation) => {
         // 2. Create Stripe Checkout Session
-        const session = await stripe.checkout.sessions.create({
+        const sessionPayload: any = {
             payment_method_types: ['card'],
             line_items: [
                 {
                     price_data: {
                         currency: 'ron',
                         product_data: {
-                            name: 'Donatie Scrisoare',
-                            description: `Suma rezervata: ${amount} RON`
+                            name: `Donație: Dorința #${scrisoareId.substring(0, 8)}`,
+                            description: `Suma rezervată: ${amount} RON. Mulțumim!`
                         },
                         unit_amount: Math.round(amount * 100), // bani
                     },
@@ -80,9 +71,17 @@ export async function createReservationAndCheckout(scrisoareId: string, amount: 
             cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/donatie/cancel?reservationId=${reservation.id}`,
             metadata: {
                 reservationId: reservation.id,
-                scrisoareId: scrisoareId
+                scrisoareId: scrisoareId,
+                userId: userSession?.id || null
             }
-        })
+        }
+
+        // Prefill email if logged in
+        if (userSession?.email) {
+            sessionPayload.customer_email = userSession.email
+        }
+
+        const session = await stripe.checkout.sessions.create(sessionPayload)
 
         // 3. Update Reservation with Session ID
         await prisma.reservation.update({
