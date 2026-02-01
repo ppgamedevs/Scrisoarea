@@ -23,16 +23,28 @@ model Profile {
 
 model Institution {
   id             String   @id @default(uuid())
+  // Internal/Legal
   name           String   
   cui            String   @unique
+  
+  // Public Profile
+  slug             String?  @unique
+  publicName       String?  // If null, fallback to 'name'
+  descriptionPublic String?
+  logoUrl          String?
+  website          String?
+
   verified       Boolean  @default(false)
+  
   county         String   
   city           String
   addressPrivate String?  
   contactName    String?
   contactEmail   String?
+  
   users          Profile[]
   scrisori       Scrisoare[]
+  
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
@@ -115,7 +127,7 @@ model Scrisoare {
   reservations    Reservation[]
   proofs          ProofMedia[]
   fulfillmentClaims FulfillmentClaim[]
-  updates         Update[]        // Relation to Updates
+  updates         Update[]
 
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
@@ -207,21 +219,17 @@ model ActionLog {
   @@index([targetId])
 }
 
-// New Model for Updates Feed
 model Update {
   id          String    @id @default(uuid())
-  title       String    // Max 80 chars
-  body        String    // Max 300 chars, neutral tone
-  type        String    // STATUS, LOGISTIC, PROOF, GENERAL
+  title       String    
+  body        String    
+  type        String    
   isPublic    Boolean   @default(true)
-  
   scrisoare   Scrisoare? @relation(fields: [scrisoareId], references: [id])
   scrisoareId String?
-
-  createdBy   String?   // User ID (Admin)
+  createdBy   String?   
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-
   @@index([type])
   @@index([scrisoareId])
   @@index([createdAt])

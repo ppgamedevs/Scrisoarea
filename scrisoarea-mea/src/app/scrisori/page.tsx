@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { formatCurrency, calculateAgeBucket } from "@/lib/utils"
 import { LetterFilters } from "@/components/letters/letter-filters"
+import { ScrisoareCard } from "@/components/ui/scrisoare-card"
 
 export default async function ScrisoriPage({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
     const params = await searchParams
@@ -59,36 +60,7 @@ export default async function ScrisoriPage({ searchParams }: { searchParams: Pro
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {letters.map(l => (
-                            <Link href={`/scrisori/${l.slug || l.id}`} key={l.id} className="group block h-full">
-                                <article className="bg-white rounded-xl shadow-sm border overflow-hidden hover:shadow-md transition-all h-full flex flex-col relative">
-                                    {l.campaign && (
-                                        <div className="absolute top-0 left-0 bg-purple-600 text-white text-xs font-bold px-3 py-1 z-10 rounded-br-lg">
-                                            Campanie: {l.campaign.title}
-                                        </div>
-                                    )}
-
-                                    <div className="aspect-[16/10] bg-neutral-100 relative overflow-hidden">
-                                        <img src={l.originalImgUrl} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Cover" />
-                                        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent pt-12">
-                                            <p className="text-white font-bold text-lg">{l.childFirstName}, {calculateAgeBucket(l.childAge)} ani</p>
-                                        </div>
-                                    </div>
-                                    <div className="p-5 flex-1 flex flex-col">
-                                        <div className="mb-4">
-                                            <div className="flex gap-2 mb-2 flex-wrap">
-                                                <Badge variant="outline">{l.category}</Badge>
-                                                {l.status === 'FINANTAT' && <Badge className="bg-green-100 text-green-800 border-none">Finanțat</Badge>}
-                                                {l.status === 'INCHIS' && <Badge className="bg-emerald-100 text-emerald-800 border-none">Închis</Badge>}
-                                            </div>
-                                            <p className="text-slate-600 text-sm line-clamp-2">{l.childStory || "O poveste specială..."}</p>
-                                        </div>
-                                        <div className="mt-auto pt-4 border-t flex justify-between items-center text-sm">
-                                            <span className="text-slate-500 truncate max-w-[150px]">{l.institution.county}</span>
-                                            <span className="font-bold text-slate-900">{formatCurrency(Number(l.targetAmount))}</span>
-                                        </div>
-                                    </div>
-                                </article>
-                            </Link>
+                            <ScrisoareCard key={l.id} letter={l} />
                         ))}
                     </div>
                 )}
