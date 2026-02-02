@@ -1,0 +1,104 @@
+
+> scrisoarea-mea@0.1.0 build
+> next build
+
+▲ Next.js 16.1.6 (Turbopack)
+- Environments: .env
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+
+> Build error occurred
+Error: Turbopack build failed with 4 errors:
+./src/components/forms/form-177.tsx:8:1
+Module not found: Can't resolve '@/components/ui/checkbox'
+[0m [90m  6 |[39m [36mimport[39m { [33mInput[39m } [36mfrom[39m [32m"@/components/ui/input"[39m
+ [90m  7 |[39m [36mimport[39m { [33mLabel[39m } [36mfrom[39m [32m"@/components/ui/label"[39m
+[31m[1m>[22m[39m[90m  8 |[39m [36mimport[39m { [33mCheckbox[39m } [36mfrom[39m [32m"@/components/ui/checkbox"[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m  9 |[39m [36mimport[39m { [33mSignaturePad[39m[33m,[39m [33mSignaturePadRef[39m } [36mfrom[39m [32m"@/components/ui/signature-pad"[39m
+ [90m 10 |[39m [36mimport[39m { validateCUI } [36mfrom[39m [32m"@/lib/validations/ro-tax"[39m
+ [90m 11 |[39m[0m
+
+Import map: aliased to relative './src/components/ui/checkbox' inside of [project]/
+
+
+Import trace:
+  Server Component:
+    ./src/components/forms/form-177.tsx
+    ./src/app/directioneaza-20/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/components/forms/form-177.tsx:9:1
+Module not found: Can't resolve '@/components/ui/checkbox'
+[0m [90m  7 |[39m [36mimport[39m { [33mInput[39m } [36mfrom[39m [32m"@/components/ui/input"[39m[33m;[39m
+ [90m  8 |[39m [36mimport[39m { [33mLabel[39m } [36mfrom[39m [32m"@/components/ui/label"[39m[33m;[39m
+[31m[1m>[22m[39m[90m  9 |[39m [36mimport[39m { [33mCheckbox[39m } [36mfrom[39m [32m"@/components/ui/checkbox"[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 10 |[39m [36mimport[39m { [33mSignaturePad[39m[33m,[39m [33mSignaturePadRef[39m } [36mfrom[39m [32m"@/components/ui/signature-pad"[39m[33m;[39m
+ [90m 11 |[39m [36mimport[39m { validateCUI } [36mfrom[39m [32m"@/lib/validations/ro-tax"[39m[33m;[39m
+ [90m 12 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mForm177[39m() {[0m
+
+Import map: aliased to relative './src/components/ui/checkbox' inside of [project]/
+
+
+Import trace:
+  Server Component:
+    ./src/components/forms/form-177.tsx
+    ./src/app/directioneaza-20/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/components/forms/form-230.tsx:8:1
+Module not found: Can't resolve '@/components/ui/checkbox'
+[0m [90m  6 |[39m [36mimport[39m { [33mInput[39m } [36mfrom[39m [32m"@/components/ui/input"[39m
+ [90m  7 |[39m [36mimport[39m { [33mLabel[39m } [36mfrom[39m [32m"@/components/ui/label"[39m
+[31m[1m>[22m[39m[90m  8 |[39m [36mimport[39m { [33mCheckbox[39m } [36mfrom[39m [32m"@/components/ui/checkbox"[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m  9 |[39m [36mimport[39m { [33mSignaturePad[39m[33m,[39m [33mSignaturePadRef[39m } [36mfrom[39m [32m"@/components/ui/signature-pad"[39m
+ [90m 10 |[39m [36mimport[39m { validateCNP } [36mfrom[39m [32m"@/lib/validations/ro-tax"[39m
+ [90m 11 |[39m[0m
+
+Import map: aliased to relative './src/components/ui/checkbox' inside of [project]/
+
+
+Import trace:
+  Server Component:
+    ./src/components/forms/form-230.tsx
+    ./src/app/directioneaza-35/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/components/forms/form-230.tsx:9:1
+Module not found: Can't resolve '@/components/ui/checkbox'
+[0m [90m  7 |[39m [36mimport[39m { [33mInput[39m } [36mfrom[39m [32m"@/components/ui/input"[39m[33m;[39m
+ [90m  8 |[39m [36mimport[39m { [33mLabel[39m } [36mfrom[39m [32m"@/components/ui/label"[39m[33m;[39m
+[31m[1m>[22m[39m[90m  9 |[39m [36mimport[39m { [33mCheckbox[39m } [36mfrom[39m [32m"@/components/ui/checkbox"[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 10 |[39m [36mimport[39m { [33mSignaturePad[39m[33m,[39m [33mSignaturePadRef[39m } [36mfrom[39m [32m"@/components/ui/signature-pad"[39m[33m;[39m
+ [90m 11 |[39m [36mimport[39m { validateCNP } [36mfrom[39m [32m"@/lib/validations/ro-tax"[39m[33m;[39m
+ [90m 12 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mForm230[39m() {[0m
+
+Import map: aliased to relative './src/components/ui/checkbox' inside of [project]/
+
+
+Import trace:
+  Server Component:
+    ./src/components/forms/form-230.tsx
+    ./src/app/directioneaza-35/page.tsx
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (./src/components/forms/form-177.tsx:8:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/components/forms/form-177.tsx:9:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/components/forms/form-230.tsx:8:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/components/forms/form-230.tsx:9:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)

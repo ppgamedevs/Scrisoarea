@@ -240,3 +240,60 @@ model Update {
   @@index([scrisoareId])
   @@index([createdAt])
 }
+
+enum RedirectionType {
+  INDIVIDUAL_230
+  COMPANY_177
+}
+
+enum RedirectionStatus {
+  DRAFT
+  SUBMITTED
+  READY_FOR_ANAF
+  FILED
+  REJECTED
+}
+
+model TaxRedirectionRequest {
+  id          String            @id @default(uuid())
+  type        RedirectionType
+  status      RedirectionStatus @default(DRAFT)
+  year        Int
+
+  // Common Contact
+  email       String
+  phone       String?
+  consentTerms Boolean          @default(false)
+  consentPrivacy Boolean        @default(false)
+
+  // Individual Form 230
+  firstName   String?
+  lastName    String?
+  cnp         String?           // Ideally encrypted or hashed in code before storing if strictly needed, but for MVP storing plain (or simple encrypt) is common if DB is secure.
+  county      String?
+  city        String?
+  address     String?
+  
+  // Company Form 177
+  companyName String?
+  cui         String?
+  regCom      String?
+  contactName String?           // Representative Name
+  amountRON   Decimal?
+
+  // Assets
+  signatureUrl String?          // S3/Blob URL or Base64 (if small)
+  pdfUrl       String?          // Generated Form 230 or Form 177
+  contractUrl  String?          // Sponsorship Contract for 177
+
+  anafNotes    String?          // Admin internal notes
+
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@index([type])
+  @@index([status])
+  @@index([year])
+  @@index([email])
+  @@index([createdAt])
+}
