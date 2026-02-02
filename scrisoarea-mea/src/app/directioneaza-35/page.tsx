@@ -1,10 +1,20 @@
+import Form230 from "@/components/forms/form-230"
+import { ArrowLeft } from "lucide-react"
+import Link from "next/link"
+
 export default function Directioneaza35Page() {
     return (
         <main className="min-h-screen bg-slate-50">
             {/* Hero Section */}
             <section className="bg-gradient-to-br from-indigo-900 via-indigo-800 to-indigo-900 text-white py-20 relative overflow-hidden">
                 <div className="container mx-auto px-4 relative z-10 text-center">
-                    <h1 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight">
+                    <div className="absolute top-0 left-4 pt-8 md:pt-12 hidden md:block">
+                        <Link href="/" className="inline-flex items-center text-indigo-300 hover:text-white transition-colors">
+                            <ArrowLeft className="w-4 h-4 mr-2" /> Înapoi acasă
+                        </Link>
+                    </div>
+
+                    <h1 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight mt-8 md:mt-0">
                         Redirecționează 3,5% din impozit.<br />
                         Gratuit. Simplu. De impact.
                     </h1>
@@ -53,4 +63,4 @@ export default function Directioneaza35Page() {
     )
 }
 
-import Form230 from "@/components/forms/form-230"
+

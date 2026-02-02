@@ -8,7 +8,7 @@ import FulfillmentModule from "@/components/fulfillment-module"
 import { Badge } from "@/components/ui/badge"
 import { Metadata } from 'next'
 import { generateLetterSchema, BASE_URL } from "@/lib/seo/jsonld"
-import { Sparkles, PlayCircle, Heart } from "lucide-react"
+import { Sparkles, PlayCircle, Heart, ArrowLeft } from "lucide-react"
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
     const { id } = await params
@@ -101,9 +101,13 @@ export default async function ScrisoarePage({ params }: { params: Promise<{ id: 
             />
             {/* Header Status Bar */}
             <div className="container mx-auto px-4 py-8 max-w-6xl">
-                <Link href="/scrisori" className="group text-sm text-slate-500 hover:text-blue-600 mb-6 inline-flex items-center gap-1 transition-colors">
-                    <span className="group-hover:-translate-x-1 transition-transform">&larr;</span> Înapoi la toate dorințele
-                </Link>
+                {/* Back Button */}
+                <div className="mb-6">
+                    <Link href="/scrisori" className="inline-flex items-center text-sm text-slate-500 hover:text-slate-900 transition-colors gap-1 group">
+                        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                        Înapoi la scrisori
+                    </Link>
+                </div>
 
                 <div className="mb-10 pb-8 border-b border-slate-200">
                     <div className="flex flex-wrap gap-2 mb-4">

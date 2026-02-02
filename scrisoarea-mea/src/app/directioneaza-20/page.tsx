@@ -1,4 +1,6 @@
+import Link from "next/link"
 import Form177 from "@/components/forms/form-177"
+import { ArrowLeft } from "lucide-react"
 
 export default function Directioneaza20Page() {
     return (
@@ -6,7 +8,13 @@ export default function Directioneaza20Page() {
             {/* Hero Section */}
             <section className="bg-gradient-to-br from-blue-900 via-blue-800 to-slate-900 text-white py-20 relative overflow-hidden">
                 <div className="container mx-auto px-4 relative z-10 text-center">
-                    <h1 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight">
+                    <div className="absolute top-0 left-4 pt-8 md:pt-12 hidden md:block">
+                        <Link href="/" className="inline-flex items-center text-blue-300 hover:text-white transition-colors">
+                            <ArrowLeft className="w-4 h-4 mr-2" /> Înapoi acasă
+                        </Link>
+                    </div>
+
+                    <h1 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight mt-8 md:mt-0">
                         Transformă Impozitul Companiei în Fapte Bune.
                     </h1>
                     <p className="text-xl text-blue-100 max-w-2xl mx-auto mb-8">

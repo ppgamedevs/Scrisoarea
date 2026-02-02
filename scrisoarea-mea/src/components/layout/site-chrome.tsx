@@ -70,6 +70,8 @@ export function SiteFooter() {
                     <ul className="space-y-3">
                         <li><Link href="/cum-functioneaza" className="hover:text-blue-600 transition-colors">Cum funcționează</Link></li>
                         <li><Link href="/scrisori" className="hover:text-blue-600 transition-colors">Toate Scrisorile</Link></li>
+                        <li><Link href="/directioneaza-35" className="text-indigo-600 font-semibold hover:underline">Redirecționează 3.5%</Link></li>
+                        <li><Link href="/directioneaza-20" className="text-blue-600 font-semibold hover:underline">Sponsorizează 20%</Link></li>
                         <li><Link href="/impact" className="hover:text-blue-600 transition-colors">Dovezi de Impact</Link></li>
                         <li><Link href="/transparenta" className="hover:text-blue-600 transition-colors">Rapoarte Financiare</Link></li>
                     </ul>
