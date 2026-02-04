@@ -10,8 +10,8 @@ export async function SiteHeader() {
         <header className="sticky top-0 z-50 w-full border-b border-slate-200/80 bg-white/95 shadow-sm shadow-slate-200/50 backdrop-blur-md">
             <div className="container mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-4">
                 <Link href="/" className="text-sm font-medium text-slate-600 hover:text-teal-600 transition-colors flex items-center gap-0 shrink-0 min-h-[44px]">
-                    <div className="overflow-hidden w-28 h-[120px] flex-shrink-0 -mr-3">
-                        <Image src="/logo.svg" alt="Vise pe hârtie" width={120} height={120} className="object-contain object-left h-[120px] w-auto -translate-y-1" priority />
+                    <div className="overflow-hidden w-28 h-[400px] flex-shrink-0 -mr-3">
+                        <Image src="/logo.svg" alt="Vise pe hârtie" width={400} height={400} className="object-contain object-left h-[400px] w-auto -translate-y-3" priority />
                     </div>
                     <span className="self-center ml-0">Vise pe hârtie</span>
                 </Link>
@@ -30,7 +30,7 @@ export function SiteFooter() {
             <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-12 mb-12">
                 <div className="space-y-4">
                     <h3 className="font-bold text-[var(--brand)] text-lg mb-2 flex items-center gap-2">
-                        <Image src="/logo.svg" alt="" width={28} height={28} className="object-contain" />
+                        <Image src="/logo.svg" alt="" width={56} height={56} className="object-contain" />
                         Vise pe hârtie
                     </h3>
                     <p className="leading-relaxed text-slate-500">
