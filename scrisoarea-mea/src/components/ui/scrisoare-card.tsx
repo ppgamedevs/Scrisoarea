@@ -15,7 +15,7 @@ export function ScrisoareCard({ letter }: ScrisoareCardProps) {
     const isVideo = letter.mediaType === 'VIDEO'
 
     return (
-        <article className="bg-white rounded-xl shadow-sm border overflow-hidden hover:shadow-md transition-all h-full flex flex-col relative group">
+        <article className="bg-[var(--pastel-cream)] rounded-xl shadow-sm border border-[var(--pastel-lavender)]/30 overflow-hidden hover:shadow-md transition-all h-full flex flex-col relative group">
             <Link href={`/scrisori/${letter.slug || letter.id}`} className="absolute inset-0 z-0">
                 <span className="sr-only">Citește povestea ✨</span>
             </Link>

@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma"
+import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { formatCurrency } from "@/lib/utils"
@@ -49,11 +49,11 @@ export default async function HomePage() {
     const updates = await getLatestUpdates()
 
     return (
-        <main className="bg-slate-50/50">
+        <main className="bg-[var(--pastel-sage)]/30">
             {/* Hero */}
-            <section className="relative pt-24 pb-20 px-4 text-center border-b bg-white">
+            <section className="relative pt-24 pb-20 px-4 text-center border-b bg-[var(--pastel-cream)]">
                 <div className="max-w-4xl mx-auto space-y-8">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-sm font-medium mb-4">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--pastel-lavender)] text-slate-700 text-sm font-medium mb-4">
                         <Sparkles className="w-4 h-4" />
                         <span>Fă o faptă bună azi</span>
                     </div>
@@ -84,18 +84,18 @@ export default async function HomePage() {
             </section>
 
             {/* Metrics Strip */}
-            <section className="py-10 bg-white border-b border-slate-100 text-center shadow-sm z-10 relative">
-                <div className="container mx-auto grid grid-cols-3 gap-8 text-slate-900">
+            <section className="py-10 bg-[var(--pastel-blue)]/50 border-b border-slate-100 text-center shadow-sm z-10 relative">
+                <div className="container mx-auto grid grid-cols-3 gap-4 sm:gap-8 text-slate-900">
                     <div>
-                        <span className="block text-3xl font-black text-slate-800">{stats.active}</span>
+                        <span className="block text-2xl sm:text-3xl font-black text-slate-800">{stats.active}</span>
                         <span className="text-xs uppercase tracking-wider text-slate-500 font-semibold">Dorințe Așteaptă</span>
                     </div>
                     <div>
-                        <span className="block text-3xl font-black text-emerald-500">{stats.fulfilled}</span>
+                        <span className="block text-2xl sm:text-3xl font-black text-emerald-500">{stats.fulfilled}</span>
                         <span className="text-xs uppercase tracking-wider text-slate-500 font-semibold">Visuri Împlinite</span>
                     </div>
                     <div>
-                        <span className="block text-3xl font-black text-blue-600">{formatCurrency(stats.raised)}</span>
+                        <span className="block text-2xl sm:text-3xl font-black text-blue-600">{formatCurrency(stats.raised)}</span>
                         <span className="text-xs uppercase tracking-wider text-slate-500 font-semibold">Donați cu Drag</span>
                     </div>
                 </div>
@@ -140,10 +140,10 @@ export default async function HomePage() {
                         Suntem o echipă mică cu visuri mari. Contribuția ta lunară ne ajută să găsim copiii, să verificăm poveștile și să livrăm bucurie constant.
                     </p>
 
-                    <div className="grid grid-cols-3 gap-4 max-w-md mx-auto pt-4">
-                        <Button variant="outline" className="border-slate-700 bg-slate-800/50 hover:bg-slate-700 hover:text-white h-14 text-lg border-2 hover:border-blue-500 transition-all">10 Lei</Button>
-                        <Button variant="outline" className="border-slate-700 bg-slate-800/50 hover:bg-slate-700 hover:text-white h-14 text-lg border-2 hover:border-purple-500 transition-all">25 Lei</Button>
-                        <Button variant="outline" className="border-slate-700 bg-slate-800/50 hover:bg-slate-700 hover:text-white h-14 text-lg border-2 hover:border-emerald-500 transition-all">50 Lei</Button>
+                    <div className="grid grid-cols-3 gap-2 sm:gap-4 max-w-md mx-auto pt-4">
+                        <Button variant="outline" className="border-slate-700 bg-slate-800/50 hover:bg-slate-700 hover:text-white min-h-[44px] sm:h-14 text-base sm:text-lg border-2 hover:border-blue-500 transition-all">10 Lei</Button>
+                        <Button variant="outline" className="border-slate-700 bg-slate-800/50 hover:bg-slate-700 hover:text-white min-h-[44px] sm:h-14 text-base sm:text-lg border-2 hover:border-purple-500 transition-all">25 Lei</Button>
+                        <Button variant="outline" className="border-slate-700 bg-slate-800/50 hover:bg-slate-700 hover:text-white min-h-[44px] sm:h-14 text-base sm:text-lg border-2 hover:border-emerald-500 transition-all">50 Lei</Button>
                     </div>
 
                     <div className="pt-4">
@@ -156,7 +156,7 @@ export default async function HomePage() {
             </section>
 
             {/* Trust/FAQ */}
-            <section className="py-24 bg-white">
+            <section className="py-24 bg-[var(--pastel-cream)]">
                 <div className="container mx-auto px-4 max-w-3xl">
                     <div className="text-center mb-12">
                         <h2 className="text-3xl font-bold mb-4 text-slate-900">Totul e simplu și curat</h2>
@@ -165,7 +165,7 @@ export default async function HomePage() {
 
                     <div className="grid gap-6">
                         {FAQ_ITEMS_REFINED.map((item, idx) => (
-                            <div key={idx} className="bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:border-slate-200 transition-colors">
+                            <div key={idx} className="bg-[var(--pastel-sage)]/40 p-6 rounded-2xl border border-slate-100 hover:border-slate-200 transition-colors">
                                 <h3 className="font-bold text-lg mb-2 text-slate-900 flex items-start gap-2">
                                     <span className="text-blue-500 mt-1">?</span> {item.q}
                                 </h3>

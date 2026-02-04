@@ -59,7 +59,7 @@ export default function DonationModule({
     }
 
     return (
-        <div className="bg-white border text-slate-800 border-slate-200 shadow-xl shadow-slate-200/50 rounded-2xl p-8 space-y-6">
+        <div className="bg-[var(--pastel-cream)] border text-slate-800 border-slate-200 shadow-xl shadow-slate-200/50 rounded-2xl p-8 space-y-6">
             <div>
                 <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Trimite un cadou</p>
                 <div className="text-4xl font-black text-slate-900 mb-2">
@@ -76,7 +76,7 @@ export default function DonationModule({
                     <Button
                         key={p}
                         variant={Number(customAmount) === p ? "default" : "outline"}
-                        className={Number(customAmount) === p ? "bg-blue-600 hover:bg-blue-700" : "hover:bg-blue-50 hover:text-blue-600 border-slate-200"}
+                        className={`min-h-[44px] ${Number(customAmount) === p ? "bg-blue-600 hover:bg-blue-700" : "hover:bg-blue-50 hover:text-blue-600 border-slate-200"}`}
                         onClick={() => handlePreset(p)}
                     >
                         {p} LEI
@@ -86,7 +86,7 @@ export default function DonationModule({
                 {remainingAmount > 0 && !presets.includes(remainingAmount) && (
                     <Button
                         variant={Number(customAmount) === remainingAmount ? "default" : "outline"}
-                        className={Number(customAmount) === remainingAmount ? "bg-blue-600 hover:bg-blue-700" : "hover:bg-blue-50 hover:text-blue-600 border-slate-200"}
+                        className={`min-h-[44px] ${Number(customAmount) === remainingAmount ? "bg-blue-600 hover:bg-blue-700" : "hover:bg-blue-50 hover:text-blue-600 border-slate-200"}`}
                         onClick={() => handlePreset(remainingAmount)}
                     >
                         Integral

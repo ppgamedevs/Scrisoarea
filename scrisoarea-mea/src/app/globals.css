@@ -44,10 +44,23 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
+  --color-pastel-cream: var(--pastel-cream);
+  --color-pastel-sage: var(--pastel-sage);
+  --color-pastel-blue: var(--pastel-blue);
+  --color-pastel-pink: var(--pastel-pink);
+  --color-pastel-lavender: var(--pastel-lavender);
+  --color-pastel-mint: var(--pastel-mint);
 }
 
 :root {
   --radius: 0.625rem;
+  /* Pastel palette (backgrounds/accents only; keep text/CTAs dark) */
+  --pastel-cream: oklch(0.98 0.01 85);
+  --pastel-sage: oklch(0.95 0.02 150);
+  --pastel-blue: oklch(0.92 0.04 220);
+  --pastel-pink: oklch(0.94 0.04 350);
+  --pastel-lavender: oklch(0.93 0.05 290);
+  --pastel-mint: oklch(0.92 0.06 160);
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);

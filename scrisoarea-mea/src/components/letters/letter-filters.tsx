@@ -57,15 +57,15 @@ export function LetterFilters() {
     }
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border mb-8 overflow-hidden">
-            <div className="p-4 border-b bg-slate-50 flex flex-wrap gap-2 items-center">
+        <div className="bg-[var(--pastel-cream)] rounded-xl shadow-sm border border-slate-100 mb-8 overflow-hidden">
+            <div className="p-4 border-b bg-[var(--pastel-sage)]/30 flex flex-wrap gap-2 items-center">
                 <span className="text-xs font-bold uppercase text-slate-500 mr-2">Filtre Rapide:</span>
                 <Badge variant="outline" className="cursor-pointer hover:bg-slate-100" onClick={() => handleQuickChip('status', 'NOU')}>Noi</Badge>
                 <Badge variant="outline" className="cursor-pointer hover:bg-slate-100" onClick={() => handleQuickChip('status', 'ACTIV')}>Active</Badge>
                 <Badge variant="outline" className="cursor-pointer hover:bg-slate-100" onClick={() => handleQuickChip('status', 'FINANTAT')}>Aproape Complet</Badge>
 
                 {activeFiltersCount > 0 && (
-                    <Button variant="ghost" size="sm" onClick={reset} className="ml-auto text-xs h-6 text-red-500 hover:text-red-600 hover:bg-red-50">
+                    <Button variant="ghost" size="sm" onClick={reset} className="ml-auto text-xs min-h-[44px] px-3 text-red-500 hover:text-red-600 hover:bg-red-50">
                         <X className="w-3 h-3 mr-1" /> Resetează
                     </Button>
                 )}

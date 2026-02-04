@@ -94,7 +94,7 @@ export default async function ScrisoarePage({ params }: { params: Promise<{ id: 
     const isVideo = letter.mediaType === 'VIDEO' // Assuming schema update propagated
 
     return (
-        <main className="min-h-screen bg-slate-50 pb-20 font-sans">
+        <main className="min-h-screen bg-[var(--pastel-sage)]/30 pb-20 font-sans">
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -157,12 +157,12 @@ export default async function ScrisoarePage({ params }: { params: Promise<{ id: 
                             <h3 className="font-bold text-2xl text-slate-900 mb-4 flex items-center gap-2">
                                 <span className="text-3xl">📖</span> Povestea lui {letter.childFirstName}
                             </h3>
-                            <div className="bg-white p-8 rounded-2xl border border-blue-50/50 shadow-sm relative">
-                                <span className="absolute top-4 left-4 text-6xl text-blue-100 font-serif leading-none select-none">“</span>
+                            <div className="bg-[var(--pastel-blue)]/30 p-8 rounded-2xl border border-slate-100 shadow-sm relative">
+                                <span className="absolute top-4 left-4 text-6xl text-[var(--pastel-blue)] font-serif leading-none select-none">“</span>
                                 <p className="text-slate-700 italic relative z-10 leading-loose">
                                     {letter.childStory || "Povestea nu a fost încă transcrisă, dar nevoia este reală și verificată."}
                                 </p>
-                                <span className="absolute bottom-4 right-4 text-6xl text-blue-100 font-serif leading-none select-none rotate-180">“</span>
+                                <span className="absolute bottom-4 right-4 text-6xl text-[var(--pastel-blue)] font-serif leading-none select-none rotate-180">“</span>
                             </div>
                         </section>
 
@@ -184,7 +184,7 @@ export default async function ScrisoarePage({ params }: { params: Promise<{ id: 
                             </div>
                         </section>
 
-                        <div className="bg-blue-50 text-blue-900 p-6 rounded-2xl text-sm flex gap-4 items-start border border-blue-100">
+                        <div className="bg-[var(--pastel-mint)]/50 text-slate-800 p-6 rounded-2xl text-sm flex gap-4 items-start border border-slate-200">
                             <div className="p-2 bg-white rounded-full shadow-sm">🛡</div>
                             <div>
                                 <strong className="block text-base mb-1">Impact Garantat</strong>
@@ -196,7 +196,7 @@ export default async function ScrisoarePage({ params }: { params: Promise<{ id: 
                     {/* Right Column (Action) */}
                     <div className="lg:col-span-5 relative">
                         <div className="sticky top-24 space-y-6">
-                            <div className="bg-white p-6 md:p-8 border border-slate-200 rounded-2xl shadow-xl shadow-slate-200/50">
+                            <div className="bg-[var(--pastel-cream)] p-6 md:p-8 border border-slate-200 rounded-2xl shadow-xl shadow-slate-200/50">
                                 <div className="flex justify-between items-end mb-4">
                                     <div>
                                         <span className="text-4xl font-black text-slate-900">{formatCurrency(totalOccupied)}</span>

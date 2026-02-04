@@ -41,8 +41,8 @@ export default async function ScrisoriPage({ searchParams }: { searchParams: Pro
     })
 
     return (
-        <main className="min-h-screen bg-slate-50 pb-20">
-            <div className="bg-white border-b py-12 px-4 mb-8">
+        <main className="min-h-screen bg-[var(--pastel-sage)]/30 pb-20">
+            <div className="bg-[var(--pastel-cream)] border-b py-12 px-4 mb-8">
                 <div className="container mx-auto">
                     <h1 className="text-3xl font-bold text-slate-900 mb-2">Toate Scrisorile</h1>
                     <p className="text-slate-500">Alege o poveste și ajută la îndeplinirea unei dorințe.</p>

@@ -1,5 +1,22 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Database (PostgreSQL)
+
+The app uses PostgreSQL. For local development, run Postgres with Docker:
+
+```bash
+docker compose up -d
+```
+
+This starts PostgreSQL 16 on `localhost:5432` with user `postgres`, password `password`, and database `scrisoarea` (matches the default in `.env`). Then apply the schema:
+
+```bash
+npx prisma generate
+npx prisma db push
+```
+
+To stop: `docker compose down`. Data is kept in a Docker volume.
+
 ## Getting Started
 
 First, run the development server:
