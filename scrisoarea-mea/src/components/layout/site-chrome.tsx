@@ -7,11 +7,11 @@ export async function SiteHeader() {
     const session = await getSession()
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-slate-200/80 bg-white/95 shadow-sm shadow-slate-200/50 backdrop-blur-md">
-            <div className="container mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-4">
-                <Link href="/" className="text-sm font-medium text-slate-600 hover:text-teal-600 transition-colors flex items-center gap-0 shrink-0 min-h-[44px]">
-                    <div className="overflow-hidden w-28 h-[400px] flex-shrink-0 -mr-3">
-                        <Image src="/logo.svg" alt="Vise pe hârtie" width={400} height={400} className="object-contain object-left h-[400px] w-auto -translate-y-3" priority />
+        <header className="sticky top-0 z-50 w-full border-b border-slate-200/80 bg-white/95 shadow-sm shadow-slate-200/50 backdrop-blur-md overflow-hidden">
+            <div className="container mx-auto px-3 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-2 sm:gap-4">
+                <Link href="/" className="text-sm font-medium text-slate-600 hover:text-teal-600 transition-colors flex items-center gap-0 shrink-0 min-h-[44px] -ml-1 sm:ml-0">
+                    <div className="overflow-hidden w-20 sm:w-28 h-[72px] sm:h-[400px] flex-shrink-0 -mr-2 sm:-mr-3">
+                        <Image src="/logo.svg" alt="Vise pe hârtie" width={400} height={400} className="object-contain object-left h-[72px] sm:h-[400px] w-auto -translate-y-2 sm:-translate-y-3" priority />
                     </div>
                     <span className="self-center ml-0">Vise pe hârtie</span>
                 </Link>
