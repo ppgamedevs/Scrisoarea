@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image"
 import { getSession } from "@/lib/auth"
 import { HeaderNavClient } from "@/components/layout/header-nav-client"
 
@@ -7,10 +8,10 @@ export async function SiteHeader() {
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-slate-200/80 bg-white/95 shadow-sm shadow-slate-200/50 backdrop-blur-md">
-            <div className="container mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-6">
-                <Link href="/" className="font-bold text-lg sm:text-xl tracking-tight text-[var(--brand)] flex items-center gap-2.5 shrink-0 min-h-[44px] items-center hover:text-teal-600 transition-colors">
-                    <span className="bg-[var(--brand)] text-[var(--brand-foreground)] w-9 h-9 flex items-center justify-center rounded-xl text-lg font-extrabold shadow-md shadow-teal-900/10">S</span>
-                    Scrisoarea Mea
+            <div className="container mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-4">
+                <Link href="/" className="text-sm font-medium text-slate-600 hover:text-teal-600 transition-colors flex items-center gap-0.5 shrink-0 min-h-[44px]">
+                    <Image src="/logo.svg" alt="Vise pe hârtie" width={160} height={160} className="object-contain w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 flex-shrink-0 bg-transparent -translate-y-3 sm:-translate-y-2.5" priority />
+                    <span className="self-center">Vise pe hârtie</span>
                 </Link>
 
                 <div className="flex items-center gap-1 sm:gap-2 md:gap-6 flex-1 justify-end min-w-0">
@@ -27,14 +28,14 @@ export function SiteFooter() {
             <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-12 mb-12">
                 <div className="space-y-4">
                     <h3 className="font-bold text-[var(--brand)] text-lg mb-2 flex items-center gap-2">
-                        <span className="bg-[var(--brand)] text-[var(--brand-foreground)] w-6 h-6 flex items-center justify-center rounded text-xs shadow-sm">S</span>
-                        Scrisoarea Mea
+                        <Image src="/logo.svg" alt="" width={28} height={28} className="object-contain" />
+                        Vise pe hârtie
                     </h3>
                     <p className="leading-relaxed text-slate-500">
                         Platforma tehnologică 100% transparentă care conectează direct donatorii cu nevoile verificate ale copiilor din medii vulnerabile. Fără comisioane. Fără intermediari.
                     </p>
                     <div className="text-xs text-slate-400 space-y-1 mt-4">
-                        <p><strong>Asociația Scrisoarea Mea</strong></p>
+                        <p><strong>Asociația Vise pe hârtie</strong></p>
                         <p>CUI: RO12345678 (Demo)</p>
                         <p>București, România</p>
                         <p>contact@scrisoareamea.ro</p>
@@ -74,7 +75,7 @@ export function SiteFooter() {
             </div>
 
             <div className="container mx-auto px-4 border-t pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-400">
-                <p>&copy; {new Date().getFullYear()} Asociația Scrisoarea Mea. Cod Open Source.</p>
+                <p>&copy; {new Date().getFullYear()} Asociația Vise pe hârtie. Cod Open Source.</p>
                 <div className="flex gap-6 mt-4 md:mt-0">
                     <Link href="/admin" className="hover:text-slate-900">Acces Admin</Link>
                     <Link href="/partener/login" className="hover:text-slate-900">Acces Parteneri</Link>

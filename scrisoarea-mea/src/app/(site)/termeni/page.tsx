@@ -6,7 +6,7 @@ export default function TermeniPage() {
                 <p className="lead">Ultima actualizare: 01.02.2025</p>
 
                 <h3>1. Introducere</h3>
-                <p>Acest site este operat de Asociația Scrisoarea Mea. Accesarea și utilizarea platformei implică acceptarea acestor termeni.</p>
+                <p>Acest site este operat de Asociația Vise pe hârtie. Accesarea și utilizarea platformei implică acceptarea acestor termeni.</p>
 
                 <h3>2. Eligibilitate Donatori</h3>
                 <p>Orice persoană fizică sau juridică poate face donații. Sumele donate nu sunt rambursabile decât în condiții excepționale (ex: eroare tehnică).</p>

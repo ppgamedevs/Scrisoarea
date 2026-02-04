@@ -31,7 +31,7 @@ export async function sendEmail({ to, template, data }: EmailData) {
 
     switch (template) {
         case 'DONATION_SUCCESS':
-            subject = "Mulțumim pentru donație - Scrisoarea Mea"
+            subject = "Mulțumim pentru donație - Vise pe hârtie"
             html = `<p>Salut,</p><p>Îți mulțumim pentru donația de ${data.amount} RON pentru ${data.childName}.</p>`
             break
         case 'MATCHING_APPLIED':
@@ -51,7 +51,7 @@ export async function sendEmail({ to, template, data }: EmailData) {
 
     try {
         // await resend.emails.send({
-        //     from: 'Scrisoarea Mea <no-reply@scrisoarea-mea.ro>',
+        //     from: 'Vise pe hârtie <no-reply@scrisoarea-mea.ro>',
         //     to,
         //     subject,
         //     html

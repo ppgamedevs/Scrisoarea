@@ -6,7 +6,7 @@ const apiKey = process.env.STRIPE_SECRET_KEY || 'sk_test_mock_key_for_build'
 export const stripe = new Stripe(apiKey, {
     apiVersion: '2023-10-16' as any,
     appInfo: {
-        name: 'Scrisoarea Mea',
+        name: 'Vise pe hârtie',
         version: '0.1.0'
     },
     typescript: true,

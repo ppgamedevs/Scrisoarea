@@ -8,7 +8,7 @@ export default function DesprePage() {
                 <div className="container mx-auto max-w-4xl text-center space-y-6">
                     <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900">Despre Noi</h1>
                     <p className="text-xl text-slate-500 max-w-3xl mx-auto">
-                        Scrisoarea Mea este o platformă tehnologică non-profit care conectează direct dorințele copiilor din medii vulnerabile cu donatorii care le pot îndeplini, eliminând intermediarii și opacitatea.
+                        Vise pe hârtie este o platformă tehnologică non-profit care conectează direct dorințele copiilor din medii vulnerabile cu donatorii care le pot îndeplini, eliminând intermediarii și opacitatea.
                     </p>
                 </div>
             </section>

@@ -118,7 +118,7 @@ export const REPLY_TEMPLATES = `
 > Da, formularul tău a fost preluat. Îl centralizăm și îl depunem la ANAF în următorul nostru lot programat (depunem săptămânal/lunar).
 > Vei primi o confirmare finală pe email imediat ce avem recipisa de la ANAF.
 > Mulțumim,
-> Echipa Scrisoarea Mea
+> Echipa Vise pe hârtie
 
 **2. "Pot modifica datele?" / "Am greșit CNP/CUI"**
 > Salut,
@@ -140,7 +140,7 @@ export const REPLY_TEMPLATES = `
 
 **5. "Sunteți ONG real?"**
 > Salut,
-> Da, suntem Asociația Scrisoarea Mea, CUI [RO...], înregistrată în Registrul Asociațiilor și Fundațiilor.
+> Da, suntem Asociația Vise pe hârtie, CUI [RO...], înregistrată în Registrul Asociațiilor și Fundațiilor.
 > Poți verifica rapoartele noastre direct pe site la secțiunea Transparență sau pe site-ul Ministerului Finanțelor.
 > Suntem aici dacă ai alte întrebări.
 `;

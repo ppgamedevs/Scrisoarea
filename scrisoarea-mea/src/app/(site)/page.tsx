@@ -92,7 +92,7 @@ export default async function HomePage() {
                     </div>
                     <div>
                         <span className="block text-2xl sm:text-3xl font-black text-emerald-500">{stats.fulfilled}</span>
-                        <span className="text-xs uppercase tracking-wider text-slate-500 font-semibold">Visuri Împlinite</span>
+                        <span className="text-xs uppercase tracking-wider text-slate-500 font-semibold">Vise Împlinite</span>
                     </div>
                     <div>
                         <span className="block text-2xl sm:text-3xl font-black text-blue-600">{formatCurrency(stats.raised)}</span>
@@ -137,7 +137,7 @@ export default async function HomePage() {
                     </span>
                     <h2 className="text-3xl md:text-4xl font-bold">Ajută-ne să ținem lumina aprinsă</h2>
                     <p className="text-slate-300 text-lg leading-relaxed">
-                        Suntem o echipă mică cu visuri mari. Contribuția ta lunară ne ajută să găsim copiii, să verificăm poveștile și să livrăm bucurie constant.
+                        Suntem o echipă mică cu vise mari. Contribuția ta lunară ne ajută să găsim copiii, să verificăm poveștile și să livrăm bucurie constant.
                     </p>
 
                     <div className="grid grid-cols-3 gap-2 sm:gap-4 max-w-md mx-auto pt-4">

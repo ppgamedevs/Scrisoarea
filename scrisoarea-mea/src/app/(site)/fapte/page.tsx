@@ -3,7 +3,7 @@ import { formatCurrency } from "@/lib/utils"
 // import { Metadata } from "next"
 
 export const metadata = {
-    title: "Fapte și Cifre | Scrisoarea Mea",
+    title: "Fapte și Cifre | Vise pe hârtie",
     description: "Sursa de adevăr pentru datele platformei: scrisori active, sume colectate și definiții oficiale.",
 }
 
@@ -33,15 +33,15 @@ export default async function FactsPage() {
             <div className="container mx-auto max-w-3xl prose prose-slate">
                 <h1 className="text-4xl font-bold text-slate-900 mb-2">Fapte și Cifre</h1>
                 <p className="lead text-xl text-slate-500 mb-12">
-                    Sursa oficială de date pentru platforma Scrisoarea Mea. Aceste informații sunt actualizate în timp real.
+                    Sursa oficială de date pentru platforma Vise pe hârtie. Aceste informații sunt actualizate în timp real.
                 </p>
 
                 <hr className="my-8" />
 
                 {/* Section A: What is it */}
                 <section className="mb-12">
-                    <h2 className="text-2xl font-bold mb-4">Ce este Scrisoarea Mea?</h2>
-                    <p>Scrisoarea Mea este o platformă tehnologică non-profit care conectează transparent donatorii cu nevoile specifice ale copiilor din medii vulnerabile. Nu suntem un fond general de caritate, ci un facilitator de ajutor direct, 1-la-1.</p>
+                    <h2 className="text-2xl font-bold mb-4">Ce este Vise pe hârtie?</h2>
+                    <p>Vise pe hârtie este o platformă tehnologică non-profit care conectează transparent donatorii cu nevoile specifice ale copiilor din medii vulnerabile. Nu suntem un fond general de caritate, ci un facilitator de ajutor direct, 1-la-1.</p>
 
                     <h3 className="text-lg font-bold mt-4">Ce NU suntem:</h3>
                     <ul className="list-disc pl-5 space-y-2">

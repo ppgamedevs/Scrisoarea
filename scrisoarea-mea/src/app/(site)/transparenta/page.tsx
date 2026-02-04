@@ -55,7 +55,7 @@ export default async function TransparentaPage() {
                             <CardHeader><CardTitle>Structură Costuri</CardTitle></CardHeader>
                             <CardContent>
                                 <p className="text-sm text-slate-600 mb-4">
-                                    Platforma Scrisoarea Mea operează pe un model de <strong>100% Direct to Beneficiary</strong> pentru donațiile individuale.
+                                    Platforma Vise pe hârtie operează pe un model de <strong>100% Direct to Beneficiary</strong> pentru donațiile individuale.
                                     Costurile operaționale (hosting, dezvoltare, verificare) sunt acoperite separat prin granturi și sponsorizări dedicate sau contribuții recurente specifice ("Tips").
                                 </p>
                                 <div className="h-4 w-full bg-slate-100 rounded-full overflow-hidden flex">

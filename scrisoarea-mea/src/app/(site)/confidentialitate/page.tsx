@@ -5,7 +5,7 @@ export default function ConfidentialitatePage() {
                 <h1>Politica de Confidențialitate (GDPR)</h1>
 
                 <h3>1. Operator de date</h3>
-                <p>Asociația Scrisoarea Mea, cu sediul în București, este operatorul datelor dumneavoastră cu caracter personal.</p>
+                <p>Asociația Vise pe hârtie, cu sediul în București, este operatorul datelor dumneavoastră cu caracter personal.</p>
 
                 <h3>2. Ce date colectăm</h3>
                 <ul>
