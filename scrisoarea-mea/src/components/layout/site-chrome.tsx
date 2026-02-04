@@ -6,14 +6,14 @@ export async function SiteHeader() {
     const session = await getSession()
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b bg-[var(--pastel-cream)]/90 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-            <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
-                <Link href="/" className="font-bold text-xl tracking-tight text-slate-900 flex items-center gap-2 shrink-0 min-h-[44px] items-center">
-                    <span className="bg-slate-900 text-white w-8 h-8 flex items-center justify-center rounded-lg text-lg">S</span>
+        <header className="sticky top-0 z-50 w-full border-b border-slate-200/80 bg-white/95 shadow-sm shadow-slate-200/50 backdrop-blur-md">
+            <div className="container mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-6">
+                <Link href="/" className="font-bold text-lg sm:text-xl tracking-tight text-[var(--brand)] flex items-center gap-2.5 shrink-0 min-h-[44px] items-center hover:text-teal-600 transition-colors">
+                    <span className="bg-[var(--brand)] text-[var(--brand-foreground)] w-9 h-9 flex items-center justify-center rounded-xl text-lg font-extrabold shadow-md shadow-teal-900/10">S</span>
                     Scrisoarea Mea
                 </Link>
 
-                <div className="flex items-center gap-2 md:gap-4 flex-1 justify-end">
+                <div className="flex items-center gap-1 sm:gap-2 md:gap-6 flex-1 justify-end min-w-0">
                     <HeaderNavClient session={session ? { email: session.email } : null} />
                 </div>
             </div>
@@ -26,8 +26,8 @@ export function SiteFooter() {
         <footer className="bg-[var(--pastel-sage)]/50 border-t pt-16 pb-12 text-slate-600 text-sm">
             <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-12 mb-12">
                 <div className="space-y-4">
-                    <h3 className="font-bold text-slate-900 text-lg mb-2 flex items-center gap-2">
-                        <span className="bg-slate-900 text-white w-6 h-6 flex items-center justify-center rounded text-xs">S</span>
+                    <h3 className="font-bold text-[var(--brand)] text-lg mb-2 flex items-center gap-2">
+                        <span className="bg-[var(--brand)] text-[var(--brand-foreground)] w-6 h-6 flex items-center justify-center rounded text-xs shadow-sm">S</span>
                         Scrisoarea Mea
                     </h3>
                     <p className="leading-relaxed text-slate-500">
@@ -44,31 +44,31 @@ export function SiteFooter() {
                 <div>
                     <h4 className="font-bold text-slate-900 mb-4">Navigare</h4>
                     <ul className="space-y-3">
-                        <li><Link href="/cum-functioneaza" className="hover:text-blue-600 transition-colors inline-block py-2">Cum funcționează</Link></li>
-                        <li><Link href="/scrisori" className="hover:text-blue-600 transition-colors inline-block py-2">Toate Scrisorile</Link></li>
-                        <li><Link href="/directioneaza-35" className="text-indigo-600 font-semibold hover:underline inline-block py-2">Redirecționează 3.5%</Link></li>
-                        <li><Link href="/directioneaza-20" className="text-blue-600 font-semibold hover:underline inline-block py-2">Sponsorizează 20%</Link></li>
-                        <li><Link href="/impact" className="hover:text-blue-600 transition-colors inline-block py-2">Dovezi de Impact</Link></li>
-                        <li><Link href="/transparenta" className="hover:text-blue-600 transition-colors inline-block py-2">Rapoarte Financiare</Link></li>
+                        <li><Link href="/cum-functioneaza" className="hover:text-teal-600 transition-colors inline-block py-2">Cum funcționează</Link></li>
+                        <li><Link href="/scrisori" className="hover:text-teal-600 transition-colors inline-block py-2">Toate Scrisorile</Link></li>
+                        <li><Link href="/directioneaza-35" className="text-teal-700 font-semibold hover:underline inline-block py-2">Redirecționează 3.5%</Link></li>
+                        <li><Link href="/directioneaza-20" className="text-teal-700 font-semibold hover:underline inline-block py-2">Sponsorizează 20%</Link></li>
+                        <li><Link href="/impact" className="hover:text-teal-600 transition-colors inline-block py-2">Dovezi de Impact</Link></li>
+                        <li><Link href="/transparenta" className="hover:text-teal-600 transition-colors inline-block py-2">Rapoarte Financiare</Link></li>
                     </ul>
                 </div>
 
                 <div>
                     <h4 className="font-bold text-slate-900 mb-4">Resurse & Siguranță</h4>
                     <ul className="space-y-3">
-                        <li><Link href="/fapte" className="hover:text-blue-600 transition-colors inline-block py-2">Fapte și Cifre</Link></li>
-                        <li><Link href="/siguranta" className="hover:text-blue-600 transition-colors inline-block py-2">Siguranță și GDPR</Link></li>
-                        <li><Link href="/procese" className="hover:text-blue-600 transition-colors inline-block py-2">Procese Operaționale</Link></li>
-                        <li><Link href="/intrebari" className="hover:text-blue-600 transition-colors inline-block py-2">Întrebări Frecvente</Link></li>
+                        <li><Link href="/fapte" className="hover:text-teal-600 transition-colors inline-block py-2">Fapte și Cifre</Link></li>
+                        <li><Link href="/siguranta" className="hover:text-teal-600 transition-colors inline-block py-2">Siguranță și GDPR</Link></li>
+                        <li><Link href="/procese" className="hover:text-teal-600 transition-colors inline-block py-2">Procese Operaționale</Link></li>
+                        <li><Link href="/intrebari" className="hover:text-teal-600 transition-colors inline-block py-2">Întrebări Frecvente</Link></li>
                     </ul>
                 </div>
 
                 <div>
                     <h4 className="font-bold text-slate-900 mb-4">Legal</h4>
                     <ul className="space-y-3">
-                        <li><Link href="/termeni" className="hover:text-blue-600 transition-colors inline-block py-2">Termeni și Condiții</Link></li>
-                        <li><Link href="/confidentialitate" className="hover:text-blue-600 transition-colors inline-block py-2">Politica de Confidențialitate</Link></li>
-                        <li><Link href="/cookies" className="hover:text-blue-600 transition-colors inline-block py-2">Politica Cookies</Link></li>
+                        <li><Link href="/termeni" className="hover:text-teal-600 transition-colors inline-block py-2">Termeni și Condiții</Link></li>
+                        <li><Link href="/confidentialitate" className="hover:text-teal-600 transition-colors inline-block py-2">Politica de Confidențialitate</Link></li>
+                        <li><Link href="/cookies" className="hover:text-teal-600 transition-colors inline-block py-2">Politica Cookies</Link></li>
                     </ul>
                 </div>
             </div>

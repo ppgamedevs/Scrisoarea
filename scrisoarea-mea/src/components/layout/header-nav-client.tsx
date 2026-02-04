@@ -64,45 +64,38 @@ export function HeaderNavClient({ session }: { session: Session }) {
 
   return (
     <>
-      {/* Desktop nav + CTA (unchanged behaviour) */}
-      <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
+      {/* Desktop nav */}
+      <nav className="hidden md:flex items-center gap-5 lg:gap-7 text-sm font-medium text-slate-600">
         {NAV_LINKS.map(({ href, label }) => (
           <Link
             key={href}
             href={href}
-            className="hover:text-slate-900 transition-colors"
+            className="hover:text-teal-600 transition-colors py-2"
           >
             {label}
           </Link>
         ))}
       </nav>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-3">
         {session ? (
           <Link
             href="/profil"
-            className="hidden md:flex text-sm font-medium items-center gap-2 text-slate-700 hover:text-blue-600 bg-slate-50 px-3 py-1.5 rounded-full border min-h-[44px]"
+            className="hidden md:inline-flex text-sm font-semibold items-center gap-2 text-slate-700 hover:text-teal-600 bg-slate-100/80 hover:bg-teal-50 px-4 py-2.5 rounded-full border border-slate-200/80 min-h-[44px] transition-colors"
           >
-            <User className="w-4 h-4" />
-            <span className="max-w-[100px] truncate">
+            <User className="w-4 h-4 shrink-0" />
+            <span className="max-w-[120px] truncate">
               {session.email.split("@")[0]}
             </span>
           </Link>
         ) : (
-          <Link
-            href="/login"
-            className="text-sm font-medium text-slate-500 hover:text-slate-900 hidden sm:block"
+          <Button
+            asChild
+            className="bg-[var(--brand)] hover:bg-teal-600 text-[var(--brand-foreground)] shadow-md shadow-teal-900/15 rounded-full px-5 sm:px-6 min-h-[44px] font-semibold text-sm"
           >
-            Intră în cont
-          </Link>
+            <Link href="/login">Intră în cont</Link>
+          </Button>
         )}
-
-        <Button
-          asChild
-          className="bg-slate-900 hover:bg-slate-800 text-white shadow-none rounded-full px-6 min-h-[44px]"
-        >
-          <Link href="/scrisori">Donează Acum</Link>
-        </Button>
 
         {/* Mobile: hamburger */}
         <button
@@ -127,15 +120,15 @@ export function HeaderNavClient({ session }: { session: Session }) {
           <button
             type="button"
             aria-label="Închide meniul"
-            className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
+            className="absolute inset-0 bg-slate-800/40 backdrop-blur-[2px]"
             onClick={() => setOpen(false)}
           />
           <div
             ref={drawerRef}
-            className="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-white shadow-xl flex flex-col p-6 pt-8 animate-in slide-in-from-right duration-200"
+            className="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-[var(--pastel-cream)]/98 shadow-2xl flex flex-col p-6 pt-8 animate-in slide-in-from-right duration-200 border-l border-slate-200/80"
           >
             <div className="flex justify-between items-center mb-8">
-              <span className="font-bold text-slate-900">Meniu</span>
+              <span className="font-bold text-slate-800 text-lg">Meniu</span>
               <button
                 type="button"
                 aria-label="Închide"
@@ -168,22 +161,15 @@ export function HeaderNavClient({ session }: { session: Session }) {
                   <span className="truncate">{session.email.split("@")[0]}</span>
                 </Link>
               ) : (
-                <Link
-                  href="/login"
-                  className="py-3 px-3 rounded-lg font-medium text-slate-700 hover:bg-slate-100 min-h-[44px] flex items-center md:hidden"
-                  onClick={() => setOpen(false)}
+                <Button
+                  asChild
+                  className="w-full bg-[var(--brand)] hover:bg-teal-600 text-[var(--brand-foreground)] rounded-full min-h-[44px] font-semibold shadow-md"
                 >
-                  Intră în cont
-                </Link>
+                  <Link href="/login" onClick={() => setOpen(false)}>
+                    Intră în cont
+                  </Link>
+                </Button>
               )}
-              <Button
-                asChild
-                className="w-full bg-slate-900 hover:bg-slate-800 text-white rounded-full min-h-[44px] mt-2"
-              >
-                <Link href="/scrisori" onClick={() => setOpen(false)}>
-                  Donează Acum
-                </Link>
-              </Button>
             </div>
           </div>
         </div>

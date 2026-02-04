@@ -50,6 +50,9 @@
   --color-pastel-pink: var(--pastel-pink);
   --color-pastel-lavender: var(--pastel-lavender);
   --color-pastel-mint: var(--pastel-mint);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-focus-ring: var(--focus-ring);
 }
 
 :root {
@@ -61,6 +64,11 @@
   --pastel-pink: oklch(0.94 0.04 350);
   --pastel-lavender: oklch(0.93 0.05 290);
   --pastel-mint: oklch(0.92 0.06 160);
+  /* Brand: joyful teal (colourblind-friendly, distinct from red/green) */
+  --brand: oklch(0.55 0.12 180);
+  --brand-foreground: oklch(0.99 0 0);
+  /* Focus: high-contrast outline (not red/green) for accessibility */
+  --focus-ring: oklch(0.55 0.18 250);
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -132,7 +140,16 @@
   * {
     @apply border-border outline-ring/50;
   }
+  *:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
   body {
     @apply bg-background text-foreground;
+  }
+  /* Colourblind-friendly: links show underline on focus, not only color */
+  a:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
   }
 }

@@ -107,8 +107,8 @@ export default function FulfillmentModule({
                     <p className="text-sm text-slate-500 mb-6 leading-relaxed">
                         Poți cumpăra și expedia personal cadoul. Îți vom oferi adresa centrului partener și instrucțiuni pas cu pas. Este o experiență magică!
                     </p>
-                    <Button onClick={() => setView('EMAIL_FORM')} className="w-full bg-white border-2 border-slate-200 hover:border-blue-600 hover:text-blue-600 text-slate-700 py-6 text-lg transition-colors font-bold">
-                        Vreau să pregătesc cadoul
+                    <Button onClick={() => setView('EMAIL_FORM')} className="w-full text-lg h-14 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-lg shadow-blue-200 rounded-xl transition-all hover:scale-[1.02]">
+                        Vreau să pregătesc cadoul ✨
                     </Button>
                     <p className="text-xs text-slate-400 mt-2">
                         Ai la dispoziție 48h să confirmi expedierea.
