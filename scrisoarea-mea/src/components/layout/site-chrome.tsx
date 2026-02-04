@@ -10,8 +10,10 @@ export async function SiteHeader() {
         <header className="sticky top-0 z-50 w-full border-b border-slate-200/80 bg-white/95 shadow-sm shadow-slate-200/50 backdrop-blur-md">
             <div className="container mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-4">
                 <Link href="/" className="text-sm font-medium text-slate-600 hover:text-teal-600 transition-colors flex items-center gap-0 shrink-0 min-h-[44px]">
-                    <Image src="/logo.svg" alt="Vise pe hârtie" width={192} height={192} className="object-contain w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 flex-shrink-0 bg-transparent -translate-y-3 sm:-translate-y-2.5 -mr-0.5" priority />
-                    <span className="self-center">Vise pe hârtie</span>
+                    <div className="overflow-hidden w-28 h-[120px] flex-shrink-0 -mr-3">
+                        <Image src="/logo.svg" alt="Vise pe hârtie" width={120} height={120} className="object-contain object-left h-[120px] w-auto -translate-y-1" priority />
+                    </div>
+                    <span className="self-center ml-0">Vise pe hârtie</span>
                 </Link>
 
                 <div className="flex items-center gap-1 sm:gap-2 md:gap-6 flex-1 justify-end min-w-0">
