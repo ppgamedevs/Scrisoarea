@@ -141,14 +141,20 @@ export default async function HomePage() {
                     </p>
 
                     <div className="grid grid-cols-3 gap-2 sm:gap-4 max-w-md mx-auto pt-4">
-                        <Button variant="outline" className="border-slate-700 bg-slate-800/50 hover:bg-slate-700 hover:text-white min-h-[44px] sm:h-14 text-base sm:text-lg border-2 hover:border-blue-500 transition-all">10 Lei</Button>
-                        <Button variant="outline" className="border-slate-700 bg-slate-800/50 hover:bg-slate-700 hover:text-white min-h-[44px] sm:h-14 text-base sm:text-lg border-2 hover:border-purple-500 transition-all">25 Lei</Button>
-                        <Button variant="outline" className="border-slate-700 bg-slate-800/50 hover:bg-slate-700 hover:text-white min-h-[44px] sm:h-14 text-base sm:text-lg border-2 hover:border-emerald-500 transition-all">50 Lei</Button>
+                        <Button asChild variant="outline" className="border-slate-700 bg-slate-800/50 hover:bg-slate-700 hover:text-white min-h-[44px] sm:h-14 text-base sm:text-lg border-2 hover:border-blue-500 transition-all">
+                            <Link href="/donatie-lunara">10 Lei</Link>
+                        </Button>
+                        <Button asChild variant="outline" className="border-slate-700 bg-slate-800/50 hover:bg-slate-700 hover:text-white min-h-[44px] sm:h-14 text-base sm:text-lg border-2 hover:border-purple-500 transition-all">
+                            <Link href="/donatie-lunara">25 Lei</Link>
+                        </Button>
+                        <Button asChild variant="outline" className="border-slate-700 bg-slate-800/50 hover:bg-slate-700 hover:text-white min-h-[44px] sm:h-14 text-base sm:text-lg border-2 hover:border-emerald-500 transition-all">
+                            <Link href="/donatie-lunara">50 Lei</Link>
+                        </Button>
                     </div>
 
                     <div className="pt-4">
-                        <Button size="lg" className="h-14 px-12 text-lg bg-white text-slate-900 hover:bg-slate-100 rounded-full font-bold shadow-lg shadow-white/10 hover:shadow-white/20">
-                            Activează Donația Lunară
+                        <Button asChild size="lg" className="h-14 px-12 text-lg bg-white text-slate-900 hover:bg-slate-100 rounded-full font-bold shadow-lg shadow-white/10 hover:shadow-white/20">
+                            <Link href="/donatie-lunara">Activează Donația Lunară</Link>
                         </Button>
                         <p className="text-xs text-slate-500 mt-4 opacity-70">Securizat prin Stripe • Poți anula oricând</p>
                     </div>

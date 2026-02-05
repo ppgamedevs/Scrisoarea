@@ -1,9 +1,7 @@
+import { Resend } from "resend"
 
-// Mock implementation using console for MVP since we don't have a real Resend key in dev
-// In production, uncomment and use 'resend' package.
-
-// import { Resend } from 'resend'
-// const resend = new Resend(process.env.RESEND_API_KEY)
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
+const FROM_EMAIL = process.env.EMAIL_FROM || "Vise pe hârtie <onboarding@resend.dev>"
 
 export type EmailTemplate =
     | 'DONATION_SUCCESS'
@@ -13,6 +11,7 @@ export type EmailTemplate =
     | 'PROOF_REJECTED'
     | 'ADMIN_NEW_PARTNER'
     | 'ADMIN_NEW_SCRISOARE'
+    | 'CONTACT_FORM'
 
 interface EmailData {
     to: string
@@ -21,11 +20,6 @@ interface EmailData {
 }
 
 export async function sendEmail({ to, template, data }: EmailData) {
-    console.log(`[EMAIL MOCK] Sending ${template} to ${to}`, data)
-
-    // Safety check for test environment
-    if (!process.env.RESEND_API_KEY) return
-
     let subject = ""
     let html = ""
 
@@ -46,17 +40,22 @@ export async function sendEmail({ to, template, data }: EmailData) {
             subject = "Scrisoare Respinsă - Necesită modificări"
             html = `<p>Scrisoarea pentru ${data.childName} a fost respinsă. Motiv: ${data.reason}</p>`
             break
-        // ... add others
+        case 'CONTACT_FORM':
+            subject = `[Contact] ${data.subject}`
+            html = `<p><strong>De la:</strong> ${data.name} &lt;${data.email}&gt;</p><p><strong>Subiect:</strong> ${data.subject}</p><p><strong>Mesaj:</strong></p><p>${(data.message || '').replace(/\n/g, '<br>')}</p>`
+            break
     }
 
-    try {
-        // await resend.emails.send({
-        //     from: 'Vise pe hârtie <no-reply@scrisoarea-mea.ro>',
-        //     to,
-        //     subject,
-        //     html
-        // })
-    } catch (e) {
-        console.error("Email send failed", e)
+    if (!subject || !html) return
+
+    if (resend) {
+        try {
+            await resend.emails.send({ from: FROM_EMAIL, to, subject, html })
+        } catch (e) {
+            console.error("Email send failed", e)
+            throw e
+        }
+    } else {
+        console.log(`[EMAIL] No RESEND_API_KEY; would send ${template} to ${to}:`, subject)
     }
 }

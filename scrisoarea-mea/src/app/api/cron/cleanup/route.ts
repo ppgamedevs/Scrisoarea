@@ -2,9 +2,10 @@ import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 
 export async function GET(req: Request) {
-    // Simple check for cron key if needed, or leave public for MVP
-    // const authHeader = req.headers.get('authorization');
-    // if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) ...
+    const secret = process.env.CRON_SECRET
+    if (secret && req.headers.get('Authorization') !== `Bearer ${secret}`) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
 
     const result = await prisma.reservation.updateMany({
         where: {

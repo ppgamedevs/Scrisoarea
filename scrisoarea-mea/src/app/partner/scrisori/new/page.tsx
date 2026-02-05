@@ -7,7 +7,7 @@ import { redirect } from "next/navigation"
 
 export default async function NewScrisoarePage() {
     const session = await getSession()
-    if (!session || session.role !== 'PARTNER') redirect('/auth/signin?callbackUrl=/partner/scrisori/new')
+    if (!session || session.role !== 'PARTNER') redirect('/login?callbackUrl=/partner/scrisori/new')
 
     const campaigns = await prisma.campaign.findMany({
         where: {

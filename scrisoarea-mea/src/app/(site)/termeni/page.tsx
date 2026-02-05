@@ -20,7 +20,7 @@ export default function TermeniPage() {
                 <h3>5. Modificări</h3>
                 <p>Ne rezervăm dreptul de a modifica acești termeni. Continuarea utilizării site-ului reprezintă acceptul dumneavoastră.</p>
 
-                <p className="text-sm text-slate-400 mt-12 bg-slate-50 p-4 rounded">Notă: Acesta este un document placeholder pentru MVP. Consultați un jurist pentru versiunea finală.</p>
+                <p className="text-sm text-slate-400 mt-12 bg-slate-50 p-4 rounded">Pentru orice nelămuriri legale, contactați un jurist.</p>
             </div>
         </main>
     )
