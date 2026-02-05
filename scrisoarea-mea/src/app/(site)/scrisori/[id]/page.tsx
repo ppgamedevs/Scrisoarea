@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import { formatCurrency } from "@/lib/utils"
 import Link from "next/link"
+import { getSession } from "@/lib/auth"
 import { Progress } from "@/components/ui/progress"
 import DonationModule from "@/components/donation-module"
 import FulfillmentModule from "@/components/fulfillment-module"
@@ -32,6 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function ScrisoarePage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params
+    const session = await getSession()
     let letter = await prisma.scrisoare.findFirst({
         where: { slug: id },
         include: {
@@ -254,6 +256,7 @@ export default async function ScrisoarePage({ params }: { params: Promise<{ id: 
                                                 scrisoareId={letter.id}
                                                 remainingAmount={remaining}
                                                 isFullyFunded={isFullyFunded}
+                                                userEmail={session?.email}
                                             />
                                         )}
                                     </>
