@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,11 +10,13 @@ import { createReservationAndCheckout } from "@/app/actions/donate"
 export default function DonationModule({
     scrisoareId,
     remainingAmount,
-    isFullyFunded
+    isFullyFunded,
+    userEmail
 }: {
     scrisoareId: string,
     remainingAmount: number,
-    isFullyFunded: boolean
+    isFullyFunded: boolean,
+    userEmail?: string | null
 }) {
     const [customAmount, setCustomAmount] = useState<string>('')
     const [loading, setLoading] = useState(false)
@@ -114,6 +117,15 @@ export default function DonationModule({
             {error && (
                 <div className="text-red-600 text-sm bg-red-50 p-3 rounded-lg border border-red-100 flex gap-2 items-center">
                     <span>⚠</span> {error}
+                </div>
+            )}
+
+            {!userEmail && (
+                <div className="bg-blue-50/50 text-blue-800 text-xs p-3 rounded-xl border border-blue-100 flex gap-2 items-start">
+                    <span className="mt-0.5">💡</span>
+                    <p>
+                        <Link href="/login" className="font-bold hover:underline">Loghează-te</Link> pentru a avea donația în istoricul tău.
+                    </p>
                 </div>
             )}
 

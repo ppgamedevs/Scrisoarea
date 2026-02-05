@@ -32,7 +32,6 @@ export default function Directioneaza35Page() {
 
             <section className="container mx-auto px-4 -mt-10 mb-20 relative z-20">
                 <div className="max-w-4xl mx-auto">
-                    import Form230 from "@/components/forms/form-230"
                     <Form230 />
                 </div>
             </section>

@@ -59,7 +59,7 @@ export async function generateForm230(data: {
     // II. NGO Destination
     page.drawText('II. DESTINATIA SUMEI (3.5%)', { x: 50, y, size: 14, font: fontBold })
     y -= 30
-    drawText('Beneficiar: ASOCIATIA SCRISOAREA MEA', 50, y, { font: fontBold })
+    drawText('Beneficiar: ASOCIATIA VISE PE HARTIE', 50, y, { font: fontBold })
     y -= 20
     drawText('Cod de Identificare Fiscala: 49767355', 50, y)
     y -= 20
@@ -112,7 +112,7 @@ export async function generateContract177(data: {
     page.drawText('CONTRACT DE SPONSORIZARE', { x: 200, y: height - 50, size: 18 })
 
     // Mock content
-    page.drawText(`Intre ASOCIATIA SCRISOAREA MEA si ${data.companyName}`, { x: 50, y: height - 100, size: 12, font })
+    page.drawText(`Intre ASOCIATIA VISE PE HARTIE si ${data.companyName}`, { x: 50, y: height - 100, size: 12, font })
     page.drawText(`CUI: ${data.cui}`, { x: 50, y: height - 120, size: 12, font })
 
     page.drawText(`Obiectul contractului: Sponsorizare in suma de ${data.amount} RON via Formular 177.`, { x: 50, y: height - 160, size: 12, font })
