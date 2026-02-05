@@ -32,7 +32,7 @@ export function SiteFooter() {
                 <div className="space-y-4">
                     <Link href="/" className="group block">
                         <h3 className="font-bold text-[var(--brand)] text-lg mb-2 flex items-center gap-0">
-                            <div className="overflow-hidden w-20 h-16 flex-shrink-0 -mr-2 relative">
+                            <div className="overflow-hidden w-24 h-20 flex-shrink-0 -mr-2 relative">
                                 <Image
                                     src="/logo.svg"
                                     alt="Vise pe hârtie"
@@ -40,7 +40,7 @@ export function SiteFooter() {
                                     className="object-contain object-left"
                                 />
                             </div>
-                            <span className="self-center">Vise pe hârtie</span>
+                            <span className="self-center mt-2">Vise pe hârtie</span>
                         </h3>
                     </Link>
                     <p className="leading-relaxed text-slate-500">
@@ -59,8 +59,8 @@ export function SiteFooter() {
                     <ul className="space-y-3">
                         <li><Link href="/cum-functioneaza" className="hover:text-teal-600 transition-colors inline-block py-2">Cum funcționează</Link></li>
                         <li><Link href="/scrisori" className="hover:text-teal-600 transition-colors inline-block py-2">Toate Scrisorile</Link></li>
-                        <li><Link href="/directioneaza-35" className="text-teal-700 font-semibold hover:underline inline-block py-2">Redirecționează 3.5%</Link></li>
-                        <li><Link href="/directioneaza-20" className="text-teal-700 font-semibold hover:underline inline-block py-2">Sponsorizează 20%</Link></li>
+                        <li><Link href="/directioneaza-35" className="text-[var(--brand)] font-semibold hover:underline inline-block py-2">Redirecționează 3.5%</Link></li>
+                        <li><Link href="/directioneaza-20" className="text-[var(--brand)] font-semibold hover:underline inline-block py-2">Sponsorizează 20%</Link></li>
                         <li><Link href="/impact" className="hover:text-teal-600 transition-colors inline-block py-2">Dovezi de Impact</Link></li>
                         <li><Link href="/transparenta" className="hover:text-teal-600 transition-colors inline-block py-2">Rapoarte Financiare</Link></li>
                         <li><Link href="/contact" className="hover:text-teal-600 transition-colors inline-block py-2">Contact</Link></li>
