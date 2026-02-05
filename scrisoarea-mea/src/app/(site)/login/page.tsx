@@ -18,8 +18,8 @@ export default function LoginPage() {
     return (
         <main className="min-h-[calc(100vh-200px)] flex items-center justify-center bg-slate-50 px-4">
             <div className="bg-white p-8 rounded-xl shadow-sm border max-w-md w-full text-center">
-                <h1 className="text-2xl font-bold mb-2">Acces Cont Donator</h1>
-                <p className="text-slate-500 mb-8">Introdu adresa de email pentru a vedea istoricul donațiilor și impactul tău.</p>
+                <h1 className="text-2xl font-bold mb-2">Accesează Platforma</h1>
+                <p className="text-slate-500 mb-8">Introdu adresa de email pentru a te loga ca Donator, Partener sau Administrator.</p>
 
                 <form action={handleLogin} className="space-y-4">
                     <div className="text-left">

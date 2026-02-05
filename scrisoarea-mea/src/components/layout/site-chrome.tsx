@@ -2,6 +2,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { getSession } from "@/lib/auth"
 import { HeaderNavClient } from "@/components/layout/header-nav-client"
+import { Button } from "@/components/ui/button"
 
 export async function SiteHeader() {
     const session = await getSession()
@@ -29,10 +30,15 @@ export function SiteFooter() {
         <footer className="bg-[var(--pastel-sage)]/50 border-t pt-16 pb-12 text-slate-600 text-sm">
             <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-12 mb-12">
                 <div className="space-y-4">
-                    <h3 className="font-bold text-[var(--brand)] text-lg mb-2 flex items-center gap-2">
-                        <Image src="/logo.svg" alt="" width={56} height={56} className="object-contain" />
-                        Vise pe hârtie
-                    </h3>
+                    <Link href="/" className="group block">
+                        <h3 className="font-bold text-[var(--brand)] text-lg mb-2 flex items-center gap-0">
+                            {/* Logo logic copied from Header as requested */}
+                            <div className="overflow-hidden w-20 sm:w-28 h-[72px] sm:h-[400px] flex-shrink-0 -mr-2 sm:-mr-3">
+                                <Image src="/logo.svg" alt="Vise pe hârtie" width={400} height={400} className="object-contain object-left h-[72px] sm:h-[400px] w-auto -translate-y-2 sm:-translate-y-3" />
+                            </div>
+                            <span className="self-center mt-4 sm:mt-0">Vise pe hârtie</span>
+                        </h3>
+                    </Link>
                     <p className="leading-relaxed text-slate-500">
                         Platforma tehnologică 100% transparentă care conectează direct donatorii cu nevoile verificate ale copiilor din medii vulnerabile. Fără comisioane. Fără intermediari.
                     </p>
@@ -53,6 +59,7 @@ export function SiteFooter() {
                         <li><Link href="/directioneaza-20" className="text-teal-700 font-semibold hover:underline inline-block py-2">Sponsorizează 20%</Link></li>
                         <li><Link href="/impact" className="hover:text-teal-600 transition-colors inline-block py-2">Dovezi de Impact</Link></li>
                         <li><Link href="/transparenta" className="hover:text-teal-600 transition-colors inline-block py-2">Rapoarte Financiare</Link></li>
+                        <li><Link href="/contact" className="hover:text-teal-600 transition-colors inline-block py-2">Contact</Link></li>
                     </ul>
                 </div>
 
@@ -76,11 +83,21 @@ export function SiteFooter() {
                 </div>
             </div>
 
-            <div className="container mx-auto px-4 border-t pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-400">
-                <p>&copy; {new Date().getFullYear()} Asociația Vise pe hârtie. Cod Open Source.</p>
-                <div className="flex gap-6 mt-4 md:mt-0">
-                    <Link href="/admin" className="hover:text-slate-900">Acces Admin</Link>
-                    <Link href="/partener/login" className="hover:text-slate-900">Acces Parteneri</Link>
+            <div className="container mx-auto px-4 border-t pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-400 gap-6">
+                <div className="flex flex-col gap-2">
+                    <p>&copy; {new Date().getFullYear()} Asociația Vise pe hârtie. Cod Open Source.</p>
+                    <div className="flex items-center gap-3 mt-2">
+                        <span className="opacity-70">Plăți securizate prin</span>
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/Skrill_logo.svg" alt="Skrill" className="h-5 w-auto opacity-70 grayscale hover:grayscale-0 transition-all" />
+                    </div>
+                </div>
+                <div className="flex flex-wrap gap-4 items-center justify-center">
+                    <Button asChild variant="outline" size="sm" className="h-10 px-4">
+                        <Link href="/admin">Acces Admin</Link>
+                    </Button>
+                    <Button asChild size="sm" className="h-10 px-4 bg-slate-800 hover:bg-slate-900">
+                        <Link href="/partner">Acces Parteneri</Link>
+                    </Button>
                 </div>
             </div>
         </footer>
