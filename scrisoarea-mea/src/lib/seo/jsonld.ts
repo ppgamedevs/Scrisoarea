@@ -19,10 +19,12 @@ export function generateOrganizationSchema() {
             addressLocality: 'Bucuresti',
             addressCountry: 'RO'
         },
-        sameAs: [
-            'https://facebook.com/scrisoarea-mea-placeholder',
-            'https://instagram.com/scrisoarea-mea-placeholder'
-        ]
+        sameAs: (process.env.NEXT_PUBLIC_SOCIAL_FACEBOOK || process.env.NEXT_PUBLIC_SOCIAL_INSTAGRAM)
+            ? [
+                ...(process.env.NEXT_PUBLIC_SOCIAL_FACEBOOK ? [process.env.NEXT_PUBLIC_SOCIAL_FACEBOOK] : []),
+                ...(process.env.NEXT_PUBLIC_SOCIAL_INSTAGRAM ? [process.env.NEXT_PUBLIC_SOCIAL_INSTAGRAM] : [])
+            ].filter(Boolean)
+            : []
     }
 }
 

@@ -1,5 +1,9 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Environment variables
+
+Copy `.env.example` to `.env` and fill in the values. Required: `DATABASE_URL`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `NEXT_PUBLIC_APP_URL`. Optional: `RESEND_API_KEY` (email), `CONTACT_EMAIL`, `NEXT_PUBLIC_ASSOCIATION_CUI`, `NEXT_PUBLIC_SOCIAL_*`, `CRON_SECRET` (protects `/api/cron/*` routes; set in Vercel and use Authorization: Bearer &lt;CRON_SECRET&gt; when invoking cron).
+
 ## Database (PostgreSQL)
 
 The app uses PostgreSQL. For local development, run Postgres with Docker:

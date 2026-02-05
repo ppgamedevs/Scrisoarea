@@ -297,3 +297,13 @@ model TaxRedirectionRequest {
   @@index([email])
   @@index([createdAt])
 }
+
+model ContactSubmission {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  subject   String
+  message   String
+  createdAt DateTime @default(now())
+  @@index([createdAt])
+}

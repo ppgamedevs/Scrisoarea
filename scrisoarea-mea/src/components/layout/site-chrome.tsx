@@ -44,7 +44,7 @@ export function SiteFooter() {
                     </p>
                     <div className="text-xs text-slate-400 space-y-1 mt-4">
                         <p><strong>Asociația Vise pe hârtie</strong></p>
-                        <p>CUI: RO12345678 (Demo)</p>
+                        <p>CUI: {process.env.NEXT_PUBLIC_ASSOCIATION_CUI || "—"}</p>
                         <p>București, România</p>
                         <p>contact@scrisoareamea.ro</p>
                     </div>

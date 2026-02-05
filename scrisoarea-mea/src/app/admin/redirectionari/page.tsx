@@ -15,7 +15,7 @@ import Link from "next/link"
 
 export default async function AdminRedirectionsPage() {
     const session = await getSession()
-    if (session?.role !== 'ADMIN') redirect('/auth/signin')
+    if (session?.role !== 'ADMIN') redirect('/login')
 
     const requests = await prisma.taxRedirectionRequest.findMany({
         orderBy: { createdAt: 'desc' },

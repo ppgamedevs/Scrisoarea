@@ -7,7 +7,7 @@ import Link from "next/link"
 
 export default async function AdminRedirectionDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const session = await getSession()
-    if (session?.role !== 'ADMIN') redirect('/auth/signin')
+    if (session?.role !== 'ADMIN') redirect('/login')
 
     const { id } = await params
     const req = await prisma.taxRedirectionRequest.findUnique({
