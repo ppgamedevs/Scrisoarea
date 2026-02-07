@@ -82,9 +82,13 @@ export default function PartnerLoginPage() {
                         {isPending ? "Se verifică..." : "Accesează Portalul"}
                     </Button>
 
-                    <div className="text-center mt-4">
-                        <p className="text-xs text-slate-400">
+                    <div className="text-center mt-6">
+                        <p className="text-xs text-slate-400 mb-2">
                             Demo: partner@speranta.ro / parola123
+                        </p>
+                        <p className="text-sm text-slate-600">
+                            Nu sunteți partener?<br />
+                            <a href="/partner/register" className="text-blue-600 font-medium hover:underline">Aplică pentru parteneriat</a>
                         </p>
                     </div>
                 </form>

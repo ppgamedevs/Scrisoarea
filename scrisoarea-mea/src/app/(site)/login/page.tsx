@@ -74,8 +74,11 @@ export default function LoginPage() {
                         {isPending ? "Se verifică..." : "Autentificare"}
                     </Button>
                     <div className="text-center mt-4">
-                        <p className="text-xs text-slate-400">
+                        <p className="text-xs text-slate-400 mb-2">
                             Demo: donator / parola123
+                        </p>
+                        <p className="text-sm text-slate-600">
+                            Nu ai cont? <a href="/register" className="text-blue-600 font-medium hover:underline">Înregistrează-te</a>
                         </p>
                     </div>
                 </form>
