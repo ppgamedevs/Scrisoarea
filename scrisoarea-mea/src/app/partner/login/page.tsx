@@ -38,11 +38,11 @@ export default function PartnerLoginPage() {
     }
 
     return (
-        <main className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
-            <div className="bg-white p-8 rounded-xl shadow-sm border max-w-md w-full text-center">
+        <main className="min-h-screen flex items-center justify-center bg-blue-50 px-4">
+            <div className="bg-white p-8 rounded-xl shadow-md border-t-4 border-blue-600 max-w-md w-full text-center">
                 <div className="flex justify-center mb-6">
-                    <div className="bg-blue-100 p-3 rounded-full">
-                        <Building2 className="w-8 h-8 text-blue-600" />
+                    <div className="bg-blue-50 p-4 rounded-full border border-blue-100">
+                        <Building2 className="w-10 h-10 text-blue-700" />
                     </div>
                 </div>
 
@@ -88,8 +88,13 @@ export default function PartnerLoginPage() {
                         </p>
                         <p className="text-sm text-slate-600">
                             Nu sunteți partener?<br />
-                            <a href="/partner/register" className="text-blue-600 font-medium hover:underline">Aplică pentru parteneriat</a>
+                            <a href="/partner/register" className="text-blue-700 font-bold hover:underline">Aplică pentru parteneriat</a>
                         </p>
+                    </div>
+                    <div className="border-t pt-4 mt-6">
+                        <a href="/login" className="text-xs text-slate-500 hover:text-blue-700 hover:underline">
+                            &larr; Înapoi la Autentificare Donator
+                        </a>
                     </div>
                 </form>
             </div>

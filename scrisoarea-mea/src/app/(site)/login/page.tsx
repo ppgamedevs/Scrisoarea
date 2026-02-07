@@ -81,6 +81,12 @@ export default function LoginPage() {
                             Nu ai cont? <a href="/register" className="text-blue-600 font-medium hover:underline">Înregistrează-te</a>
                         </p>
                     </div>
+                    <div className="border-t pt-4 mt-6">
+                        <p className="text-xs text-slate-500 mb-2">Ești reprezentant ONG sau Instituție?</p>
+                        <a href="/partner/login" className="block w-full py-2 bg-slate-100 text-slate-700 rounded text-sm font-medium hover:bg-slate-200">
+                            Accesează Portalul Partenerilor
+                        </a>
+                    </div>
                 </form>
             </div>
         </main>
