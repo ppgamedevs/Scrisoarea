@@ -2,6 +2,7 @@ import { getSession } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { logout } from "@/app/actions/auth-actions"
 
 export default async function PartnerLayout({
     children,
@@ -9,7 +10,8 @@ export default async function PartnerLayout({
     children: React.ReactNode
 }) {
     const session = await getSession()
-    if (!session || session.role !== 'PARTNER') redirect('/login')
+    if (!session) redirect('/partner/login')
+    if (session.role !== 'PARTNER') redirect('/')
 
     return (
         <div className="min-h-screen bg-slate-50">
@@ -22,14 +24,9 @@ export default async function PartnerLayout({
                     <Link href="/partner" className="text-sm hover:underline">Scrisorile Tale</Link>
                     <Link href="/partner/scrisori/new" className="text-sm hover:underline">Adaugă Scrisoare</Link>
                 </nav>
-                <form action={async () => {
-                    "use server"
-                    // Can't import logout action here directly in layout usually, 
-                    // but simpler for now just a link to public? 
-                    // Best is a Client Component for Logout button.
-                }}>
-                    <Button variant="ghost" size="sm" asChild>
-                        <Link href="/api/auth/signout">Ieșire</Link>
+                <form action={logout}>
+                    <Button variant="ghost" size="sm" type="submit">
+                        Ieșire
                     </Button>
                 </form>
             </header>

@@ -7,18 +7,34 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Profile {
+
+model User {
   id            String   @id @default(uuid())
-  authId        String   @unique
   email         String   @unique
-  role          String   @default("DONOR")
+  passwordHash  String
+  role          String   @default("DONOR") // 'DONOR', 'PARTNER', 'ADMIN'
   firstName     String?
   lastName      String?
+  
   institution   Institution? @relation(fields: [institutionId], references: [id])
   institutionId String?
+
+  sessions      Session[]
+
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  @@index([authId])
+  
+  lastLoginAt   DateTime?
+
+  @@index([role])
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  expiresAt DateTime
+
+  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
 }
 
 model Institution {
@@ -42,7 +58,7 @@ model Institution {
   contactName    String?
   contactEmail   String?
   
-  users          Profile[]
+  users          User[]
   scrisori       Scrisoare[]
   
   createdAt      DateTime @default(now())
