@@ -5,9 +5,17 @@ import { getSession } from '@/lib/auth'
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl
 
+    // Pass current pathname to layout via header (for client/server sync)
+    const requestHeaders = new Headers(request.headers)
+    requestHeaders.set('x-pathname', pathname)
+
     // Allow access to login pages publicly
     if (pathname === '/admin/login' || pathname === '/partner/login' || pathname === '/login') {
-        return NextResponse.next()
+        return NextResponse.next({
+            request: {
+                headers: requestHeaders,
+            },
+        })
     }
 
     // Check for session cookie (Lucia uses 'auth_session' by default)
@@ -26,10 +34,6 @@ export async function middleware(request: NextRequest) {
             return NextResponse.redirect(new URL('/partner/login', request.url))
         }
     }
-
-    // Pass current pathname to layout via header (for client/server sync)
-    const requestHeaders = new Headers(request.headers)
-    requestHeaders.set('x-pathname', pathname)
 
     return NextResponse.next({
         request: {
