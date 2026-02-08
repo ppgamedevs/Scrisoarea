@@ -27,7 +27,15 @@ export async function middleware(request: NextRequest) {
         }
     }
 
-    return NextResponse.next()
+    // Pass current pathname to layout via header (for client/server sync)
+    const requestHeaders = new Headers(request.headers)
+    requestHeaders.set('x-pathname', pathname)
+
+    return NextResponse.next({
+        request: {
+            headers: requestHeaders,
+        },
+    })
 }
 
 export const config = {

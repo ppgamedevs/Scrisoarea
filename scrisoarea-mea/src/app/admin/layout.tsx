@@ -2,11 +2,21 @@ import { getSession } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { logout } from "@/app/actions/auth-actions"
+import { headers } from "next/headers"
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+    const headersList = await headers()
+    const pathname = headersList.get('x-pathname') || ''
+
+    // If on login page, skip layout wrapping
+    if (pathname === '/admin/login') {
+        return <>{children}</>
+    }
+
     const session = await getSession()
     if (!session) redirect('/admin/login')
     if (session.role !== 'ADMIN') redirect('/')
+
 
     return (
         <div className="min-h-screen bg-neutral-100 grid grid-cols-[240px_1fr]">
