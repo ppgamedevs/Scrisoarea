@@ -5,6 +5,8 @@ import prisma from "@/lib/prisma"
 import { redirect } from "next/navigation"
 import { getSession } from "@/lib/auth"
 
+import { saveFile } from "@/lib/storage"
+
 export async function createScrisoare(formData: FormData) {
     const session = await getSession()
     if (!session || session.role !== 'PARTNER' || !session.institutionId) throw new Error("Unauthorized")
@@ -17,19 +19,42 @@ export async function createScrisoare(formData: FormData) {
     const campaignId = campaignIdRaw && campaignIdRaw !== 'NONE' ? campaignIdRaw : undefined
     const limit = campaignId ? 1500 : 500
 
+    // Handle Submission Status
+    const actionType = formData.get('actionType') as string // 'draft' | 'submit'
+    const status = actionType === 'submit' ? 'SUBMITTED' : 'DRAFT'
+
     // Calculate total
     const total = items.reduce((acc: number, item: any) => acc + Number(item.estimatedValue || 0), 0)
 
     if (total > limit) throw new Error(`Suma totală depășește limita de ${limit} RON pentru tipul de cerere selectat.`)
 
+    // Handle File Upload
+    const file = formData.get('file') as File | null
+    let mediaUrl = "https://placehold.co/600x800" // Default fallback
+    let mediaType: 'IMAGE' | 'VIDEO' = 'IMAGE'
+
+    if (file && file.size > 0) {
+        if (file.type.startsWith('image/')) {
+            mediaType = 'IMAGE'
+            mediaUrl = await saveFile(file)
+        } else if (file.type.startsWith('video/')) {
+            mediaType = 'VIDEO'
+            mediaUrl = await saveFile(file)
+        } else {
+            throw new Error("Tipul de fișier nu este suportat. Vă rugăm încărcați o imagine sau un video.")
+        }
+    }
+
     // Random simple public code
     const publicCode = `REQ-${Date.now().toString().slice(-6)}`
 
-    // Generate slug
+    // Generate slug (Clean URL: firstname-age-XXXX)
     const childName = (formData.get('childFirstName') as string).trim()
     const age = (formData.get('childAge') as string).trim()
     const slugBase = `${childName}-${age}-ani`.toLowerCase().replace(/[^a-z0-9]+/g, '-')
-    const slug = `${slugBase}-${Math.random().toString(36).substring(2, 6)}`
+    // Short 4-char suffix
+    const suffix = Math.random().toString(36).substring(2, 6)
+    const slug = `${slugBase}-${suffix}`
 
     const newLetter = await prisma.scrisoare.create({
         data: {
@@ -43,11 +68,13 @@ export async function createScrisoare(formData: FormData) {
             childGender: formData.get('childGender') as string,
             category: formData.get('category') as string,
             childStory: formData.get('childStory') as string,
-            originalImgUrl: "https://placehold.co/600x800", // MVP: No real upload yet
+            originalImgUrl: mediaUrl,
+            mediaType: mediaType,
             wishList: items.map((i: any) => i.name).join(", "), // Fallback
             items: itemsJson,
             targetAmount: total,
-            moderationStatus: 'DRAFT'
+            moderationStatus: status, // DRAFT or SUBMITTED
+            status: 'NOU'
         }
     })
 
