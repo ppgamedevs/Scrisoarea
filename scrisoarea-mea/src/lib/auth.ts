@@ -114,6 +114,56 @@ export async function login(email: string, password?: string, portal: 'DONOR' | 
     return user.role
 }
 
+// ... (previous imports)
+
+export async function registerUser({
+    email,
+    password,
+    firstName,
+    lastName,
+    role = 'DONOR',
+    institutionId
+}: {
+    email: string
+    password?: string
+    firstName?: string
+    lastName?: string
+    role?: 'DONOR' | 'PARTNER' | 'ADMIN'
+    institutionId?: string
+}) {
+    // 1. Check if user exists
+    const existingUser = await prisma.user.findUnique({ where: { email } })
+    if (existingUser) {
+        throw new Error("Există deja un cont cu acest email.")
+    }
+
+    // 2. Hash password
+    if (!password || password.length < 6) {
+        throw new Error("Parola trebuie să aibă cel puțin 6 caractere.")
+    }
+    const passwordHash = await bcrypt.hash(password, 10)
+
+    // 3. Create User
+    const newUser = await prisma.user.create({
+        data: {
+            email,
+            passwordHash,
+            firstName,
+            lastName,
+            role,
+            institutionId
+        }
+    })
+
+    // 4. Create Session (auto-login)
+    const session = await lucia.createSession(newUser.id, {})
+    const sessionCookie = lucia.createSessionCookie(session.id)
+    const cookieStore = await cookies()
+    cookieStore.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes)
+
+    return newUser
+}
+
 export async function logout() {
     const { session } = await validateRequest();
     if (!session) {
