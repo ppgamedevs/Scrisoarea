@@ -2,37 +2,41 @@ import prisma from "@/lib/prisma"
 
 export async function getDonorDashboardData(userId: string) {
     const user = await prisma.user.findUnique({
-        where: { id: userId },
-        include: {
-            donations: {
-                include: {
-                    scrisoare: {
-                        include: {
-                            institution: true,
-                            updates: true
-                        }
-                    }
-                },
-                orderBy: { createdAt: 'desc' }
-            }
-        }
+        where: { id: userId }
     })
 
     if (!user) return null
 
+    // Fetch donations by email since there is no direct relation in schema yet
+    const donations = await prisma.donation.findMany({
+        where: {
+            donorEmail: { equals: user.email, mode: 'insensitive' },
+            status: 'SUCCEEDED' // Only confirmed donations
+        },
+        include: {
+            scrisoare: {
+                include: {
+                    institution: true,
+                    updates: true
+                }
+            }
+        },
+        orderBy: { createdAt: 'desc' }
+    })
+
     // Calculate aggregated stats
-    const totalDonated = user.donations.reduce((acc, donation) => {
+    const totalDonated = donations.reduce((acc, donation) => {
         return acc + Number(donation.amount)
     }, 0)
 
-    const uniqueChildrenIds = new Set(user.donations.map(d => d.scrisoareId))
+    const uniqueChildrenIds = new Set(donations.map(d => d.scrisoareId))
     const uniqueChildrenSupported = uniqueChildrenIds.size
 
     // Group by child for "Impact Gallery"
     // We want to show distinct children helped, with latest updates
     const impactByChildMap = new Map()
 
-    user.donations.forEach(donation => {
+    donations.forEach(donation => {
         if (!donation.scrisoare) return
 
         const existing = impactByChildMap.get(donation.scrisoareId)
@@ -72,10 +76,10 @@ export async function getDonorDashboardData(userId: string) {
             totalDonated,
             uniqueChildrenSupported,
             badge,
-            donationCount: user.donations.length
+            donationCount: donations.length
         },
         impactGallery,
-        recentDonations: user.donations.slice(0, 10).map(d => ({
+        recentDonations: donations.slice(0, 10).map(d => ({
             id: d.id,
             amount: Number(d.amount),
             date: d.createdAt,
