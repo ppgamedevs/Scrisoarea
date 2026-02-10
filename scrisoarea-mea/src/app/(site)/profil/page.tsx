@@ -121,7 +121,7 @@ export default async function DonorProfilePage() {
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {impactGallery.map(child => (
+                            {impactGallery.map((child: { slug: string, imageUrl: string, childName: string, age: number, totalGivenToThisChild: number, status: string }) => (
                                 <Link href={`/scrisori/${child.slug}`} key={child.slug} className="group block h-full">
                                     <div className="bg-white rounded-xl overflow-hidden border border-neutral-200 shadow-sm hover:shadow-md transition-all h-full flex flex-col">
                                         <div className="aspect-video bg-neutral-100 relative overflow-hidden">
@@ -178,7 +178,7 @@ export default async function DonorProfilePage() {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-neutral-100">
-                                    {recentDonations.map(donation => (
+                                    {recentDonations.map((donation: { id: string, date: Date, childName: string, amount: number, status: string, letterSlug: string }) => (
                                         <tr key={donation.id} className="hover:bg-neutral-50/50 transition-colors">
                                             <td className="px-6 py-4 text-neutral-600 font-medium">
                                                 {new Date(donation.date).toLocaleDateString('ro-RO')}
