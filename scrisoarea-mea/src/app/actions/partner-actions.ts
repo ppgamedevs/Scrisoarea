@@ -34,6 +34,11 @@ export async function createScrisoare(formData: FormData) {
     let mediaType: 'IMAGE' | 'VIDEO' = 'IMAGE'
 
     if (file && file.size > 0) {
+        // Enforce 4.5MB limit
+        if (file.size > 4.5 * 1024 * 1024) {
+            throw new Error("Fișierul este prea mare (maxim 4.5MB). Vă rugăm încărcați un fișier mai mic.")
+        }
+
         if (file.type.startsWith('image/')) {
             mediaType = 'IMAGE'
             mediaUrl = await saveFile(file)
