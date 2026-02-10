@@ -143,7 +143,9 @@ export async function registerUser({
     }
     const passwordHash = await bcrypt.hash(password, 10)
 
-    // 3. Create User
+    // ... (previous code above)
+
+    // 3. Create User (Unverified)
     const newUser = await prisma.user.create({
         data: {
             email,
@@ -155,13 +157,63 @@ export async function registerUser({
         }
     })
 
-    // 4. Create Session (auto-login)
-    const session = await lucia.createSession(newUser.id, {})
+    // 4. Generate & Send Verification Code (No Session Created Yet)
+    const code = Math.floor(100000 + Math.random() * 900000).toString()
+    await prisma.emailVerificationCode.create({
+        data: {
+            code,
+            userId: newUser.id,
+            email,
+            expiresAt: new Date(Date.now() + 15 * 60 * 1000) // 15 mins
+        }
+    })
+
+    // Import sendEmail dynamically or ensure it is imported at top. 
+    // Assuming sendEmail is imported from @/lib/email in file. 
+    // If not, I will add import later or use a separate step.
+    // Let's assume for now I need to update imports too.
+    const { sendEmail } = await import("@/lib/email")
+    await sendEmail({
+        to: email,
+        template: 'VERIFICATION_CODE',
+        data: { code }
+    })
+
+    return newUser
+}
+
+export async function verifyEmailCode(email: string, code: string) {
+    const verification = await prisma.emailVerificationCode.findFirst({
+        where: { email, code },
+        include: { user: true }
+    })
+
+    if (!verification) {
+        throw new Error("Cod invalid.")
+    }
+
+    if (verification.expiresAt < new Date()) {
+        throw new Error("Cod expirat.")
+    }
+
+    // Activate User
+    await prisma.user.update({
+        where: { id: verification.userId },
+        data: { emailVerified: new Date() }
+    })
+
+    // Cleanup codes
+    await prisma.emailVerificationCode.deleteMany({
+        where: { userId: verification.userId }
+    })
+
+    // Create Session
+    const session = await lucia.createSession(verification.userId, {})
     const sessionCookie = lucia.createSessionCookie(session.id)
     const cookieStore = await cookies()
     cookieStore.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes)
 
-    return newUser
+    return session
 }
 
 export async function logout() {

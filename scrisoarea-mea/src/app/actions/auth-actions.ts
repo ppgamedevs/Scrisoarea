@@ -3,7 +3,7 @@
 import { login as libLogin, logout as libLogout } from "@/lib/auth"
 
 // ... (previous imports)
-import { registerUser as libRegisterUser } from "@/lib/auth"
+import { registerUser as libRegisterUser, verifyEmailCode as libVerifyEmailCode } from "@/lib/auth"
 import { redirect } from "next/navigation"
 
 export async function login(email: string, password?: string, portal: 'DONOR' | 'PARTNER' | 'ADMIN' = 'DONOR') {
@@ -36,6 +36,24 @@ export async function register(prevState: any, formData: FormData) {
         return { error: err.message || "A apărut o eroare la înregistrare." }
     }
 
+    redirect(`/verify-email?email=${encodeURIComponent(email)}`)
+}
+
+export async function verify(prevState: any, formData: FormData) {
+    const email = formData.get('email') as string
+    const code = formData.get('code') as string
+
+    if (!email || !code) {
+        return { error: "Codul și emailul sunt obligatorii." }
+    }
+
+    try {
+        await libVerifyEmailCode(email, code)
+    } catch (err: any) {
+        return { error: err.message || "Cod invalid sau expirat." }
+    }
+
+    // Success -> Login done inside verifyEmailCode
     redirect('/')
 }
 

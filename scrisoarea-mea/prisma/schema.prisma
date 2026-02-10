@@ -19,7 +19,10 @@ model User {
   institution   Institution? @relation(fields: [institutionId], references: [id])
   institutionId String?
 
+  emailVerified DateTime?
+
   sessions      Session[]
+  emailCodes    EmailVerificationCode[]
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -27,6 +30,18 @@ model User {
   lastLoginAt   DateTime?
 
   @@index([role])
+}
+
+model EmailVerificationCode {
+  id        String   @id @default(uuid())
+  code      String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  email     String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }
 
 model Session {
