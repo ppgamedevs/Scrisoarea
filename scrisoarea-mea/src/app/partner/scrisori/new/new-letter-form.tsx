@@ -23,6 +23,7 @@ export default function NewScrisoareForm({ campaigns }: { campaigns: CampaignSum
     const [campaignId, setCampaignId] = useState<string>("")
     const [previewUrl, setPreviewUrl] = useState<string | null>(null)
     const [fileType, setFileType] = useState<'image' | 'video' | null>(null)
+    const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
     const total = items.reduce((acc, i) => acc + Number(i.estimatedValue || 0), 0)
     const limit = campaignId && campaignId !== 'NONE' ? 1500 : 500
@@ -61,6 +62,7 @@ export default function NewScrisoareForm({ campaigns }: { campaigns: CampaignSum
 
         const url = URL.createObjectURL(file)
         setPreviewUrl(url)
+        setSelectedFile(file)
     }
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -80,6 +82,22 @@ export default function NewScrisoareForm({ campaigns }: { campaigns: CampaignSum
         }
 
         try {
+            // Client-side Upload
+            if (selectedFile) {
+                // Determine content type
+                const isVideo = selectedFile.type.startsWith('video/')
+                formData.set('mediaType', isVideo ? 'VIDEO' : 'IMAGE')
+
+                // Upload to Vercel Blob
+                const { upload } = await import('@vercel/blob/client');
+                const newBlob = await upload(selectedFile.name, selectedFile, {
+                    access: 'public',
+                    handleUploadUrl: '/api/upload',
+                });
+
+                formData.append('mediaUrl', newBlob.url)
+            }
+
             await createScrisoare(formData)
             // Redirect is handled by server action
         } catch (err: any) {
@@ -212,7 +230,7 @@ export default function NewScrisoareForm({ campaigns }: { campaigns: CampaignSum
                             <div className="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center hover:bg-slate-50 transition-colors cursor-pointer relative group">
                                 <input
                                     type="file"
-                                    name="file"
+                                    // Removed name="file" so it's not submitted in FormData automatically
                                     accept="image/*,video/mp4,video/quicktime"
                                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                                     onChange={handleFileChange}

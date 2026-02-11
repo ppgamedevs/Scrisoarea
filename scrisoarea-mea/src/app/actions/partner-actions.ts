@@ -29,24 +29,35 @@ export async function createScrisoare(formData: FormData) {
     if (total > limit) throw new Error(`Suma totală depășește limita de ${limit} RON pentru tipul de cerere selectat.`)
 
     // Handle File Upload
-    const file = formData.get('file') as File | null
+    // Handle File Upload (Client-side URL or Server-side File)
+    const mediaUrlParam = formData.get('mediaUrl') as string | null
+    const mediaTypeParam = formData.get('mediaType') as 'IMAGE' | 'VIDEO' | null
+
     let mediaUrl = "https://placehold.co/600x800" // Default fallback
     let mediaType: 'IMAGE' | 'VIDEO' = 'IMAGE'
 
-    if (file && file.size > 0) {
-        // Enforce 4.5MB limit
-        if (file.size > 4.5 * 1024 * 1024) {
-            throw new Error("Fișierul este prea mare (maxim 4.5MB). Vă rugăm încărcați un fișier mai mic.")
-        }
+    if (mediaUrlParam) {
+        // Client-side uploaded file
+        mediaUrl = mediaUrlParam
+        if (mediaTypeParam) mediaType = mediaTypeParam
+    } else {
+        // Fallback: Server-side file upload (Subject to 4.5MB limit likely)
+        const file = formData.get('file') as File | null
+        if (file && file.size > 0) {
+            // Enforce 4.5MB limit
+            if (file.size > 4.5 * 1024 * 1024) {
+                throw new Error("Fișierul este prea mare (maxim 4.5MB).")
+            }
 
-        if (file.type.startsWith('image/')) {
-            mediaType = 'IMAGE'
-            mediaUrl = await saveFile(file)
-        } else if (file.type.startsWith('video/')) {
-            mediaType = 'VIDEO'
-            mediaUrl = await saveFile(file)
-        } else {
-            throw new Error("Tipul de fișier nu este suportat. Vă rugăm încărcați o imagine sau un video.")
+            if (file.type.startsWith('image/')) {
+                mediaType = 'IMAGE'
+                mediaUrl = await saveFile(file)
+            } else if (file.type.startsWith('video/')) {
+                mediaType = 'VIDEO'
+                mediaUrl = await saveFile(file)
+            } else {
+                throw new Error("Tipul de fișier nu este suportat.")
+            }
         }
     }
 
