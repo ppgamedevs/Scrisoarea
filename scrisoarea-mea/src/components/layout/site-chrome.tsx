@@ -18,7 +18,7 @@ export async function SiteHeader() {
                 </Link>
 
                 <div className="flex items-center gap-1 sm:gap-2 md:gap-6 flex-1 justify-end min-w-0">
-                    <HeaderNavClient session={session ? { email: session.email } : null} />
+                    <HeaderNavClient session={session ? { email: session.email, role: session.role } : null} />
                 </div>
             </div>
         </header>

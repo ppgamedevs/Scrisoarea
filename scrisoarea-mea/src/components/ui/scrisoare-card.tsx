@@ -21,10 +21,27 @@ export function ScrisoareCard({ letter }: ScrisoareCardProps) {
             </Link>
 
             <div className="aspect-[16/10] bg-neutral-100 relative overflow-hidden">
-                <img src={letter.originalImgUrl} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={`Dorința lui ${letter.childFirstName}`} />
+                {isVideo ? (
+                    <video
+                        src={letter.originalImgUrl}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        muted
+                        loop
+                        playsInline
+                        poster={letter.originalImgUrl.replace('.mp4', '_thumb.jpg')} // Optimistic attempt, fallback to first frame
+                        onMouseEnter={(e) => (e.target as HTMLVideoElement).play()}
+                        onMouseLeave={(e) => {
+                            const v = e.target as HTMLVideoElement;
+                            v.pause();
+                            v.currentTime = 0;
+                        }}
+                    />
+                ) : (
+                    <img src={letter.originalImgUrl} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={`Dorința lui ${letter.childFirstName}`} />
+                )}
 
                 {isVideo && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/20 transition-colors">
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/10 pointer-events-none group-hover:opacity-0 transition-opacity duration-300">
                         <PlayCircle className="w-12 h-12 text-white/90 drop-shadow-md" />
                     </div>
                 )}

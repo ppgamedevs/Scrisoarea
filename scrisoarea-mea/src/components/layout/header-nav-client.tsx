@@ -4,7 +4,16 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { User, Menu, X } from "lucide-react"
+import { User, Menu, X, LogOut, LayoutDashboard } from "lucide-react"
+import { logout } from "@/app/actions/auth-actions"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 const NAV_LINKS = [
   { href: "/scrisori", label: "Scrisori" },
@@ -14,7 +23,10 @@ const NAV_LINKS = [
   { href: "/despre", label: "Despre" },
 ]
 
-type Session = { email: string } | null
+type Session = {
+  email: string
+  role: 'ADMIN' | 'PARTNER' | 'DONOR'
+} | null
 
 export function HeaderNavClient({ session }: { session: Session }) {
   const pathname = usePathname()
@@ -79,15 +91,59 @@ export function HeaderNavClient({ session }: { session: Session }) {
 
       <div className="flex items-center gap-2 sm:gap-3">
         {session ? (
-          <Link
-            href="/profil"
-            className="hidden md:inline-flex text-sm font-semibold items-center gap-2 text-slate-700 hover:text-teal-600 bg-slate-100/80 hover:bg-teal-50 px-4 py-2.5 rounded-full border border-slate-200/80 min-h-[44px] transition-colors"
-          >
-            <User className="w-4 h-4 shrink-0" />
-            <span className="max-w-[120px] truncate">
-              {session.email.split("@")[0]}
-            </span>
-          </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="hidden md:inline-flex items-center gap-2 text-slate-700 hover:text-teal-600 bg-slate-100/80 hover:bg-teal-50 px-4 py-2 rounded-full border border-slate-200/80 min-h-[44px] transition-colors"
+              >
+                <User className="w-4 h-4 shrink-0" />
+                <span className="max-w-[120px] truncate">
+                  {session.email.split("@")[0]}
+                </span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>Contul meu ({session.role})</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+
+              {session.role === 'ADMIN' && (
+                <DropdownMenuItem asChild>
+                  <Link href="/admin" className="cursor-pointer">
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    <span>Admin Panel</span>
+                  </Link>
+                </DropdownMenuItem>
+              )}
+
+              {session.role === 'PARTNER' && (
+                <DropdownMenuItem asChild>
+                  <Link href="/partner" className="cursor-pointer">
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    <span>Panou Partener</span>
+                  </Link>
+                </DropdownMenuItem>
+              )}
+
+              {session.role === 'DONOR' && (
+                <DropdownMenuItem asChild>
+                  <Link href="/profil" className="cursor-pointer">
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profil Donator</span>
+                  </Link>
+                </DropdownMenuItem>
+              )}
+
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                className="text-red-600 focus:text-red-600 cursor-pointer"
+                onClick={async () => await logout()}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Ieșire din cont</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         ) : (
           <Button
             asChild
@@ -152,14 +208,52 @@ export function HeaderNavClient({ session }: { session: Session }) {
             </nav>
             <div className="mt-6 pt-6 border-t border-slate-200 flex flex-col gap-2">
               {session ? (
-                <Link
-                  href="/profil"
-                  className="md:hidden flex items-center gap-2 text-sm font-medium text-slate-700 hover:bg-slate-100 py-3 px-3 rounded-lg min-h-[44px]"
-                  onClick={() => setOpen(false)}
-                >
-                  <User className="w-4 h-4" />
-                  <span className="truncate">{session.email.split("@")[0]}</span>
-                </Link>
+                <div className="md:hidden flex flex-col gap-2">
+                  <div className="flex items-center gap-2 text-sm font-semibold text-slate-900 px-3 py-2">
+                    <User className="w-4 h-4" />
+                    <span>{session.email} ({session.role})</span>
+                  </div>
+
+                  {session.role === 'ADMIN' && (
+                    <Link
+                      href="/admin"
+                      className="flex items-center gap-2 py-3 px-3 rounded-lg text-slate-700 hover:bg-slate-100"
+                      onClick={() => setOpen(false)}
+                    >
+                      <LayoutDashboard className="w-4 h-4" /> Admin Panel
+                    </Link>
+                  )}
+
+                  {session.role === 'PARTNER' && (
+                    <Link
+                      href="/partner"
+                      className="flex items-center gap-2 py-3 px-3 rounded-lg text-slate-700 hover:bg-slate-100"
+                      onClick={() => setOpen(false)}
+                    >
+                      <LayoutDashboard className="w-4 h-4" /> Panou Partener
+                    </Link>
+                  )}
+
+                  {session.role === 'DONOR' && (
+                    <Link
+                      href="/profil"
+                      className="flex items-center gap-2 py-3 px-3 rounded-lg text-slate-700 hover:bg-slate-100"
+                      onClick={() => setOpen(false)}
+                    >
+                      <User className="w-4 h-4" /> Profil Donator
+                    </Link>
+                  )}
+
+                  <button
+                    className="flex items-center gap-2 py-3 px-3 rounded-lg text-red-600 hover:bg-red-50 text-sm font-medium w-full text-left"
+                    onClick={async () => {
+                      await logout()
+                      setOpen(false)
+                    }}
+                  >
+                    <LogOut className="w-4 h-4" /> Ieșire din cont
+                  </button>
+                </div>
               ) : (
                 <Button
                   asChild
