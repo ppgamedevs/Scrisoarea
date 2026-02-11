@@ -9,11 +9,20 @@ import { put } from "@vercel/blob"
  * @returns The public URL path to the file
  */
 export async function saveFile(file: File): Promise<string> {
-    if (process.env.BLOB_READ_WRITE_TOKEN) {
-        const blob = await put(file.name, file, { access: 'public' })
-        return blob.url
-    } else {
-        return saveFileLocal(file)
+    try {
+        if (process.env.BLOB_READ_WRITE_TOKEN) {
+            const blob = await put(file.name, file, { access: 'public' })
+            return blob.url
+        } else if (process.env.VERCEL) {
+            // On Vercel but no Blob token => fallback to placeholder
+            console.warn("Vercel Blob not configured. Returning placeholder.")
+            return "https://placehold.co/600x800?text=No+Storage+Configured"
+        } else {
+            return await saveFileLocal(file)
+        }
+    } catch (error) {
+        console.error("Error saving file:", error)
+        return "https://placehold.co/600x800?text=Error+Saving+File"
     }
 }
 
