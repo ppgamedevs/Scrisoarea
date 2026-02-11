@@ -210,11 +210,11 @@ export default function NewScrisoareForm({ campaigns }: { campaigns: CampaignSum
                             <h3 className="font-semibold text-sm uppercase tracking-wide text-slate-500">Media</h3>
 
                             <div className="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center hover:bg-slate-50 transition-colors cursor-pointer relative group">
-                                <Input
+                                <input
                                     type="file"
                                     name="file"
                                     accept="image/*,video/mp4,video/quicktime"
-                                    className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                                     onChange={handleFileChange}
                                 />
                                 {previewUrl ? (

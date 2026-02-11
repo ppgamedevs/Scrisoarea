@@ -108,9 +108,9 @@ export default function DonationModule({
                         onChange={handleInputChange}
                         min={5}
                         max={remainingAmount}
-                        className="pl-8 text-lg"
+                        className="pr-12 text-lg"
                     />
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">RON</span>
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">RON</span>
                 </div>
             </div>
 
