@@ -138,19 +138,29 @@ export default async function ScrisoarePage({ params }: { params: Promise<{ id: 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                     {/* Left Column (Media & Story) */}
                     <div className="lg:col-span-7 space-y-10">
-                        <section className="bg-white p-2 rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                        <section className="bg-slate-900 rounded-2xl shadow-xl overflow-hidden relative group border border-slate-800">
                             {isVideo ? (
-                                <div className="aspect-[16/9] relative w-full bg-black rounded-xl overflow-hidden group">
+                                <div className="aspect-video relative w-full bg-black">
                                     <video
                                         src={letter.originalImgUrl}
-                                        className="w-full h-full object-cover"
+                                        className="w-full h-full object-contain"
                                         controls
-                                        poster={letter.originalImgUrl.replace('.mp4', '_thumb.jpg')} // basic fallback Assumption
+                                        poster={letter.originalImgUrl.replace('.mp4', '_thumb.jpg')}
                                     />
                                 </div>
                             ) : (
-                                <div className="aspect-[4/3] relative w-full flex items-center justify-center bg-slate-50 rounded-xl overflow-hidden">
-                                    <img src={letter.originalImgUrl} alt={`Scrisorica lui ${letter.childFirstName}`} className="w-full h-full object-contain" />
+                                <div className="aspect-[4/3] relative w-full bg-slate-100 overflow-hidden flex items-center justify-center">
+                                    {/* Blurred Background for professional fill */}
+                                    <div
+                                        className="absolute inset-0 bg-cover bg-center blur-2xl opacity-60 scale-110"
+                                        style={{ backgroundImage: `url(${letter.originalImgUrl})` }}
+                                    ></div>
+                                    {/* Main Image */}
+                                    <img
+                                        src={letter.originalImgUrl}
+                                        alt={`Scrisorica lui ${letter.childFirstName}`}
+                                        className="relative w-full h-full object-contain z-10 drop-shadow-xl"
+                                    />
                                 </div>
                             )}
                         </section>

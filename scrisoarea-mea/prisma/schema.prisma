@@ -181,22 +181,39 @@ model Donation {
   id                   String         @id @default(uuid())
   stripePaymentIntentId String?       @unique
   stripeSessionId      String?        @unique
+  
+  // Netopia Fields
+  netopiaTransactionId String?        @unique
+  netopiaStatus        String?        // e.g. NEW, PENDING, CONFIRMED
+  
   amount               Decimal 
+  currency             String         @default("RON")
+  
   donorEmail           String
   donorName            String?
+  donorPhone           String?       // Often required by payment processors
+  
   isAnonymous          Boolean        @default(false)
-  status               String         @default("SUCCEEDED")
+  status               String         @default("PENDING") // Changed default to PENDING for flow accuracy
+  
   matchedAmount        Decimal        @default(0)
   totalCreditedAmount  Decimal        @default(0) 
+  
   sponsor              Sponsor?       @relation(fields: [sponsorId], references: [id])
   sponsorId            String?
+  
   matchingRule         MatchingRule?  @relation(fields: [matchingRuleId], references: [id])
   matchingRuleId       String?
-  scrisoare            Scrisoare      @relation(fields: [scrisoareId], references: [id])
-  scrisoareId          String
+  
+  scrisoare            Scrisoare?      @relation(fields: [scrisoareId], references: [id])
+  scrisoareId          String?         // Made optional to allow general donations if needed later
+  
   createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+
   @@index([scrisoareId])
   @@index([sponsorId])
+  @@index([status])
 }
 
 model Reservation {

@@ -41,20 +41,50 @@ export async function createScrisoare(formData: FormData) {
         mediaUrl = mediaUrlParam
         if (mediaTypeParam) mediaType = mediaTypeParam
     } else {
-        // Fallback: Server-side file upload (Subject to 4.5MB limit likely)
+        // Fallback: Server-side file upload
         const file = formData.get('file') as File | null
         if (file && file.size > 0) {
-            // Enforce 4.5MB limit
-            if (file.size > 4.5 * 1024 * 1024) {
-                throw new Error("Fișierul este prea mare (maxim 4.5MB).")
+            // New limit: 100MB before compression
+            if (file.size > 100 * 1024 * 1024) {
+                throw new Error("Fișierul este prea mare (maxim 100MB pentru upload, va fi comprimat).")
             }
 
             if (file.type.startsWith('image/')) {
+                if (file.size > 4.5 * 1024 * 1024) throw new Error("Imaginea este prea mare (maxim 4.5MB).")
                 mediaType = 'IMAGE'
                 mediaUrl = await saveFile(file)
             } else if (file.type.startsWith('video/')) {
                 mediaType = 'VIDEO'
-                mediaUrl = await saveFile(file)
+
+                let fileToUpload = file
+                // If video > 4.5MB, compress it
+                if (file.size > 4.5 * 1024 * 1024) {
+                    try {
+                        const { compressVideo } = await import('@/lib/video') // Dynamic import to avoid load issues if ffmpeg missing
+                        const compressedBuffer = await compressVideo(file)
+
+                        // Check compressed size
+                        if (compressedBuffer.byteLength > 4.5 * 1024 * 1024) {
+                            throw new Error("Video-ul este prea mare chiar și după compresie. Te rugăm să încarci un video mai scurt.")
+                        }
+
+                        // Create a new file-like object or pass buffer to saveFile (need to check saveFile signature)
+                        // saveFile likely takes File or Blob. We might need to adjust saveFile or create a File object.
+                        // Node.js File object is tricky. let's see saveFile.
+                        // For now assume saveFile can take a buffer or we convert.
+                        // Actually saveFile in next.js server actions usually expects File. 
+                        // We can create a new File from buffer if Node version supports it, or modify saveFile.
+
+                        // Let's modify logic to pass buffer if needed, OR construct a File.
+                        fileToUpload = new File([new Uint8Array(compressedBuffer)], file.name, { type: 'video/mp4' })
+
+                    } catch (e: any) {
+                        console.error("Compression failed:", e)
+                        throw new Error(`Compresia video a eșuat: ${e.message}`)
+                    }
+                }
+
+                mediaUrl = await saveFile(fileToUpload)
             } else {
                 throw new Error("Tipul de fișier nu este suportat.")
             }

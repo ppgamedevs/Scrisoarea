@@ -4,16 +4,22 @@ import { Heart } from "lucide-react"
 import prisma from "@/lib/prisma"
 import { formatCurrency } from "@/lib/utils"
 
-export default async function DonatieConfirmarePage({ searchParams }: { searchParams: Promise<{ session_id?: string }> }) {
-    const { session_id } = await searchParams
+export default async function DonatieConfirmarePage({ searchParams }: { searchParams: Promise<{ session_id?: string, donationId?: string }> }) {
 
     // In real app, verify session with Stripe via API or DB webhook result.
     // For MVP, if we tracked via DB using session_id in Donation model.
 
     let donation = null
+    const { session_id, donationId } = await searchParams
+
     if (session_id) {
         donation = await prisma.donation.findUnique({
             where: { stripeSessionId: session_id },
+            include: { scrisoare: true }
+        })
+    } else if (donationId) {
+        donation = await prisma.donation.findUnique({
+            where: { id: donationId },
             include: { scrisoare: true }
         })
     }

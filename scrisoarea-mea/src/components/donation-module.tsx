@@ -5,7 +5,12 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { formatCurrency } from "@/lib/utils"
+
 import { createReservationAndCheckout } from "@/app/actions/donate"
+import { initiateNetopiaPayment } from "@/app/actions/netopia"
+import { useEffect, useRef } from "react"
+import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 
 export default function DonationModule({
     scrisoareId,
@@ -22,6 +27,25 @@ export default function DonationModule({
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
 
+    // Payment Method State
+    const [paymentMethod, setPaymentMethod] = useState<'stripe' | 'netopia'>('netopia') // Default to Netopia
+
+    // Donor Details for Netopia
+    const [firstName, setFirstName] = useState('')
+    const [lastName, setLastName] = useState('')
+    const [email, setEmail] = useState(userEmail || '')
+
+    // Netopia Form Data
+    const [netopiaForm, setNetopiaForm] = useState<{ url: string, env_key: string, data: string } | null>(null)
+    const netopiaFormRef = useRef<HTMLFormElement>(null)
+
+    // Auto-submit Netopia form
+    useEffect(() => {
+        if (netopiaForm && netopiaFormRef.current) {
+            netopiaFormRef.current.submit()
+        }
+    }, [netopiaForm])
+
     // Presets: 50, 100, 200, but filter out if > remaining
     const presets = [50, 100, 200].filter(p => p <= remainingAmount)
 
@@ -33,7 +57,31 @@ export default function DonationModule({
             if (!amount || amount < 5) throw new Error("Minim 5 RON")
             if (amount > remainingAmount) throw new Error("Suma depășește necesarul.")
 
-            await createReservationAndCheckout(scrisoareId, amount)
+            if (paymentMethod === 'stripe') {
+                await createReservationAndCheckout(scrisoareId, amount)
+            } else {
+                // Netopia Flow
+                if (!firstName || !lastName || !email) throw new Error("Te rugăm să completezi datele de contact pentru facturare.")
+
+                const formData = new FormData()
+                formData.append('amount', amount.toString())
+                formData.append('firstName', firstName)
+                formData.append('lastName', lastName)
+                formData.append('email', email)
+                formData.append('scrisoareId', scrisoareId)
+                // Assuming implicit anonymous check or add checkbox later if needed
+
+                const result = await initiateNetopiaPayment(formData)
+                if (result.success && result.url && result.env_key && result.data) {
+                    setNetopiaForm({
+                        url: result.url,
+                        env_key: result.env_key,
+                        data: result.data
+                    })
+                } else {
+                    throw new Error(result.error || "Eroare la inițierea plății Netopia.")
+                }
+            }
         } catch (e: any) {
             setError(e.message)
             setLoading(false)
@@ -46,8 +94,6 @@ export default function DonationModule({
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let val = Number(e.target.value)
-        // Auto-cap visual logic? Or just validate on submit? 
-        // User asked for "input input with auto-cap"
         if (val > remainingAmount) val = remainingAmount
         setCustomAmount(val.toString())
     }
@@ -85,7 +131,6 @@ export default function DonationModule({
                         {p} LEI
                     </Button>
                 ))}
-                {/* "Full Amount" button if not in presets */}
                 {remainingAmount > 0 && !presets.includes(remainingAmount) && (
                     <Button
                         variant={Number(customAmount) === remainingAmount ? "default" : "outline"}
@@ -114,13 +159,70 @@ export default function DonationModule({
                 </div>
             </div>
 
+            {/* Payment Method Selector */}
+            <div className="space-y-3 pt-2">
+                <Label className="text-sm font-semibold text-slate-700">Metoda de plată</Label>
+                <RadioGroup
+                    defaultValue="netopia"
+                    value={paymentMethod}
+                    onValueChange={(v: string) => setPaymentMethod(v as 'stripe' | 'netopia')}
+                    className="grid grid-cols-2 gap-4"
+                >
+                    <div>
+                        <RadioGroupItem value="netopia" id="pm-netopia" className="peer sr-only" />
+                        <Label
+                            htmlFor="pm-netopia"
+                            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-blue-600 peer-data-[state=checked]:text-blue-600 cursor-pointer"
+                        >
+                            <span className="mb-1 text-lg">💳</span>
+                            Card (Netopia)
+                        </Label>
+                    </div>
+                    <div>
+                        <RadioGroupItem value="stripe" id="pm-stripe" className="peer sr-only" />
+                        <Label
+                            htmlFor="pm-stripe"
+                            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-blue-600 peer-data-[state=checked]:text-blue-600 cursor-pointer"
+                        >
+                            <span className="mb-1 text-lg">🔒</span>
+                            Stripe
+                        </Label>
+                    </div>
+                </RadioGroup>
+            </div>
+
+            {/* Netopia Extra Fields */}
+            {paymentMethod === 'netopia' && (
+                <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-100 animate-in fade-in slide-in-from-top-2">
+                    <p className="text-sm font-medium text-slate-700 mb-2">Detalii donator (necesare pentru facturare):</p>
+                    <div className="grid grid-cols-2 gap-3">
+                        <Input
+                            placeholder="Prenume"
+                            value={firstName}
+                            onChange={e => setFirstName(e.target.value)}
+                        />
+                        <Input
+                            placeholder="Nume"
+                            value={lastName}
+                            onChange={e => setLastName(e.target.value)}
+                        />
+                    </div>
+                    <Input
+                        placeholder="Email"
+                        type="email"
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                    />
+                </div>
+            )}
+
             {error && (
                 <div className="text-red-600 text-sm bg-red-50 p-3 rounded-lg border border-red-100 flex gap-2 items-center">
                     <span>⚠</span> {error}
                 </div>
             )}
 
-            {!userEmail && (
+            {!userEmail && paymentMethod === 'stripe' && (
                 <div className="bg-blue-50/50 text-blue-800 text-xs p-3 rounded-xl border border-blue-100 flex gap-2 items-start">
                     <span className="mt-0.5">💡</span>
                     <p>
@@ -138,8 +240,16 @@ export default function DonationModule({
             </Button>
 
             <p className="text-xs text-slate-400 text-center flex items-center justify-center gap-1">
-                <span className="text-green-500">🔒</span> Plată 100% securizată prin Stripe.
+                <span className="text-green-500">🔒</span> Plată securizată.
             </p>
+
+            {/* Hidden Form for Netopia Auto-Submit */}
+            {netopiaForm && (
+                <form ref={netopiaFormRef} action={netopiaForm.url} method="POST">
+                    <input type="hidden" name="env_key" value={netopiaForm.env_key} />
+                    <input type="hidden" name="data" value={netopiaForm.data} />
+                </form>
+            )}
         </div>
     )
 }

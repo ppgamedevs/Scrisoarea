@@ -13,6 +13,7 @@ export type EmailTemplate =
     | 'ADMIN_NEW_SCRISOARE'
     | 'CONTACT_FORM'
     | 'VERIFICATION_CODE'
+    | 'DONATION_CONFIRMATION'
 
 interface EmailData {
     to: string
@@ -25,6 +26,21 @@ export async function sendEmail({ to, template, data }: EmailData) {
     let html = ""
 
     switch (template) {
+        case 'DONATION_CONFIRMATION':
+            subject = "Confirmare donație - Vise pe hârtie"
+            html = `
+                <div style="font-family: sans-serif;">
+                    <h2>Mulțumim pentru donație!</h2>
+                    <p>Detaliile tranzacției tale:</p>
+                    <ul>
+                        <li><strong>Sumă:</strong> ${data.amount} RON</li>
+                        <li><strong>Data:</strong> ${data.date}</li>
+                        <li><strong>Număr tranzacție:</strong> ${data.transactionId}</li>
+                    </ul>
+                    <p>Îți mulțumim că ești alături de noi!</p>
+                </div>
+            `
+            break
         case 'DONATION_SUCCESS':
             subject = "Mulțumim pentru donație - Vise pe hârtie"
             html = `<p>Salut,</p><p>Îți mulțumim pentru donația de ${data.amount} RON pentru ${data.childName}.</p>`
