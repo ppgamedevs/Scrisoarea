@@ -1,11 +1,10 @@
-import { Lucia } from "lucia";
-import { PrismaAdapter } from "@lucia-auth/adapter-prisma";
-import { cookies } from "next/headers";
-import { prisma } from "@/lib/prisma";
-import bcrypt from "bcrypt";
-import { UserRole } from "@prisma/client";
+import { Lucia } from "lucia"
+import { PrismaAdapter } from "@lucia-auth/adapter-prisma"
+import { prisma } from "./prisma"
+import { cookies } from "next/headers"
+import bcrypt from "bcrypt"
 
-const adapter = new PrismaAdapter(prisma.session, prisma.user);
+const adapter = new PrismaAdapter(prisma.session, prisma.user)
 
 export const lucia = new Lucia(adapter, {
     sessionCookie: {
@@ -17,70 +16,64 @@ export const lucia = new Lucia(adapter, {
     getUserAttributes: (attributes) => {
         return {
             email: attributes.email,
-            role: attributes.role,
+            role: attributes.role as 'ADMIN' | 'PARTNER' | 'DONOR' | 'SPONSOR',
             institutionId: attributes.institutionId
-        };
+        }
     }
-});
+})
 
 declare module "lucia" {
     interface Register {
-        Lucia: typeof lucia;
-        DatabaseUserAttributes: DatabaseUserAttributes;
+        Lucia: typeof lucia
+        DatabaseUserAttributes: DatabaseUserAttributes
     }
 }
 
 interface DatabaseUserAttributes {
-    email: string;
-    role: UserRole;
-    institutionId?: string;
+    email: string
+    role: string // Should be enum in DB but string in runtime if we cast
+    institutionId?: string
 }
 
 export type UserSession = {
     id: string
     email: string
-    role: UserRole
+    role: 'ADMIN' | 'PARTNER' | 'DONOR' | 'SPONSOR'
     institutionId?: string
 }
 
-export async function validateRequest() {
-    const cookieStore = await cookies();
-    const sessionId = cookieStore.get(lucia.sessionCookieName)?.value ?? null;
+export const validateRequest = async (): Promise<{ user: UserSession; session: import("lucia").Session } | { user: null; session: null }> => {
+    const sessionId = (await cookies()).get(lucia.sessionCookieName)?.value ?? null
     if (!sessionId) {
         return {
             user: null,
             session: null
-        };
+        }
     }
 
-    const result = await lucia.validateSession(sessionId);
+    const result = await lucia.validateSession(sessionId)
     // next.js throws when you attempt to set cookie when rendering page
     try {
         if (result.session && result.session.fresh) {
-            const sessionCookie = lucia.createSessionCookie(result.session.id);
-            cookieStore.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+            const sessionCookie = lucia.createSessionCookie(result.session.id)
+            const cookieStore = await cookies()
+            cookieStore.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes)
         }
         if (!result.session) {
-            const sessionCookie = lucia.createBlankSessionCookie();
-            cookieStore.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+            const sessionCookie = lucia.createBlankSessionCookie()
+            const cookieStore = await cookies()
+            cookieStore.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes)
         }
     } catch { }
-    return result;
+    return result as any
 }
 
-// Backward compatibility or easier usage
-export async function getSession(): Promise<UserSession | null> {
+export const getSession = async (): Promise<UserSession | null> => {
     const { user } = await validateRequest()
-    if (!user) return null
-    return {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-        institutionId: user.institutionId
-    }
+    return user
 }
 
-export async function login(email: string, password?: string, portal: UserRole = UserRole.DONOR) {
+export async function login(email: string, password?: string, portal: 'ADMIN' | 'PARTNER' | 'DONOR' | 'SPONSOR' = 'DONOR') {
     const user = await prisma.user.findUnique({ where: { email } })
     if (!user) throw new Error("Email sau parola incorecta.")
 
@@ -92,19 +85,10 @@ export async function login(email: string, password?: string, portal: UserRole =
     if (!validPassword) throw new Error("Email sau parola incorecta.")
 
     // Check Portal Access
-    if (portal === UserRole.ADMIN && user.role !== UserRole.ADMIN) {
-        throw new Error("Nu aveti acces la panoul de administrare.")
-    }
-    if (portal === UserRole.PARTNER && user.role !== UserRole.PARTNER) {
-        throw new Error("Nu aveti acces la panoul de partener.")
-    }
-    if (portal === UserRole.DONOR) {
-        // Allow Admins to act as Donors ? Maybe not for login, they should use admin portal.
-        // Assume Donor portal only for Donors and Sponsors (Sponsors are upgraded Donors)
-        // If SPONSOR tries to login at donor portal (main site), allow it? Yes.
-        // Currently main site is for everyone.
-        // But if strict role check:
-        const allowed = user.role === UserRole.DONOR || user.role === UserRole.SPONSOR || user.role === UserRole.ADMIN
+    if (portal === 'ADMIN' && user.role !== 'ADMIN') throw new Error("Nu aveti acces la panoul de administrare.")
+    if (portal === 'PARTNER' && user.role !== 'PARTNER') throw new Error("Nu aveti acces la panoul de partener.")
+    if (portal === 'DONOR') {
+        const allowed = user.role === 'DONOR' || user.role === 'SPONSOR' || user.role === 'ADMIN'
         if (!allowed) throw new Error("Contul nu are acces de donator.")
     }
 
@@ -113,24 +97,23 @@ export async function login(email: string, password?: string, portal: UserRole =
     const cookieStore = await cookies()
     cookieStore.set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes)
 
-    return user.role
+    return user.role as 'ADMIN' | 'PARTNER' | 'DONOR' | 'SPONSOR'
 }
 
-// ... (previous imports)
 
 export async function registerUser({
     email,
     password,
     firstName,
     lastName,
-    role = UserRole.DONOR,
+    role = 'DONOR',
     institutionId
 }: {
     email: string
     password?: string
     firstName?: string
     lastName?: string
-    role?: UserRole
+    role?: 'ADMIN' | 'PARTNER' | 'DONOR' | 'SPONSOR'
     institutionId?: string
 }) {
     // 1. Check if user exists
@@ -145,8 +128,6 @@ export async function registerUser({
     }
     const passwordHash = await bcrypt.hash(password, 10)
 
-    // ... (previous code above)
-
     // 3. Create User (Unverified)
     const newUser = await prisma.user.create({
         data: {
@@ -154,7 +135,7 @@ export async function registerUser({
             passwordHash,
             firstName,
             lastName,
-            role,
+            role: role, // Prisma expects string-able enum, string works if it matches
             institutionId
         }
     })
@@ -170,10 +151,6 @@ export async function registerUser({
         }
     })
 
-    // Import sendEmail dynamically or ensure it is imported at top. 
-    // Assuming sendEmail is imported from @/lib/email in file. 
-    // If not, I will add import later or use a separate step.
-    // Let's assume for now I need to update imports too.
     const { sendEmail } = await import("@/lib/email")
     await sendEmail({
         to: email,

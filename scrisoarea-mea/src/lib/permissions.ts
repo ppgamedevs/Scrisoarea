@@ -1,5 +1,4 @@
 
-import { UserRole } from "@prisma/client";
 import { UserSession } from "@/lib/auth";
 
 type LetterMinimal = {
@@ -18,21 +17,17 @@ type LetterMinimal = {
 export function canDonate(user: UserSession | null, letter: LetterMinimal): boolean {
     if (!user) return true; // Anonymous
 
-    if (user.role === UserRole.ADMIN) return true; // Admins can test donation flow
+    if (user.role === 'ADMIN') return true; // Admins can test donation flow
 
-    if (user.role === UserRole.DONOR || user.role === UserRole.SPONSOR) return true;
+    if (user.role === 'DONOR' || user.role === 'SPONSOR') return true;
 
-    if (user.role === UserRole.PARTNER) {
+    if (user.role === 'PARTNER') {
         // Prevent donating to own letters
         if (user.institutionId && user.institutionId === letter.institutionId) {
             return false;
         }
-        // Allow donating to others? Requirement says: "You are logged in as partner; switch to donor/sponsor to donate."
-        // User asked to choose safer option. I will allow it but UI might show warning, OR disable it completely.
-        // Requirement 3: "If viewer is PARTNER but the letter belongs to another org: Treat like DONOR view (optional) OR show a message... choose the safer option"
-        // Safest is to Disable Donation for Partners entirely to force them to switch accounts, avoiding role confusion.
-        // However, technically they might want to support a friend.
-        // Let's return FALSE for now to be strict as requested "remove role confusion".
+        // Requirement: Partner logged in -> treated as "Partner detected" warning in UI.
+        // So we return false here so likely UI shows warning or hides donation module.
         return false;
     }
 
@@ -45,9 +40,9 @@ export function canDonate(user: UserSession | null, letter: LetterMinimal): bool
 export function canManageLetter(user: UserSession | null, letter: LetterMinimal): boolean {
     if (!user) return false;
 
-    if (user.role === UserRole.ADMIN) return true;
+    if (user.role === 'ADMIN') return true;
 
-    if (user.role === UserRole.PARTNER) {
+    if (user.role === 'PARTNER') {
         return user.institutionId === letter.institutionId;
     }
 
@@ -56,5 +51,5 @@ export function canManageLetter(user: UserSession | null, letter: LetterMinimal)
 
 export function isPartnerForLetter(user: UserSession | null, letter: LetterMinimal): boolean {
     if (!user) return false;
-    return user.role === UserRole.PARTNER && user.institutionId === letter.institutionId;
+    return user.role === 'PARTNER' && user.institutionId === letter.institutionId;
 }

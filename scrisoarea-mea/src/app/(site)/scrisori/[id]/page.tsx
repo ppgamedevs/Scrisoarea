@@ -11,7 +11,7 @@ import { Metadata } from 'next'
 import { generateLetterSchema, BASE_URL } from "@/lib/seo/jsonld"
 import { Sparkles, PlayCircle, Heart, ArrowLeft } from "lucide-react"
 import { canManageLetter, canDonate } from "@/lib/permissions"
-import { UserRole } from "@prisma/client"
+
 import PartnerActionsPanel from "@/components/partner-actions-panel"
 import { Button } from "@/components/ui/button"
 
@@ -100,7 +100,7 @@ export default async function ScrisoarePage({ params }: { params: Promise<{ id: 
     const isVideo = letter.mediaType === 'VIDEO' // Assuming schema update propagated
 
     const isManaging = canManageLetter(session, letter)
-    const isPartnerLoggedIn = session?.role === UserRole.PARTNER // or 'PARTNER' string if enum import fails
+    const isPartnerLoggedIn = session?.role === 'PARTNER'
 
     return (
         <main className="min-h-screen bg-[var(--pastel-sage)]/30 pb-20 font-sans">
@@ -296,6 +296,7 @@ export default async function ScrisoarePage({ params }: { params: Promise<{ id: 
                                                         remainingAmount={remaining}
                                                         isFullyFunded={isFullyFunded}
                                                         userEmail={session?.email}
+                                                        userRole={session?.role}
                                                     />
                                                 )}
                                             </>

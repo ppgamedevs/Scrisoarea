@@ -2,7 +2,6 @@
 
 import { getSession } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import { UserRole } from "@prisma/client"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 
@@ -29,7 +28,7 @@ export async function registerSponsor(formData: FormData) {
             // 1. Update User Role
             await tx.user.update({
                 where: { id: session.id },
-                data: { role: UserRole.SPONSOR }
+                data: { role: 'SPONSOR' }
             })
 
             // 2. Create Sponsor Profile
