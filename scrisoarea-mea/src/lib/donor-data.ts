@@ -83,9 +83,9 @@ export async function getDonorDashboardData(userId: string) {
             id: d.id,
             amount: Number(d.amount),
             date: d.createdAt,
-            childName: d.scrisoare.childFirstName,
+            childName: d.scrisoare?.childFirstName || "Donație Generală",
             status: d.status,
-            letterSlug: d.scrisoare.slug
+            letterSlug: d.scrisoare?.slug || ""
         }))
     }
 }
