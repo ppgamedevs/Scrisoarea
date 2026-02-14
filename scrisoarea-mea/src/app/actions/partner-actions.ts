@@ -169,7 +169,14 @@ export async function createScrisoare(formData: FormData) {
 export async function submitScrisoare(id: string) {
     // Check ownership
     const session = await getSession()
-    // ... validation omitted for brevity in prompt context but crucial in real app ...
+    if (!session || session.role !== 'PARTNER' || !session.institutionId) throw new Error("Unauthorized")
+
+    const letter = await prisma.scrisoare.findUnique({ where: { id } })
+    if (!letter) throw new Error("Scrisoare inexistentă")
+
+    if (letter.institutionId !== session.institutionId) {
+        throw new Error("Nu aveți permisiunea de a modifica această scrisoare.")
+    }
 
     await prisma.scrisoare.update({
         where: { id },

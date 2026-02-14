@@ -6,6 +6,8 @@ import { redirect } from "next/navigation"
 
 import { getSession } from "@/lib/auth"
 
+import { canDonate } from "@/lib/permissions"
+
 export async function createReservationAndCheckout(scrisoareId: string, amount: number) {
     // Validate basic input
     if (amount < 5) throw new Error("Suma minimă este 5 RON.")
@@ -16,6 +18,10 @@ export async function createReservationAndCheckout(scrisoareId: string, amount: 
     // Transaction: Check availability -> Lock funds -> Create Intent
     await prisma.$transaction(async (tx) => {
         const letter = await tx.scrisoare.findUniqueOrThrow({ where: { id: scrisoareId } })
+
+        if (!canDonate(userSession, letter)) {
+            throw new Error("Nu aveți permisiunea de a dona pentru această scrisoare.")
+        }
 
         // Calculate REAL remaining (Target - Paid - Pending Reservations)
         const activeReservations = await tx.reservation.findMany({

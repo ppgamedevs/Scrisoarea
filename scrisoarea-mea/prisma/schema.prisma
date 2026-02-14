@@ -8,16 +8,25 @@ datasource db {
 }
 
 
+enum UserRole {
+  DONOR
+  PARTNER
+  SPONSOR
+  ADMIN
+}
+
 model User {
   id            String   @id @default(uuid())
   email         String   @unique
   passwordHash  String
-  role          String   @default("DONOR") // 'DONOR', 'PARTNER', 'ADMIN'
+  role          UserRole @default(DONOR)
   firstName     String?
   lastName      String?
   
   institution   Institution? @relation(fields: [institutionId], references: [id])
   institutionId String?
+
+  sponsorProfile SponsorProfile? // For SPONSOR role
 
   emailVerified DateTime?
 
@@ -205,6 +214,11 @@ model Donation {
   matchingRule         MatchingRule?  @relation(fields: [matchingRuleId], references: [id])
   matchingRuleId       String?
   
+  // Payer Tracking (who actually paid, regardless of sponsor linkage)
+  payerUserId          String?
+  payerRole            UserRole?
+  invoiceRequested     Boolean        @default(false)
+  
   scrisoare            Scrisoare?      @relation(fields: [scrisoareId], references: [id])
   scrisoareId          String?         // Made optional to allow general donations if needed later
   
@@ -352,6 +366,24 @@ model ContactSubmission {
   email     String
   subject   String
   message   String
-  createdAt DateTime @default(now())
+  createdAt     DateTime @default(now())
   @@index([createdAt])
+}
+
+model SponsorProfile {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  companyName String?
+  cui         String?
+  website     String?
+  
+  // Billing Info for quick access
+  billingAddress String?
+  billingCity    String?
+  billingCui     String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

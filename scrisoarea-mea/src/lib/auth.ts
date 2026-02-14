@@ -3,6 +3,7 @@ import { PrismaAdapter } from "@lucia-auth/adapter-prisma";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcrypt";
+import { UserRole } from "@prisma/client";
 
 const adapter = new PrismaAdapter(prisma.session, prisma.user);
 
@@ -31,14 +32,14 @@ declare module "lucia" {
 
 interface DatabaseUserAttributes {
     email: string;
-    role: 'ADMIN' | 'PARTNER' | 'DONOR';
+    role: UserRole;
     institutionId?: string;
 }
 
 export type UserSession = {
     id: string
     email: string
-    role: 'ADMIN' | 'PARTNER' | 'DONOR'
+    role: UserRole
     institutionId?: string
 }
 
@@ -79,17 +80,11 @@ export async function getSession(): Promise<UserSession | null> {
     }
 }
 
-export async function login(email: string, password?: string, portal: 'DONOR' | 'PARTNER' | 'ADMIN' = 'DONOR') {
+export async function login(email: string, password?: string, portal: UserRole = UserRole.DONOR) {
     const user = await prisma.user.findUnique({ where: { email } })
     if (!user) throw new Error("Email sau parola incorecta.")
 
-    // Verify Password if provided (for MVP transition allow empty/mock if we want, but better strictly check)
-    // The previous implementation didn't check password. We should check it now if we have hash.
-    // If user has no hash (old users?), we might have issues. But we seeded correctly.
-
     if (!password) {
-        // For now, if no password provided (legacy calls?), we might throw or allow if only explicit dev mode.
-        // But user asked for "Email + Password".
         throw new Error("Parola este obligatorie.")
     }
 
@@ -97,13 +92,20 @@ export async function login(email: string, password?: string, portal: 'DONOR' | 
     if (!validPassword) throw new Error("Email sau parola incorecta.")
 
     // Check Portal Access
-    if (portal === 'ADMIN' && user.role !== 'ADMIN') throw new Error("Nu aveti acces la panoul de administrare.")
-    if (portal === 'PARTNER' && user.role !== 'PARTNER') throw new Error("Nu aveti acces la panoul de partener.")
-    if (portal === 'DONOR' && user.role !== 'DONOR' && user.role !== 'ADMIN') {
-        // Admins can probably login as donors or maybe not? 
-        // User said: "portal donor accepta rol donor"
-        // Strict mapping:
-        if (user.role !== 'DONOR') throw new Error("Contul nu este de tip Donator.")
+    if (portal === UserRole.ADMIN && user.role !== UserRole.ADMIN) {
+        throw new Error("Nu aveti acces la panoul de administrare.")
+    }
+    if (portal === UserRole.PARTNER && user.role !== UserRole.PARTNER) {
+        throw new Error("Nu aveti acces la panoul de partener.")
+    }
+    if (portal === UserRole.DONOR) {
+        // Allow Admins to act as Donors ? Maybe not for login, they should use admin portal.
+        // Assume Donor portal only for Donors and Sponsors (Sponsors are upgraded Donors)
+        // If SPONSOR tries to login at donor portal (main site), allow it? Yes.
+        // Currently main site is for everyone.
+        // But if strict role check:
+        const allowed = user.role === UserRole.DONOR || user.role === UserRole.SPONSOR || user.role === UserRole.ADMIN
+        if (!allowed) throw new Error("Contul nu are acces de donator.")
     }
 
     const session = await lucia.createSession(user.id, {})
@@ -121,14 +123,14 @@ export async function registerUser({
     password,
     firstName,
     lastName,
-    role = 'DONOR',
+    role = UserRole.DONOR,
     institutionId
 }: {
     email: string
     password?: string
     firstName?: string
     lastName?: string
-    role?: 'DONOR' | 'PARTNER' | 'ADMIN'
+    role?: UserRole
     institutionId?: string
 }) {
     // 1. Check if user exists

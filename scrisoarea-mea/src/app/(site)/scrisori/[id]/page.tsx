@@ -10,6 +10,10 @@ import { Badge } from "@/components/ui/badge"
 import { Metadata } from 'next'
 import { generateLetterSchema, BASE_URL } from "@/lib/seo/jsonld"
 import { Sparkles, PlayCircle, Heart, ArrowLeft } from "lucide-react"
+import { canManageLetter, canDonate } from "@/lib/permissions"
+import { UserRole } from "@prisma/client"
+import PartnerActionsPanel from "@/components/partner-actions-panel"
+import { Button } from "@/components/ui/button"
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
     const { id } = await params
@@ -94,6 +98,9 @@ export default async function ScrisoarePage({ params }: { params: Promise<{ id: 
     const isFullyFunded = totalOccupied >= target || letter.status === 'FINANTAT' || letter.status === 'INCHIS'
     const isDonationDisabled = ['IN_ACHIZITIE', 'LIVRAT', 'FINALIZAT', 'ANULAT', 'RESPINS', 'INCHIS'].includes(letter.status)
     const isVideo = letter.mediaType === 'VIDEO' // Assuming schema update propagated
+
+    const isManaging = canManageLetter(session, letter)
+    const isPartnerLoggedIn = session?.role === UserRole.PARTNER // or 'PARTNER' string if enum import fails
 
     return (
         <main className="min-h-screen bg-[var(--pastel-sage)]/30 pb-20 font-sans">
@@ -249,33 +256,57 @@ export default async function ScrisoarePage({ params }: { params: Promise<{ id: 
                                     </div>
                                 )}
 
-                                {activeClaim ? (
-                                    <div className="text-center text-sm text-amber-700 bg-amber-50 p-4 rounded-xl border border-amber-100">
-                                        <p className="font-medium">O familie minunată pregătește acest pachet.</p>
-                                        <p className="opacity-80 mt-1">Donațiile sunt oprite temporar.</p>
+                                {isManaging ? (
+                                    <PartnerActionsPanel
+                                        scrisoareId={letter.id}
+                                        institutionSlug={letter.institution.slug}
+                                        status={letter.status}
+                                        moderationStatus={letter.moderationStatus}
+                                        proofApproved={letter.proofApproved}
+                                    />
+                                ) : isPartnerLoggedIn ? (
+                                    <div className="bg-amber-50 p-8 rounded-xl text-center text-amber-800 border border-amber-200 shadow-sm">
+                                        <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">🚧</div>
+                                        <h3 className="text-lg font-bold mb-2">Cont Partener Detectat</h3>
+                                        <p className="text-sm mb-4">
+                                            Pentru a dona, te rugăm să folosești un cont de <strong>Donator</strong> sau <strong>Sponsor</strong>.
+                                            Rolul de partener este strict pentru administrarea cazurilor.
+                                        </p>
+                                        <Button asChild variant="outline" className="w-full border-amber-300 hover:bg-amber-100 text-amber-900">
+                                            <Link href="/api/auth/logout">Deconectează-te</Link>
+                                        </Button>
                                     </div>
                                 ) : (
                                     <>
-                                        {isDonationDisabled ? (
-                                            <div className="bg-slate-50 p-8 rounded-xl text-center text-slate-500 border border-slate-200">
-                                                <Heart className="w-8 h-8 mx-auto mb-2 text-slate-300" />
-                                                <p>Această dorință a fost îndeplinită sau închisă.</p>
+                                        {activeClaim ? (
+                                            <div className="text-center text-sm text-amber-700 bg-amber-50 p-4 rounded-xl border border-amber-100">
+                                                <p className="font-medium">O familie minunată pregătește acest pachet.</p>
+                                                <p className="opacity-80 mt-1">Donațiile sunt oprite temporar.</p>
                                             </div>
                                         ) : (
-                                            <DonationModule
-                                                scrisoareId={letter.id}
-                                                remainingAmount={remaining}
-                                                isFullyFunded={isFullyFunded}
-                                                userEmail={session?.email}
-                                            />
+                                            <>
+                                                {isDonationDisabled ? (
+                                                    <div className="bg-slate-50 p-8 rounded-xl text-center text-slate-500 border border-slate-200">
+                                                        <Heart className="w-8 h-8 mx-auto mb-2 text-slate-300" />
+                                                        <p>Această dorință a fost îndeplinită sau închisă.</p>
+                                                    </div>
+                                                ) : (
+                                                    <DonationModule
+                                                        scrisoareId={letter.id}
+                                                        remainingAmount={remaining}
+                                                        isFullyFunded={isFullyFunded}
+                                                        userEmail={session?.email}
+                                                    />
+                                                )}
+                                            </>
                                         )}
                                     </>
                                 )}
-                            </div>
 
-                            <p className="text-center text-xs text-slate-400 max-w-xs mx-auto">
-                                Donațiile sunt procesate securizat. Nu percepem comisioane ascunse.
-                            </p>
+                                <p className="text-center text-xs text-slate-400 max-w-xs mx-auto mt-6">
+                                    Donațiile sunt procesate securizat. Nu percepem comisioane ascunse.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>

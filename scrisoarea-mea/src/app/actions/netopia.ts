@@ -4,7 +4,11 @@ import prisma from "@/lib/prisma"
 import { createNetopiaRequest } from "@/lib/netopia"
 import { redirect } from "next/navigation"
 
+import { getSession } from "@/lib/auth"
+import { canDonate } from "@/lib/permissions"
+
 export async function initiateNetopiaPayment(formData: FormData) {
+    const session = await getSession()
     const amount = Number(formData.get('amount'))
     const email = formData.get('email') as string
     const firstName = formData.get('firstName') as string
@@ -15,6 +19,14 @@ export async function initiateNetopiaPayment(formData: FormData) {
     if (!amount || amount < 1) throw new Error("Suma invalidă")
     if (!email) throw new Error("Email necesar")
 
+    // Permission Check
+    if (scrisoareId) {
+        const letter = await prisma.scrisoare.findUnique({ where: { id: scrisoareId } })
+        if (letter && !canDonate(session, letter)) {
+            throw new Error("Nu aveți permisiunea de a dona pentru această scrisoare (rol Partener).")
+        }
+    }
+
     // Create Donation Record
     const donation = await prisma.donation.create({
         data: {
@@ -24,7 +36,9 @@ export async function initiateNetopiaPayment(formData: FormData) {
             isAnonymous,
             status: 'PENDING', // Waiting for Netopia IPN
             scrisoareId: scrisoareId || undefined,
-            netopiaStatus: 'NEW'
+            netopiaStatus: 'NEW',
+            payerUserId: session?.id,
+            payerRole: session?.role
         }
     })
 

@@ -4,7 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { User, Menu, X, LogOut, LayoutDashboard } from "lucide-react"
+import { User, Menu, X, LogOut, LayoutDashboard, Sparkles } from "lucide-react"
 import { logout } from "@/app/actions/auth-actions"
 import {
   DropdownMenu,
@@ -25,7 +25,7 @@ const NAV_LINKS = [
 
 type Session = {
   email: string
-  role: 'ADMIN' | 'PARTNER' | 'DONOR'
+  role: 'ADMIN' | 'PARTNER' | 'DONOR' | 'SPONSOR'
 } | null
 
 export function HeaderNavClient({ session }: { session: Session }) {
@@ -125,13 +125,30 @@ export function HeaderNavClient({ session }: { session: Session }) {
                 </DropdownMenuItem>
               )}
 
-              {session.role === 'DONOR' && (
+              {session.role === 'SPONSOR' && (
                 <DropdownMenuItem asChild>
                   <Link href="/profil" className="cursor-pointer">
                     <User className="mr-2 h-4 w-4" />
-                    <span>Profil Donator</span>
+                    <span>Profil Sponsor</span>
                   </Link>
                 </DropdownMenuItem>
+              )}
+
+              {session.role === 'DONOR' && (
+                <>
+                  <DropdownMenuItem asChild>
+                    <Link href="/profil" className="cursor-pointer">
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Profil Donator</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/sponsor/info" className="cursor-pointer text-purple-600 font-semibold focus:text-purple-700">
+                      <Sparkles className="mr-2 h-4 w-4" />
+                      <span>Devino Sponsor</span>
+                    </Link>
+                  </DropdownMenuItem>
+                </>
               )}
 
               <DropdownMenuSeparator />
@@ -234,14 +251,33 @@ export function HeaderNavClient({ session }: { session: Session }) {
                     </Link>
                   )}
 
-                  {session.role === 'DONOR' && (
+                  {session.role === 'SPONSOR' && (
                     <Link
                       href="/profil"
                       className="flex items-center gap-2 py-3 px-3 rounded-lg text-slate-700 hover:bg-slate-100"
                       onClick={() => setOpen(false)}
                     >
-                      <User className="w-4 h-4" /> Profil Donator
+                      <User className="w-4 h-4" /> Profil Sponsor
                     </Link>
+                  )}
+
+                  {session.role === 'DONOR' && (
+                    <>
+                      <Link
+                        href="/profil"
+                        className="flex items-center gap-2 py-3 px-3 rounded-lg text-slate-700 hover:bg-slate-100"
+                        onClick={() => setOpen(false)}
+                      >
+                        <User className="w-4 h-4" /> Profil Donator
+                      </Link>
+                      <Link
+                        href="/sponsor/info"
+                        className="flex items-center gap-2 py-3 px-3 rounded-lg text-purple-600 font-semibold hover:bg-purple-50"
+                        onClick={() => setOpen(false)}
+                      >
+                        <Sparkles className="w-4 h-4" /> Devino Sponsor
+                      </Link>
+                    </>
                   )}
 
                   <button
