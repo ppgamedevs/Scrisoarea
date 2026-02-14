@@ -39,8 +39,12 @@ export default async function DonatieConfirmarePage({ searchParams }: { searchPa
                 {donation ? (
                     <div className="py-4">
                         <p className="text-slate-600 text-lg">
-                            Donația ta de <strong>{formatCurrency(Number(donation.amount))}</strong> pentru
-                            <strong> {donation.scrisoare.childFirstName}</strong> a fost confirmată.
+                            Donația ta de <strong>{formatCurrency(Number(donation.amount))}</strong>
+                            {donation.scrisoare ? (
+                                <> pentru <strong> {donation.scrisoare.childFirstName}</strong></>
+                            ) : (
+                                <> efectuată cu succes</>
+                            )} a fost confirmată.
                         </p>
                         <p className="text-sm text-slate-400 mt-2">ID Tranzacție: {donation.id.slice(0, 8)}</p>
                     </div>
