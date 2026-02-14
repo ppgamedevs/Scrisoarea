@@ -1,11 +1,15 @@
 import ffmpeg from 'fluent-ffmpeg';
-import ffmpegInstaller from '@ffmpeg-installer/ffmpeg';
+import ffmpegStatic from 'ffmpeg-static';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
 
 // Set ffmpeg path
-ffmpeg.setFfmpegPath(ffmpegInstaller.path);
+if (ffmpegStatic) {
+    ffmpeg.setFfmpegPath(ffmpegStatic);
+} else {
+    console.warn("ffmpeg-static not found, compression may fail.");
+}
 
 export async function compressVideo(file: File): Promise<Buffer> {
     const tempDir = os.tmpdir();
