@@ -43,9 +43,11 @@ export default function NewScrisoareForm({ campaigns }: { campaigns: CampaignSum
         const file = e.target.files?.[0]
         if (!file) return
 
-        // 4.5MB limit (Vercel Server Action Body Limit)
-        if (file.size > 4.5 * 1024 * 1024) {
-            alert("Fișierul este prea mare (maxim 4.5MB). Vă rugăm încărcați un fișier mai mic.")
+        const isVideo = file.type.startsWith('video/')
+        const limit = isVideo ? 100 * 1024 * 1024 : 4.5 * 1024 * 1024
+
+        if (file.size > limit) {
+            alert(`Fișierul este prea mare. Maxim ${isVideo ? '100MB' : '4.5MB'}.`)
             e.target.value = "" // Reset input
             return
         }
@@ -259,7 +261,7 @@ export default function NewScrisoareForm({ campaigns }: { campaigns: CampaignSum
                             <p className="text-xs text-slate-400 leading-relaxed">
                                 * O poză clară sau un scurt video cu copilul crește șansele de finanțare.
                                 <br />
-                                * Max 4.5MB.
+                                * Foto: Max 4.5MB | Video: Max 100MB.
                             </p>
                         </Card>
 

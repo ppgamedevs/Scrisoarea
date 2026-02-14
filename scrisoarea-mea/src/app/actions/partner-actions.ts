@@ -40,6 +40,45 @@ export async function createScrisoare(formData: FormData) {
         // Client-side uploaded file
         mediaUrl = mediaUrlParam
         if (mediaTypeParam) mediaType = mediaTypeParam
+
+        // If it's a video from Blob (URL), we might need to compress it if it's large
+        if (mediaType === 'VIDEO') {
+            try {
+                const response = await fetch(mediaUrl)
+                if (response.ok) {
+                    const size = Number(response.headers.get('content-length'))
+                    if (size > 4.5 * 1024 * 1024) {
+                        // Download and Compress
+                        const blob = await response.blob()
+                        const fileBuffer = Buffer.from(await blob.arrayBuffer())
+
+                        // Create a "File" to pass to compressor (compressVideo expects File)
+                        const fileName = mediaUrl.split('/').pop() || 'video.mp4'
+                        const fileToCompress = new File([new Uint8Array(fileBuffer)], fileName, { type: 'video/mp4' })
+
+                        const { compressVideo } = await import('@/lib/video')
+                        const compressedBuffer = await compressVideo(fileToCompress)
+
+                        // Re-upload compressed
+                        const compressedFile = new File([new Uint8Array(compressedBuffer)], fileName, { type: 'video/mp4' })
+                        const newUrl = await saveFile(compressedFile)
+
+                        // Update URL
+                        mediaUrl = newUrl
+
+                        // Try to delete old blob if it was Vercel Blob
+                        if (mediaUrlParam.includes('public.blob.vercel-storage.com')) {
+                            try {
+                                const { del } = await import('@vercel/blob')
+                                await del(mediaUrlParam)
+                            } catch (e) { console.error("Failed to delete original blob", e) }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error("Error processing video from URL:", e)
+            }
+        }
     } else {
         // Fallback: Server-side file upload
         const file = formData.get('file') as File | null
