@@ -108,7 +108,7 @@ export default async function FactsPage() {
                         </div>
                         <div>
                             <h3 className="font-bold text-base">Întrebare: Este platforma sigură?</h3>
-                            <p className="text-sm">Răspuns: Da. Datele sunt criptate. Plățile sunt procesate de Stripe. Identitatea copiilor este protejată prin pseudonime și imagini blurate/din spate unde este necesar.</p>
+                            <p className="text-sm">Răspuns: Da. Datele sunt criptate. Plățile sunt procesate securizat prin Netopia. Identitatea copiilor este protejată prin pseudonime și imagini blurate/din spate unde este necesar.</p>
                         </div>
                         <div>
                             <h3 className="font-bold text-base">Întrebare: Ce se întâmplă cu banii dacă un caz nu e finanțat?</h3>

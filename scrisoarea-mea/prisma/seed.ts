@@ -47,29 +47,52 @@ async function main() {
     }
   })
 
-  // 2. Create Profiles
-  await prisma.profile.upsert({
+
+  const bcrypt = await import('bcryptjs')
+  const hashedPassword = await bcrypt.hash('parola123', 10)
+
+  // 2. Create Users
+  await prisma.user.upsert({
     where: { email: 'admin@scrisoarea.ro' },
-    update: {},
+    update: {
+      passwordHash: hashedPassword // Update password just in case
+    },
     create: {
-      authId: 'admin-uid-123',
       email: 'admin@scrisoarea.ro',
+      passwordHash: hashedPassword,
       role: 'ADMIN',
       firstName: 'Super',
       lastName: 'Admin'
     }
   })
 
-  await prisma.profile.upsert({
+  await prisma.user.upsert({
     where: { email: 'partner@speranta.ro' },
-    update: {},
+    update: {
+      passwordHash: hashedPassword
+    },
     create: {
-      authId: 'partner-uid-456',
       email: 'partner@speranta.ro',
+      passwordHash: hashedPassword,
       role: 'PARTNER',
       firstName: 'Ion',
       lastName: 'Popescu',
       institutionId: institution.id
+    }
+  })
+
+  // Create Donor User
+  await prisma.user.upsert({
+    where: { email: 'donor@gmail.com' },
+    update: {
+      passwordHash: hashedPassword
+    },
+    create: {
+      email: 'donor@gmail.com',
+      passwordHash: hashedPassword,
+      role: 'DONOR',
+      firstName: 'Donator',
+      lastName: 'Generic'
     }
   })
 

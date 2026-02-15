@@ -4,16 +4,17 @@ import { Heart } from "lucide-react"
 import prisma from "@/lib/prisma"
 import { formatCurrency } from "@/lib/utils"
 
-export default async function DonatieConfirmarePage({ searchParams }: { searchParams: Promise<{ session_id?: string }> }) {
-    const { session_id } = await searchParams
+export default async function DonatieConfirmarePage({ searchParams }: { searchParams: Promise<{ donationId?: string }> }) {
 
     // In real app, verify session with Stripe via API or DB webhook result.
     // For MVP, if we tracked via DB using session_id in Donation model.
 
     let donation = null
-    if (session_id) {
+    const { donationId } = await searchParams
+
+    if (donationId) {
         donation = await prisma.donation.findUnique({
-            where: { stripeSessionId: session_id },
+            where: { id: donationId },
             include: { scrisoare: true }
         })
     }
@@ -33,8 +34,12 @@ export default async function DonatieConfirmarePage({ searchParams }: { searchPa
                 {donation ? (
                     <div className="py-4">
                         <p className="text-slate-600 text-lg">
-                            Donația ta de <strong>{formatCurrency(Number(donation.amount))}</strong> pentru
-                            <strong> {donation.scrisoare.childFirstName}</strong> a fost confirmată.
+                            Donația ta de <strong>{formatCurrency(Number(donation.amount))}</strong>
+                            {donation.scrisoare ? (
+                                <> pentru <strong> {donation.scrisoare.childFirstName}</strong></>
+                            ) : (
+                                <> efectuată cu succes</>
+                            )} a fost confirmată.
                         </p>
                         <p className="text-sm text-slate-400 mt-2">ID Tranzacție: {donation.id.slice(0, 8)}</p>
                     </div>

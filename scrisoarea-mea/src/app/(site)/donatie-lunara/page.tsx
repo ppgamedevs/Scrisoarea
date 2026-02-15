@@ -17,8 +17,8 @@ export default function DonatieLunaraPage() {
                 </span>
                 <h1 className="text-3xl md:text-4xl font-bold text-slate-900">Donație lunară</h1>
                 <p className="text-slate-600 text-lg leading-relaxed">
-                    Contribuția ta lunară ne ajută să găsim copiii, să verificăm poveștile și să livrăm bucurie constant. 
-                    În curând vei putea seta o donație recurentă direct aici (10, 25 sau 50 lei/lună). Până atunci, 
+                    Contribuția ta lunară ne ajută să găsim copiii, să verificăm poveștile și să livrăm bucurie constant.
+                    În curând vei putea seta o donație recurentă direct aici (10, 25 sau 50 lei/lună). Până atunci,
                     poți alege o dorință de pe site și să o îndeplinești cu o singură donație.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
@@ -29,7 +29,7 @@ export default function DonatieLunaraPage() {
                         <Link href="/contact">Contactează-ne</Link>
                     </Button>
                 </div>
-                <p className="text-sm text-slate-500">Securizat prin Stripe • Transparență totală</p>
+                <p className="text-sm text-slate-500">Securizat prin Netopia • Transparență totală</p>
             </div>
         </main>
     )

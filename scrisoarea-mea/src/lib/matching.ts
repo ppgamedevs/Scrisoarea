@@ -76,6 +76,8 @@ export async function applyMatchingToDonation(donationId: string) {
         if (!donation || donation.status !== 'SUCCEEDED' || Number(donation.matchedAmount) > 0) return
 
         // Recalculate match (to be safe in transaction)
+        if (!donation.scrisoareId) return
+
         const match = await calculatePotentialMatch(donation.scrisoareId, Number(donation.amount))
 
         if (!match || match.amount <= 0) {

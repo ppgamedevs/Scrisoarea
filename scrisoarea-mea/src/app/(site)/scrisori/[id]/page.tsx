@@ -10,6 +10,10 @@ import { Badge } from "@/components/ui/badge"
 import { Metadata } from 'next'
 import { generateLetterSchema, BASE_URL } from "@/lib/seo/jsonld"
 import { Sparkles, PlayCircle, Heart, ArrowLeft } from "lucide-react"
+import { canManageLetter, canDonate } from "@/lib/permissions"
+
+import PartnerActionsPanel from "@/components/partner-actions-panel"
+import { Button } from "@/components/ui/button"
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
     const { id } = await params
@@ -95,6 +99,9 @@ export default async function ScrisoarePage({ params }: { params: Promise<{ id: 
     const isDonationDisabled = ['IN_ACHIZITIE', 'LIVRAT', 'FINALIZAT', 'ANULAT', 'RESPINS', 'INCHIS'].includes(letter.status)
     const isVideo = letter.mediaType === 'VIDEO' // Assuming schema update propagated
 
+    const isManaging = canManageLetter(session, letter)
+    const isPartnerLoggedIn = session?.role === 'PARTNER'
+
     return (
         <main className="min-h-screen bg-[var(--pastel-sage)]/30 pb-20 font-sans">
             <script
@@ -138,19 +145,29 @@ export default async function ScrisoarePage({ params }: { params: Promise<{ id: 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                     {/* Left Column (Media & Story) */}
                     <div className="lg:col-span-7 space-y-10">
-                        <section className="bg-white p-2 rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                        <section className="bg-slate-900 rounded-2xl shadow-xl overflow-hidden relative group border border-slate-800">
                             {isVideo ? (
-                                <div className="aspect-[16/9] relative w-full bg-black rounded-xl overflow-hidden group">
+                                <div className="aspect-video relative w-full bg-black">
                                     <video
                                         src={letter.originalImgUrl}
-                                        className="w-full h-full object-cover"
+                                        className="w-full h-full object-contain"
                                         controls
-                                        poster={letter.originalImgUrl.replace('.mp4', '_thumb.jpg')} // basic fallback Assumption
+                                        poster={letter.originalImgUrl.replace('.mp4', '_thumb.jpg')}
                                     />
                                 </div>
                             ) : (
-                                <div className="aspect-[4/3] relative w-full flex items-center justify-center bg-slate-50 rounded-xl overflow-hidden">
-                                    <img src={letter.originalImgUrl} alt={`Scrisorica lui ${letter.childFirstName}`} className="w-full h-full object-contain" />
+                                <div className="aspect-[4/3] relative w-full bg-slate-100 overflow-hidden flex items-center justify-center">
+                                    {/* Blurred Background for professional fill */}
+                                    <div
+                                        className="absolute inset-0 bg-cover bg-center blur-2xl opacity-60 scale-110"
+                                        style={{ backgroundImage: `url(${letter.originalImgUrl})` }}
+                                    ></div>
+                                    {/* Main Image */}
+                                    <img
+                                        src={letter.originalImgUrl}
+                                        alt={`Scrisorica lui ${letter.childFirstName}`}
+                                        className="relative w-full h-full object-contain z-10 drop-shadow-xl"
+                                    />
                                 </div>
                             )}
                         </section>
@@ -239,33 +256,64 @@ export default async function ScrisoarePage({ params }: { params: Promise<{ id: 
                                     </div>
                                 )}
 
-                                {activeClaim ? (
-                                    <div className="text-center text-sm text-amber-700 bg-amber-50 p-4 rounded-xl border border-amber-100">
-                                        <p className="font-medium">O familie minunată pregătește acest pachet.</p>
-                                        <p className="opacity-80 mt-1">Donațiile sunt oprite temporar.</p>
+                                {isManaging ? (
+                                    <PartnerActionsPanel
+                                        scrisoareId={letter.id}
+                                        institutionSlug={letter.institution.slug}
+                                        status={letter.status}
+                                        moderationStatus={letter.moderationStatus}
+                                        proofApproved={letter.proofApproved}
+                                    />
+                                ) : isPartnerLoggedIn ? (
+                                    <div className="bg-amber-50 p-8 rounded-xl text-center text-amber-800 border border-amber-200 shadow-sm">
+                                        <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">🚧</div>
+                                        <h3 className="text-lg font-bold mb-2">Cont Partener Detectat</h3>
+                                        <p className="text-sm mb-4">
+                                            Pentru a dona, te rugăm să folosești un cont de <strong>Donator</strong> sau <strong>Sponsor</strong>.
+                                            Rolul de partener este strict pentru administrarea cazurilor.
+                                        </p>
+                                        <form action={async () => {
+                                            "use server"
+                                            const { logout } = await import("@/app/actions/auth-actions")
+                                            await logout()
+                                        }}>
+                                            <Button type="submit" variant="outline" className="w-full border-amber-300 hover:bg-amber-100 text-amber-900">
+                                                Deconectează-te
+                                            </Button>
+                                        </form>
                                     </div>
                                 ) : (
                                     <>
-                                        {isDonationDisabled ? (
-                                            <div className="bg-slate-50 p-8 rounded-xl text-center text-slate-500 border border-slate-200">
-                                                <Heart className="w-8 h-8 mx-auto mb-2 text-slate-300" />
-                                                <p>Această dorință a fost îndeplinită sau închisă.</p>
+                                        {activeClaim ? (
+                                            <div className="text-center text-sm text-amber-700 bg-amber-50 p-4 rounded-xl border border-amber-100">
+                                                <p className="font-medium">O familie minunată pregătește acest pachet.</p>
+                                                <p className="opacity-80 mt-1">Donațiile sunt oprite temporar.</p>
                                             </div>
                                         ) : (
-                                            <DonationModule
-                                                scrisoareId={letter.id}
-                                                remainingAmount={remaining}
-                                                isFullyFunded={isFullyFunded}
-                                                userEmail={session?.email}
-                                            />
+                                            <>
+                                                {isDonationDisabled ? (
+                                                    <div className="bg-slate-50 p-8 rounded-xl text-center text-slate-500 border border-slate-200">
+                                                        <Heart className="w-8 h-8 mx-auto mb-2 text-slate-300" />
+                                                        <p>Această dorință a fost îndeplinită sau închisă.</p>
+                                                    </div>
+                                                ) : (
+                                                    <DonationModule
+                                                        scrisoareId={letter.id}
+                                                        remainingAmount={remaining}
+                                                        isFullyFunded={isFullyFunded}
+                                                        userEmail={session?.email}
+                                                        userRole={session?.role}
+                                                    />
+                                                )}
+                                            </>
                                         )}
                                     </>
                                 )}
-                            </div>
 
-                            <p className="text-center text-xs text-slate-400 max-w-xs mx-auto">
-                                Donațiile sunt procesate securizat. Nu percepem comisioane ascunse.
-                            </p>
+                                <p className="text-center text-xs text-slate-400 max-w-xs mx-auto mt-6">
+                                    Donațiile sunt procesate securizat. Nu percepem comisioane ascunse.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>

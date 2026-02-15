@@ -12,7 +12,7 @@ export async function GET() {
         orderBy: { createdAt: 'desc' }
     })
 
-    const csvHeader = "ID,Date,Amount,MatchedAmount,TotalCredited,Sponsor,ScrisoareID,StripeSession,Status\n"
+    const csvHeader = "ID,Date,Amount,MatchedAmount,TotalCredited,Sponsor,ScrisoareID,Status\n"
     const csvRows = donations.map(d => {
         return [
             d.id,
@@ -22,7 +22,7 @@ export async function GET() {
             d.totalCreditedAmount,
             d.sponsor?.name || 'N/A',
             d.scrisoareId,
-            d.stripeSessionId,
+
             d.status
         ].join(",")
     }).join("\n")
