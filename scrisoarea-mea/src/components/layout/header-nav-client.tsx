@@ -125,14 +125,7 @@ export function HeaderNavClient({ session }: { session: Session }) {
                 </DropdownMenuItem>
               )}
 
-              {session.role === 'SPONSOR' && (
-                <DropdownMenuItem asChild>
-                  <Link href="/profil" className="cursor-pointer">
-                    <User className="mr-2 h-4 w-4" />
-                    <span>Profil Sponsor</span>
-                  </Link>
-                </DropdownMenuItem>
-              )}
+
 
               {session.role === 'DONOR' && (
                 <>
@@ -142,12 +135,7 @@ export function HeaderNavClient({ session }: { session: Session }) {
                       <span>Profil Donator</span>
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/sponsor/info" className="cursor-pointer text-purple-600 font-semibold focus:text-purple-700">
-                      <Sparkles className="mr-2 h-4 w-4" />
-                      <span>Devino Sponsor</span>
-                    </Link>
-                  </DropdownMenuItem>
+
                 </>
               )}
 
@@ -251,15 +239,7 @@ export function HeaderNavClient({ session }: { session: Session }) {
                     </Link>
                   )}
 
-                  {session.role === 'SPONSOR' && (
-                    <Link
-                      href="/profil"
-                      className="flex items-center gap-2 py-3 px-3 rounded-lg text-slate-700 hover:bg-slate-100"
-                      onClick={() => setOpen(false)}
-                    >
-                      <User className="w-4 h-4" /> Profil Sponsor
-                    </Link>
-                  )}
+
 
                   {session.role === 'DONOR' && (
                     <>
@@ -270,13 +250,7 @@ export function HeaderNavClient({ session }: { session: Session }) {
                       >
                         <User className="w-4 h-4" /> Profil Donator
                       </Link>
-                      <Link
-                        href="/sponsor/info"
-                        className="flex items-center gap-2 py-3 px-3 rounded-lg text-purple-600 font-semibold hover:bg-purple-50"
-                        onClick={() => setOpen(false)}
-                      >
-                        <Sparkles className="w-4 h-4" /> Devino Sponsor
-                      </Link>
+
                     </>
                   )}
 

@@ -272,9 +272,15 @@ export default async function ScrisoarePage({ params }: { params: Promise<{ id: 
                                             Pentru a dona, te rugăm să folosești un cont de <strong>Donator</strong> sau <strong>Sponsor</strong>.
                                             Rolul de partener este strict pentru administrarea cazurilor.
                                         </p>
-                                        <Button asChild variant="outline" className="w-full border-amber-300 hover:bg-amber-100 text-amber-900">
-                                            <Link href="/api/auth/logout">Deconectează-te</Link>
-                                        </Button>
+                                        <form action={async () => {
+                                            "use server"
+                                            const { logout } = await import("@/app/actions/auth-actions")
+                                            await logout()
+                                        }}>
+                                            <Button type="submit" variant="outline" className="w-full border-amber-300 hover:bg-amber-100 text-amber-900">
+                                                Deconectează-te
+                                            </Button>
+                                        </form>
                                     </div>
                                 ) : (
                                     <>

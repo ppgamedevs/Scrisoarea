@@ -2,7 +2,7 @@ import { Lucia } from "lucia"
 import { PrismaAdapter } from "@lucia-auth/adapter-prisma"
 import { prisma } from "./prisma"
 import { cookies } from "next/headers"
-import bcrypt from "bcryptjs"
+import { compare, hash } from "bcryptjs"
 
 const adapter = new PrismaAdapter(prisma.session, prisma.user)
 
@@ -81,7 +81,7 @@ export async function login(email: string, password?: string, portal: 'ADMIN' | 
         throw new Error("Parola este obligatorie.")
     }
 
-    const validPassword = await bcrypt.compare(password, user.passwordHash)
+    const validPassword = await compare(password, user.passwordHash)
     if (!validPassword) throw new Error("Email sau parola incorecta.")
 
     // Check Portal Access
@@ -126,7 +126,7 @@ export async function registerUser({
     if (!password || password.length < 6) {
         throw new Error("Parola trebuie să aibă cel puțin 6 caractere.")
     }
-    const passwordHash = await bcrypt.hash(password, 10)
+    const passwordHash = await hash(password, 10)
 
     // 3. Create User (Unverified)
     const newUser = await prisma.user.create({

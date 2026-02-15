@@ -92,7 +92,7 @@ export function SiteFooter() {
                     <p>&copy; {new Date().getFullYear()} Asociația Vise pe hârtie. Cod Open Source.</p>
                     <div className="flex items-center gap-3 mt-2">
                         <span className="opacity-70">Plăți securizate prin</span>
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/Skrill_logo.svg" alt="Skrill" className="h-5 w-auto opacity-70 grayscale hover:grayscale-0 transition-all" />
+                        <span className="font-bold text-slate-500">Netopia Payments</span>
                     </div>
                 </div>
                 <div className="flex flex-wrap gap-4 items-center justify-center">

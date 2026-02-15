@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma"
+import { getSession } from "@/lib/auth"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { formatCurrency } from "@/lib/utils"
@@ -44,6 +45,7 @@ const FAQ_ITEMS_REFINED = [
 ]
 
 export default async function HomePage() {
+    const session = await getSession()
     const stats = await getStats()
     const letters = await getFeaturedLetters()
     const updates = await getLatestUpdates()
@@ -123,56 +125,57 @@ export default async function HomePage() {
                 </div>
             </section>
 
-            {/* Recurring Donation Block */}
-            <section className="py-24 relative overflow-hidden">
-                {/* Background Blobs for depth */}
-                <div className="absolute top-0 left-0 w-full h-full opacity-30 pointer-events-none">
-                    <div className="absolute top-20 -left-20 w-96 h-96 bg-[var(--pastel-blue)] rounded-full blur-3xl mix-blend-multiply"></div>
-                    <div className="absolute bottom-20 right-20 w-80 h-80 bg-[var(--pastel-pink)] rounded-full blur-3xl mix-blend-multiply"></div>
-                </div>
+            {session?.role !== 'PARTNER' && (
+                <section className="py-24 relative overflow-hidden">
+                    {/* Background Blobs for depth */}
+                    <div className="absolute top-0 left-0 w-full h-full opacity-30 pointer-events-none">
+                        <div className="absolute top-20 -left-20 w-96 h-96 bg-[var(--pastel-blue)] rounded-full blur-3xl mix-blend-multiply"></div>
+                        <div className="absolute bottom-20 right-20 w-80 h-80 bg-[var(--pastel-pink)] rounded-full blur-3xl mix-blend-multiply"></div>
+                    </div>
 
-                <div className="container mx-auto px-4 max-w-4xl relative z-10">
-                    <div className="bg-white/80 backdrop-blur-xl border border-white/40 shadow-2xl rounded-3xl p-8 md:p-12 text-center">
-                        <span className="inline-flex items-center gap-2 bg-rose-50 text-rose-600 px-4 py-1.5 rounded-full text-sm font-bold border border-rose-100 mb-6">
-                            <Heart className="w-4 h-4 fill-rose-600" />
-                            Devino Eroul Nostru
-                        </span>
+                    <div className="container mx-auto px-4 max-w-4xl relative z-10">
+                        <div className="bg-white/80 backdrop-blur-xl border border-white/40 shadow-2xl rounded-3xl p-8 md:p-12 text-center">
+                            <span className="inline-flex items-center gap-2 bg-rose-50 text-rose-600 px-4 py-1.5 rounded-full text-sm font-bold border border-rose-100 mb-6">
+                                <Heart className="w-4 h-4 fill-rose-600" />
+                                Devino Eroul Nostru
+                            </span>
 
-                        <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">
-                            Ajută-ne să ținem <span className="text-blue-600">lumina aprinsă.</span>
-                        </h2>
+                            <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">
+                                Ajută-ne să ținem <span className="text-blue-600">lumina aprinsă.</span>
+                            </h2>
 
-                        <p className="text-slate-600 text-lg leading-relaxed max-w-2xl mx-auto mb-10">
-                            Suntem o echipă mică cu vise mari. Contribuția ta lunară ne asigură continuitatea și ne ajută să găsim copiii, să verificăm poveștile și să livrăm bucurie constant, lună de lună.
-                        </p>
+                            <p className="text-slate-600 text-lg leading-relaxed max-w-2xl mx-auto mb-10">
+                                Suntem o echipă mică cu vise mari. Contribuția ta lunară ne asigură continuitatea și ne ajută să găsim copiii, să verificăm poveștile și să livrăm bucurie constant, lună de lună.
+                            </p>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-lg mx-auto mb-8">
-                            <Button asChild variant="outline" className="h-16 text-lg font-bold border-2 border-slate-100 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-700 transition-all rounded-2xl group">
-                                <Link href="/donatie-lunara">
-                                    <span className="group-hover:scale-110 transition-transform">10 Lei</span>
-                                </Link>
-                            </Button>
-                            <Button asChild variant="outline" className="h-16 text-lg font-bold border-2 border-blue-100 bg-blue-50/50 text-blue-800 hover:border-blue-600 hover:bg-blue-100 transition-all rounded-2xl scale-105 shadow-sm group">
-                                <Link href="/donatie-lunara">
-                                    <span className="group-hover:scale-110 transition-transform">25 Lei</span>
-                                </Link>
-                            </Button>
-                            <Button asChild variant="outline" className="h-16 text-lg font-bold border-2 border-slate-100 hover:border-purple-500 hover:bg-purple-50 hover:text-purple-700 transition-all rounded-2xl group">
-                                <Link href="/donatie-lunara">
-                                    <span className="group-hover:scale-110 transition-transform">50 Lei</span>
-                                </Link>
-                            </Button>
-                        </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-lg mx-auto mb-8">
+                                <Button asChild variant="outline" className="h-16 text-lg font-bold border-2 border-slate-100 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-700 transition-all rounded-2xl group">
+                                    <Link href="/donatie-lunara">
+                                        <span className="group-hover:scale-110 transition-transform">10 Lei</span>
+                                    </Link>
+                                </Button>
+                                <Button asChild variant="outline" className="h-16 text-lg font-bold border-2 border-blue-100 bg-blue-50/50 text-blue-800 hover:border-blue-600 hover:bg-blue-100 transition-all rounded-2xl scale-105 shadow-sm group">
+                                    <Link href="/donatie-lunara">
+                                        <span className="group-hover:scale-110 transition-transform">25 Lei</span>
+                                    </Link>
+                                </Button>
+                                <Button asChild variant="outline" className="h-16 text-lg font-bold border-2 border-slate-100 hover:border-purple-500 hover:bg-purple-50 hover:text-purple-700 transition-all rounded-2xl group">
+                                    <Link href="/donatie-lunara">
+                                        <span className="group-hover:scale-110 transition-transform">50 Lei</span>
+                                    </Link>
+                                </Button>
+                            </div>
 
-                        <div>
-                            <Button asChild size="lg" className="h-14 px-10 text-lg bg-slate-900 text-white hover:bg-slate-800 rounded-full font-bold shadow-xl shadow-slate-200 hover:shadow-slate-300 transition-all hover:-translate-y-1">
-                                <Link href="/donatie-lunara">Activează Donația Lunară</Link>
-                            </Button>
-                            <p className="text-xs text-slate-400 mt-4 font-medium">✨ Securizat prin Stripe • Poți anula oricând</p>
+                            <div>
+                                <Button asChild size="lg" className="h-14 px-10 text-lg bg-slate-900 text-white hover:bg-slate-800 rounded-full font-bold shadow-xl shadow-slate-200 hover:shadow-slate-300 transition-all hover:-translate-y-1">
+                                    <Link href="/donatie-lunara">Activează Donația Lunară</Link>
+                                </Button>
+                                <p className="text-xs text-slate-400 mt-4 font-medium">✨ Securizat prin Netopia • Poți anula oricând</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            )}
 
             {/* Trust/FAQ */}
             <section className="py-24 bg-[var(--pastel-cream)]">
