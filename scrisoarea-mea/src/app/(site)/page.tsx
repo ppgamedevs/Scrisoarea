@@ -164,18 +164,21 @@ export default async function HomePage() {
             {/* Trust/FAQ */}
             <section className="py-24 bg-[var(--pastel-cream)]">
                 <div className="container mx-auto px-4 max-w-3xl">
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl font-bold mb-4 text-slate-900">Totul e simplu și curat</h2>
-                        <p className="text-slate-500">Răspundem la ce contează.</p>
+                    <div className="text-center mb-14">
+                        <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-3">Totul e simplu și curat</h2>
+                        <p className="text-slate-500 text-lg">Răspundem la ce contează.</p>
                     </div>
 
-                    <div className="grid gap-6">
+                    <div className="grid gap-5">
                         {FAQ_ITEMS_REFINED.map((item, idx) => (
-                            <div key={idx} className="bg-[var(--pastel-sage)]/40 p-6 rounded-2xl border border-slate-100 hover:border-slate-200 transition-colors">
-                                <h3 className="font-bold text-lg mb-2 text-slate-900 flex items-start gap-2">
-                                    <span className="text-blue-500 mt-1">?</span> {item.q}
-                                </h3>
-                                <p className="text-slate-600 leading-relaxed pl-6">{item.a}</p>
+                            <div key={idx} className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-100 shadow-sm shadow-slate-200/50 hover:border-slate-200 hover:shadow-md transition-all text-left">
+                                <div className="flex gap-4 sm:gap-5">
+                                    <span className="flex-shrink-0 w-8 h-8 rounded-full bg-[var(--pastel-blue)] text-blue-600 font-bold text-sm flex items-center justify-center" aria-hidden>?</span>
+                                    <div className="min-w-0">
+                                        <h3 className="font-bold text-slate-900 text-base sm:text-lg mb-2 leading-snug">{item.q}</h3>
+                                        <p className="text-slate-600 text-sm sm:text-base leading-relaxed">{item.a}</p>
+                                    </div>
+                                </div>
                             </div>
                         ))}
                     </div>
