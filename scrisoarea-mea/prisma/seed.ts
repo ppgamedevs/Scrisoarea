@@ -48,7 +48,7 @@ async function main() {
   })
 
 
-  const bcrypt = await import('bcrypt')
+  const bcrypt = await import('bcryptjs')
   const hashedPassword = await bcrypt.hash('parola123', 10)
 
   // 2. Create Users

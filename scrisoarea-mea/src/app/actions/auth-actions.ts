@@ -6,7 +6,7 @@ import { login as libLogin, logout as libLogout } from "@/lib/auth"
 import { registerUser as libRegisterUser, verifyEmailCode as libVerifyEmailCode } from "@/lib/auth"
 import { redirect } from "next/navigation"
 
-export async function login(email: string, password?: string, portal: 'DONOR' | 'PARTNER' | 'ADMIN' = 'DONOR') {
+export async function login(email: string, password?: string, portal: 'DONOR' | 'PARTNER' | 'ADMIN' | 'SPONSOR' = 'DONOR') {
     return await libLogin(email, password, portal)
 }
 

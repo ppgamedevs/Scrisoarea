@@ -13,7 +13,7 @@ export default async function PartnerLayout({
     const headersList = await headers()
     const pathname = headersList.get('x-pathname') || ''
 
-    if (pathname === '/partner/login') {
+    if (pathname === '/partner/login' || pathname === '/partner/register') {
         return <>{children}</>
     }
 

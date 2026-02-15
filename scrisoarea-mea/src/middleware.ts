@@ -10,7 +10,7 @@ export async function middleware(request: NextRequest) {
     requestHeaders.set('x-pathname', pathname)
 
     // Allow access to login pages publicly
-    if (pathname === '/admin/login' || pathname === '/partner/login' || pathname === '/login') {
+    if (pathname === '/admin/login' || pathname === '/partner/login' || pathname === '/login' || pathname === '/partner/register') {
         return NextResponse.next({
             request: {
                 headers: requestHeaders,

@@ -2,7 +2,7 @@ import { Lucia } from "lucia"
 import { PrismaAdapter } from "@lucia-auth/adapter-prisma"
 import { prisma } from "./prisma"
 import { cookies } from "next/headers"
-import bcrypt from "bcrypt"
+import bcrypt from "bcryptjs"
 
 const adapter = new PrismaAdapter(prisma.session, prisma.user)
 
