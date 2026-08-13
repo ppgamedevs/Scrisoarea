@@ -92,7 +92,8 @@ export default function NewScrisoareForm({ campaigns }: { campaigns: CampaignSum
 
                 // Upload to Vercel Blob
                 const { upload } = await import('@vercel/blob/client');
-                const newBlob = await upload(selectedFile.name, selectedFile, {
+                const safeName = selectedFile.name.replace(/[^a-zA-Z0-9._-]/g, '_')
+                const newBlob = await upload(`letters/${crypto.randomUUID()}-${safeName}`, selectedFile, {
                     access: 'public',
                     handleUploadUrl: '/api/upload',
                 });

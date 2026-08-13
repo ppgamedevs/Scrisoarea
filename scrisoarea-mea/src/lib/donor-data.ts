@@ -10,7 +10,7 @@ export async function getDonorDashboardData(userId: string) {
     // Fetch donations by email since there is no direct relation in schema yet
     const donations = await prisma.donation.findMany({
         where: {
-            donorEmail: { equals: user.email, mode: 'insensitive' },
+            donorEmail: user.email,
             status: 'SUCCEEDED' // Only confirmed donations
         },
         include: {

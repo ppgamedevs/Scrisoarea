@@ -2,24 +2,31 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Environment variables
 
-Copy `.env.example` to `.env` and fill in the values. Required: `DATABASE_URL`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `NEXT_PUBLIC_APP_URL`. Optional: `RESEND_API_KEY` (email), `CONTACT_EMAIL`, `NEXT_PUBLIC_ASSOCIATION_CUI`, `NEXT_PUBLIC_SOCIAL_*`, `CRON_SECRET` (protects `/api/cron/*` routes; set in Vercel and use Authorization: Bearer &lt;CRON_SECRET&gt; when invoking cron).
+Copy `.env.example` to `.env.local` and fill in the values.
 
-## Database (PostgreSQL)
+Required for production: `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, `BLOB_READ_WRITE_TOKEN`, `NEXT_PUBLIC_APP_URL`.
+Optional: `RESEND_API_KEY`, `CONTACT_EMAIL`, `NEXT_PUBLIC_ASSOCIATION_CUI`, `NEXT_PUBLIC_SOCIAL_*`, `CRON_SECRET` (protects `/api/cron/*`).
 
-The app uses PostgreSQL. For local development, run Postgres with Docker:
+## Database (Turso / libSQL)
 
-```bash
-docker compose up -d
-```
+The app uses [Turso](https://turso.tech) (hosted libSQL). Prisma talks to it through `@prisma/adapter-libsql`.
 
-This starts PostgreSQL 16 on `localhost:5432` with user `postgres`, password `password`, and database `scrisoarea` (matches the default in `.env`). Then apply the schema:
+Locally, Prisma CLI uses a SQLite file at `prisma/dev.db`:
 
 ```bash
 npx prisma generate
 npx prisma db push
 ```
 
-To stop: `docker compose down`. Data is kept in a Docker volume.
+On Turso (after `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` are set):
+
+```bash
+npm run db:push-turso
+npm run db:seed
+```
+
+Images and videos are stored in [Vercel Blob](https://vercel.com/docs/vercel-blob).
+
 
 ## Getting Started
 

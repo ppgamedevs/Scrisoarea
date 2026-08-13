@@ -1,5 +1,4 @@
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
+import prisma from '../src/lib/prisma'
 
 // removed utils dependency for seeding simplicity
 const formatCurrency = (n: number) => n.toString()

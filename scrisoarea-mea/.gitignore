@@ -32,6 +32,13 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+
+# local sqlite (Turso uses a remote libSQL database)
+/prisma/*.db
+/prisma/*.db-journal
+/prisma/turso-schema.sql
+/public/uploads
 
 # vercel
 .vercel
@@ -41,3 +48,6 @@ yarn-error.log*
 next-env.d.ts
 
 /src/generated/prisma
+
+.vercel
+.env*.local

@@ -2,11 +2,11 @@
     "crons": [
         {
             "path": "/api/cron/reservations-cleanup",
-            "schedule": "*/10 * * * *"
+            "schedule": "0 2 * * *"
         },
         {
             "path": "/api/cron/claims-cleanup",
-            "schedule": "0 0 * * *"
+            "schedule": "0 3 * * *"
         }
     ]
 }

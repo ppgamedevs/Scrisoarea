@@ -1,6 +1,4 @@
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import prisma from '../src/lib/prisma'
 
 function slugify(text: string) {
   return text.toString().toLowerCase()
