@@ -40,7 +40,7 @@ export default function robots(): MetadataRoute.Robots {
         rules: [
             {
                 userAgent: "*",
-                allow: ["/", "/llms.txt", "/llms-full.txt"],
+                allow: ["/", "/sitemap.xml", "/sitemaps.xml", "/llms.txt", "/llms-full.txt"],
                 disallow: DISALLOW,
             },
             ...AI_BOTS.map((userAgent) => ({
@@ -49,7 +49,7 @@ export default function robots(): MetadataRoute.Robots {
                 disallow: DISALLOW,
             })),
         ],
-        sitemap: `${SITE_URL}/sitemap.xml`,
-        host: SITE_URL,
+        sitemap: [`${SITE_URL}/sitemap.xml`, `${SITE_URL}/sitemaps.xml`],
+        host: SITE_URL.replace(/^https?:\/\//, ""),
     }
 }

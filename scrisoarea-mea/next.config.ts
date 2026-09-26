@@ -39,6 +39,20 @@ const nextConfig: NextConfig = {
         source: "/llms.txt",
         headers: [{ key: "Content-Type", value: "text/plain; charset=utf-8" }],
       },
+      {
+        source: "/sitemap.xml",
+        headers: [
+          { key: "Content-Type", value: "text/xml; charset=utf-8" },
+          { key: "Access-Control-Allow-Origin", value: "*" },
+        ],
+      },
+      {
+        source: "/sitemaps.xml",
+        headers: [
+          { key: "Content-Type", value: "text/xml; charset=utf-8" },
+          { key: "Access-Control-Allow-Origin", value: "*" },
+        ],
+      },
     ]
   },
 };
