@@ -7,28 +7,36 @@ import { redirect } from "next/navigation"
 
 export async function uploadProofAction(scrisoareId: string, formData: FormData) {
     const session = await getSession()
-    if (session?.role !== 'PARTNER') throw new Error("Unauthorized")
+    if (session?.role !== "PARTNER" || !session.institutionId) throw new Error("Unauthorized")
+    if (!session.emailVerified) throw new Error("Email neverificat.")
+
+    const letter = await prisma.scrisoare.findUnique({ where: { id: scrisoareId } })
+    if (!letter || letter.institutionId !== session.institutionId) {
+        throw new Error("Nu aveți acces la această scrisoare.")
+    }
+
+    const institution = await prisma.institution.findUnique({
+        where: { id: session.institutionId },
+        select: { verified: true },
+    })
+    if (!institution?.verified) throw new Error("Instituția nu este aprobată.")
 
     // Mock Upload Logic for MVP
-    // Ideally: Upload to S3/Blob, get URL.
-    // Here: Use a placeholder video/image based on input type.
+    const file = formData.get("proofFile") as File
+    const type = file.type.startsWith("video") ? "VIDEO" : "PHOTO"
 
-    // Check file type (mock)
-    const file = formData.get('proofFile') as File
-    const type = file.type.startsWith('video') ? 'VIDEO' : 'PHOTO'
-
-    // Mock URL - In real app, this is result of upload
-    const mockUrl = type === 'VIDEO'
-        ? 'https://www.w3schools.com/html/mov_bbb.mp4' // Public sample video
-        : 'https://placehold.co/800x600/png?text=Dovada+Foto'
+    const mockUrl =
+        type === "VIDEO"
+            ? "https://www.w3schools.com/html/mov_bbb.mp4"
+            : "https://placehold.co/800x600/png?text=Dovada+Foto"
 
     await prisma.proofMedia.create({
         data: {
             scrisoareId,
             url: mockUrl,
             type,
-            moderationStatus: 'PENDING'
-        }
+            moderationStatus: "PENDING",
+        },
     })
 
     revalidatePath(`/partner/scrisori/${scrisoareId}`)

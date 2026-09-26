@@ -12,14 +12,15 @@
     "db:push": "prisma db push",
     "db:seed": "npx tsx --env-file=.env prisma/seed.ts",
     "db:sync-admin": "npx tsx --env-file=.env scripts/sync-admin.ts",
-    "db:push-turso": "npx tsx scripts/push-turso.ts"
+    "db:push-turso": "npx tsx scripts/push-turso.ts",
+    "email:test": "npx tsx --env-file=.env scripts/test-email.ts"
   },
   "prisma": {
     "seed": "npx tsx --env-file=.env prisma/seed.ts"
   },
   "dependencies": {
+    "@better-auth/prisma-adapter": "^1.7.6",
     "@bogdan-nita/netopia-card": "^1.1.31",
-    "@lucia-auth/adapter-prisma": "^4.0.1",
     "@libsql/client": "^0.15.15",
     "@prisma/adapter-libsql": "^6.19.0",
     "@prisma/client": "^6.19.0",
@@ -29,14 +30,12 @@
     "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-tabs": "^1.1.13",
-    "@types/bcryptjs": "^2.4.6",
     "@vercel/blob": "^2.2.0",
-    "bcryptjs": "^3.0.3",
+    "better-auth": "^1.7.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "ffmpeg-static": "^5.3.0",
     "fluent-ffmpeg": "^2.1.3",
-    "lucia": "^3.2.2",
     "lucide-react": "^0.563.0",
     "next": "16.1.6",
     "pdf-lib": "^1.17.1",

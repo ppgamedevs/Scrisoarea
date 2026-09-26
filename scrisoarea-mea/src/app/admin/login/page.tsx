@@ -1,88 +1,143 @@
 "use client"
 
+import { useRouter, useSearchParams } from "next/navigation"
+import { Suspense, useState, useTransition } from "react"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { login } from "@/app/actions/auth-actions"
-import { useRouter } from "next/navigation"
-import { useState, useTransition } from "react"
-import { toast } from "sonner"
-import { ShieldCheck } from "lucide-react"
+import { Label } from "@/components/ui/label"
+import { authClient } from "@/lib/auth-client"
 
-export default function AdminLoginPage() {
-    const [isPending, startTransition] = useTransition()
-    const [error, setError] = useState<string | null>(null)
+function AccessDeniedMessage() {
+    return (
+        <div className="text-sm text-red-700 bg-red-50 border border-red-100 rounded-lg p-3">
+            Acces interzis. Acest cont nu are drepturi de administrator.
+        </div>
+    )
+}
+
+function AdminLoginForm() {
     const router = useRouter()
+    const searchParams = useSearchParams()
+    const [pending, startTransition] = useTransition()
+    const [error, setError] = useState<string | null>(
+        searchParams.get("error") === "AccessDenied"
+            ? "Acces interzis. Acest cont nu are drepturi de administrator."
+            : null
+    )
+    const [accessDenied, setAccessDenied] = useState(
+        searchParams.get("error") === "AccessDenied"
+    )
 
-    async function handleLogin(formData: FormData) {
-        const emailInput = formData.get('email') as string
-        const passwordInput = formData.get('password') as string
-
+    async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault()
         setError(null)
+        setAccessDenied(false)
+        const form = new FormData(e.currentTarget)
+        const email = String(form.get("email") || "")
+            .trim()
+            .toLowerCase()
+        const password = String(form.get("password") || "")
 
         startTransition(async () => {
-            try {
-                // Pass 'ADMIN' as the portal
-                await login(emailInput, passwordInput, 'ADMIN')
-                router.push('/admin')
-            } catch (err) {
-                console.error(err)
-                const message = err instanceof Error ? err.message : "A apărut o eroare la logare."
-                if (message.includes("Nu aveti acces")) {
-                    setError("Acest cont nu are drepturi de Administrator.")
+            const { error: err } = await authClient.signIn.email({
+                email,
+                password,
+                callbackURL: "/admin",
+            })
+
+            if (err) {
+                if (err.status === 403 || err.message?.toLowerCase().includes("verif")) {
+                    setError(
+                        "Adresa de email nu este confirmată. Verifică emailul pentru a activa contul."
+                    )
                 } else {
-                    setError(message)
+                    setError("Email sau parolă incorectă.")
                 }
-                toast.error(message)
+                return
             }
+
+            const sessionRes = await authClient.getSession()
+            const role = sessionRes.data?.user?.role
+
+            if (role !== "ADMIN") {
+                await authClient.signOut()
+                setAccessDenied(true)
+                setError("Acces interzis. Acest cont nu are drepturi de administrator.")
+                return
+            }
+
+            toast.success("Autentificare reușită")
+            router.push("/admin")
+            router.refresh()
         })
     }
 
     return (
-        <main className="min-h-screen flex items-center justify-center bg-slate-900 px-4">
-            <div className="bg-white p-8 rounded-xl shadow-xl border max-w-md w-full text-center">
-                <div className="flex justify-center mb-6">
-                    <div className="bg-red-100 p-3 rounded-full">
-                        <ShieldCheck className="w-8 h-8 text-red-600" />
-                    </div>
+        <main className="min-h-screen flex items-center justify-center bg-slate-100 px-4 py-16">
+            <div className="bg-white p-8 rounded-2xl shadow-sm border max-w-md w-full space-y-6">
+                <div>
+                    <h1 className="text-2xl font-bold text-slate-900">Autentificare Admin</h1>
+                    <p className="text-slate-500 text-sm mt-1">
+                        Acces restricționat pentru administratori.
+                    </p>
                 </div>
 
-                <h1 className="text-2xl font-bold mb-2">Autentificare Admin</h1>
-                <p className="text-slate-500 mb-8">Acces restricționat.</p>
-
-                <form action={handleLogin} className="space-y-4">
-                    <div className="text-left">
-                        <label className="text-sm font-medium mb-1 block">Email Admin</label>
+                <form onSubmit={onSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="email">Email</Label>
                         <Input
+                            id="email"
                             name="email"
                             type="email"
-                            placeholder="admin@example.com"
+                            autoComplete="email"
                             required
-                            disabled={isPending}
+                            disabled={pending}
                         />
                     </div>
-
-                    <div className="text-left">
-                        <label className="text-sm font-medium mb-1 block">Parola</label>
+                    <div className="space-y-2">
+                        <Label htmlFor="password">Parolă</Label>
                         <Input
+                            id="password"
                             name="password"
                             type="password"
-                            placeholder="••••••••"
+                            autoComplete="current-password"
                             required
-                            disabled={isPending}
+                            minLength={8}
+                            disabled={pending}
                         />
                     </div>
 
-                    {error && (
-                        <div className="text-red-500 text-sm bg-red-50 p-2 rounded border border-red-100">
-                            {error}
-                        </div>
-                    )}
+                    {(error || accessDenied) &&
+                        (accessDenied ? (
+                            <AccessDeniedMessage />
+                        ) : (
+                            <div className="text-sm text-red-700 bg-red-50 border border-red-100 rounded-lg p-3">
+                                {error}
+                            </div>
+                        ))}
 
-                    <Button type="submit" className="w-full bg-slate-900 hover:bg-slate-800" disabled={isPending}>
-                        {isPending ? "Se verifică..." : "Autentificare Admin"}
+                    <Button type="submit" className="w-full" disabled={pending}>
+                        {pending ? "Se autentifică..." : "Intră în panoul admin"}
                     </Button>
                 </form>
             </div>
         </main>
+    )
+}
+
+export default function AdminLoginPage() {
+    return (
+        <Suspense
+            fallback={
+                <main className="min-h-screen flex items-center justify-center bg-slate-100 px-4">
+                    <div className="bg-white p-8 rounded-2xl shadow-sm border max-w-md w-full text-slate-500 text-sm">
+                        Se încarcă...
+                    </div>
+                </main>
+            }
+        >
+            <AdminLoginForm />
+        </Suspense>
     )
 }

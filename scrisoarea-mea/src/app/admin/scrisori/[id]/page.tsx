@@ -43,7 +43,7 @@ export default async function AdminScrisoareDetail({
                 items,
                 institution: {
                     name: letter.institution.name,
-                    cui: letter.institution.cui,
+                    cui: letter.institution.cui || "",
                     contactName: letter.institution.contactName,
                     contactEmail: letter.institution.contactEmail,
                 },

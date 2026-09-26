@@ -60,7 +60,6 @@ export default function EditScrisoareForm({
 
     const updateItem = (index: number, field: string, val: unknown) => {
         const newItems = [...items]
-        // @ts-expect-error dynamic field
         newItems[index] = { ...newItems[index], [field]: val }
         setItems(newItems)
     }

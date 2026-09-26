@@ -1,7 +1,7 @@
-"use client"
+﻿"use client"
 
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useRef, useState, useTransition } from "react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
@@ -9,14 +9,23 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { authClient } from "@/lib/auth-client"
 
-export default function PartnerLoginPage() {
+export default function DonorLoginForm() {
     const router = useRouter()
+    const searchParams = useSearchParams()
+    const returnTo = searchParams.get("returnTo")
     const [pending, startTransition] = useTransition()
     const [resendPending, setResendPending] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [needsVerification, setNeedsVerification] = useState(false)
     const [email, setEmail] = useState("")
     const lastResendAt = useRef(0)
+
+    function safeReturn(path: string | null) {
+        if (!path || !path.startsWith("/") || path.startsWith("//") || path.includes("://")) {
+            return "/profil"
+        }
+        return path
+    }
 
     async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
@@ -33,14 +42,14 @@ export default function PartnerLoginPage() {
             const { error: err } = await authClient.signIn.email({
                 email: emailValue,
                 password,
-                callbackURL: "/partner",
+                callbackURL: safeReturn(returnTo),
             })
 
             if (err) {
                 if (err.status === 403 || err.message?.toLowerCase().includes("verif")) {
                     setNeedsVerification(true)
                     setError(
-                        "Adresa de email nu este confirmată. Verifică emailul pentru a activa contul instituției."
+                        "Adresa de email nu este confirmată. Verifică emailul pentru a activa contul."
                     )
                 } else {
                     setError("Email sau parolă incorectă.")
@@ -49,7 +58,7 @@ export default function PartnerLoginPage() {
             }
 
             toast.success("Autentificare reușită")
-            router.push("/partner")
+            router.push(safeReturn(returnTo))
             router.refresh()
         })
     }
@@ -65,7 +74,7 @@ export default function PartnerLoginPage() {
         try {
             const { error: err } = await authClient.sendVerificationEmail({
                 email,
-                callbackURL: "/partner/pending-approval",
+                callbackURL: "/profil",
             })
             if (err) {
                 toast.error(err.message || "Nu am putut retrimite emailul.")
@@ -82,10 +91,8 @@ export default function PartnerLoginPage() {
         <main className="min-h-screen flex items-center justify-center bg-[var(--pastel-sage)]/30 px-4 py-16">
             <div className="bg-white p-8 rounded-2xl shadow-sm border max-w-md w-full space-y-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900">Portal Instituții</h1>
-                    <p className="text-slate-500 text-sm mt-1">
-                        Pentru orfelinate, case de copii, centre de plasament și organizații partenere.
-                    </p>
+                    <h1 className="text-2xl font-bold text-slate-900">Intră în cont</h1>
+                    <p className="text-slate-500 text-sm mt-1">Cont donator / sponsor</p>
                 </div>
 
                 <form onSubmit={onSubmit} className="space-y-4">
@@ -131,7 +138,7 @@ export default function PartnerLoginPage() {
                     )}
 
                     <Button type="submit" className="w-full" disabled={pending}>
-                        {pending ? "Se autentifică..." : "Intră în portal"}
+                        {pending ? "Se autentifică..." : "Intră în cont"}
                     </Button>
                 </form>
 
@@ -142,18 +149,15 @@ export default function PartnerLoginPage() {
                         </Link>
                     </p>
                     <p>
-                        Nu ai cont de instituție?{" "}
-                        <Link
-                            href="/partner/register"
-                            className="text-teal-700 font-medium hover:underline"
-                        >
-                            Înregistrează instituția
+                        Nu ai cont?{" "}
+                        <Link href="/register" className="text-teal-700 font-medium hover:underline">
+                            Creează unul
                         </Link>
                     </p>
                     <p className="pt-2 border-t">
-                        Ești donator?{" "}
-                        <Link href="/login" className="text-slate-800 hover:underline">
-                            Intră în contul de donator
+                        Ești instituție?{" "}
+                        <Link href="/partner/login" className="text-slate-800 hover:underline">
+                            Portal Instituții
                         </Link>
                     </p>
                 </div>

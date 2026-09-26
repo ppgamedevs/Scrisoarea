@@ -10,9 +10,10 @@ import { logout } from "@/app/actions/auth-actions"
 
 export default async function DonorProfilePage() {
     const session = await getSession()
-    if (!session || session.role !== 'DONOR') {
-        redirect('/login')
+    if (!session || (session.role !== "DONOR" && session.role !== "SPONSOR")) {
+        redirect("/login")
     }
+    if (!session.emailVerified) redirect("/verify-email")
 
     const data = await getDonorDashboardData(session.id)
     if (!data) return <div>Incarcare...</div>

@@ -17,6 +17,16 @@ async function requirePartner() {
     if (!session || session.role !== "PARTNER" || !session.institutionId) {
         throw new Error("Unauthorized")
     }
+    if (!session.emailVerified) {
+        throw new Error("Email neverificat.")
+    }
+    const institution = await prisma.institution.findUnique({
+        where: { id: session.institutionId },
+        select: { verified: true },
+    })
+    if (!institution?.verified) {
+        throw new Error("Instituția nu este încă aprobată de administrator.")
+    }
     return session as typeof session & { institutionId: string }
 }
 

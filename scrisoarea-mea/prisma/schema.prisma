@@ -15,57 +15,94 @@ enum UserRole {
   ADMIN
 }
 
+enum InstitutionType {
+  ORFELINAT
+  CASA_DE_COPII
+  CENTRU_PLASAMENT
+  ONG
+  FUNDATIE
+  ALTUL
+}
+
 model User {
-  id            String   @id @default(uuid())
-  email         String   @unique
-  passwordHash  String
-  role          UserRole @default(DONOR)
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Application fields (not settable via client auth input)
+  role          UserRole  @default(DONOR)
   firstName     String?
   lastName      String?
-  
+  lastLoginAt   DateTime?
+
   institution   Institution? @relation(fields: [institutionId], references: [id])
   institutionId String?
 
-  sponsorProfile SponsorProfile? // For SPONSOR role
-
-  emailVerified DateTime?
-
+  sponsorProfile SponsorProfile?
   sessions      Session[]
-  emailCodes    EmailVerificationCode[]
-
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  
-  lastLoginAt   DateTime?
+  accounts      Account[]
 
   @@index([role])
-}
-
-model EmailVerificationCode {
-  id        String   @id @default(uuid())
-  code      String
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  email     String
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-
-  @@index([userId])
+  @@map("user")
 }
 
 model Session {
-  id        String   @id
-  userId    String
+  id        String   @id @default(cuid())
   expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
 }
 
 model Institution {
   id             String   @id @default(uuid())
   // Internal/Legal
   name           String   
-  cui            String   @unique
+  cui            String?  @unique
+  institutionType InstitutionType @default(ALTUL)
   
   // Public Profile
   slug             String?  @unique
@@ -81,6 +118,8 @@ model Institution {
   addressPrivate String?  
   contactName    String?
   contactEmail   String?
+  contactPhone   String?
+  representativeRole String?
   
   users          User[]
   scrisori       Scrisoare[]
