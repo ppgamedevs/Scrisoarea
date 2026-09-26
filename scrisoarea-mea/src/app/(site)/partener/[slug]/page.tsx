@@ -11,10 +11,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const partner = await prisma.institution.findUnique({ where: { slug } })
     if (!partner) return { title: 'Partener Inexistent' }
 
-    return {
-        title: `${partner.publicName || partner.name} | Partener Verificat | Visuri pe hartie`,
-        description: partner.descriptionPublic?.substring(0, 160) || `Profil oficial pentru ${partner.publicName || partner.name}. Instituție verificată pe platforma Visuri pe hartie.`,
-    }
+    const name = partner.publicName || partner.name
+    const { pageMetadata } = await import("@/lib/seo/metadata")
+    return pageMetadata({
+        title: `${name} — partener verificat`,
+        description:
+            partner.descriptionPublic?.substring(0, 160) ||
+            `Profil oficial ${name} (${partner.city}, ${partner.county}). Instituție verificată pe visuripehartie.ro.`,
+        path: `/partener/${slug}`,
+        keywords: [name, partner.county, partner.city, "partener verificat"],
+    })
 }
 
 export default async function PartnerPage({ params }: { params: Promise<{ slug: string }> }) {

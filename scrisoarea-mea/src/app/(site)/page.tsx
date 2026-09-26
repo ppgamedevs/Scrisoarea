@@ -6,6 +6,18 @@ import { formatCurrency } from "@/lib/utils"
 // import { FAQ_ITEMS } from "@/lib/constants"
 import { CheckCircle2, Heart, Sparkles, TrendingUp, FileText, BarChart3, ArrowRight } from "lucide-react"
 import { ScrisoareCard } from "@/components/ui/scrisoare-card"
+import { JsonLd } from "@/components/seo/json-ld"
+import { FAQ_ITEMS } from "@/lib/constants"
+import { generateFaqSchema, generateHowToSchema } from "@/lib/seo/jsonld"
+import { pageMetadata } from "@/lib/seo/metadata"
+
+export const metadata = pageMetadata({
+    title: "Donează pentru copii din România — scrisori verificate",
+    description:
+        "Visuri pe hârtie publică scrisori verificate ale copiilor. Donezi o dorință concretă, fără comision, cu dovadă foto sau video. Domeniu: visuripehartie.ro.",
+    path: "/",
+    keywords: ["donație copii", "scrisori Moș Crăciun", "ONG transparent", "formular 230"],
+})
 
 async function getStats() {
     const { LetterModeration } = await import("@/lib/letter-moderation")
@@ -63,6 +75,7 @@ export default async function HomePage() {
 
     return (
         <main className="bg-[var(--pastel-sage)]/30">
+            <JsonLd data={[generateFaqSchema([...FAQ_ITEMS, ...FAQ_ITEMS_REFINED]), generateHowToSchema()]} />
             {/* Hero */}
             <section className="relative pt-24 pb-20 px-4 text-center border-b bg-[var(--pastel-cream)]">
                 <div className="max-w-4xl mx-auto space-y-8">

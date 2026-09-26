@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
 import { checkRateLimit } from "@/lib/rate-limit"
 import { headers } from "next/headers"
+import { SITE_URL } from "@/lib/seo/site"
 
 // Cache for 10 mins
 export const revalidate = 600
@@ -47,7 +48,7 @@ export async function GET(request: Request) {
 
     const transformed = letters.map(l => ({
         id: l.id,
-        url: `https://scrisoareamea.ro/scrisori/${l.slug || l.id}`,
+        url: `${SITE_URL}/scrisori/${l.slug || l.id}`,
         pseudonim: l.childFirstName,
         age: l.childAge,
         category: l.category,

@@ -1,22 +1,55 @@
-import { MetadataRoute } from 'next'
+import type { MetadataRoute } from "next"
+import { SITE_URL } from "@/lib/seo/site"
+
+const DISALLOW = [
+    "/admin/",
+    "/partner/",
+    "/api/",
+    "/private/",
+    "/login",
+    "/register",
+    "/verify-email",
+    "/reset-password",
+    "/profil",
+    "/donatie/cancel",
+    "/donatie/success",
+]
+
+const AI_BOTS = [
+    "GPTBot",
+    "ChatGPT-User",
+    "OAI-SearchBot",
+    "ClaudeBot",
+    "anthropic-ai",
+    "PerplexityBot",
+    "Google-Extended",
+    "GoogleOther",
+    "Applebot",
+    "Applebot-Extended",
+    "Bingbot",
+    "Bytespider",
+    "CCBot",
+    "meta-externalagent",
+    "Amazonbot",
+    "cohere-ai",
+    "YouBot",
+]
 
 export default function robots(): MetadataRoute.Robots {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://scrisoareamea.ro'
-
     return {
-        rules: {
-            userAgent: '*',
-            allow: '/',
-            disallow: [
-                '/admin/',
-                '/partner/',
-                '/api/',
-                '/private/',
-                '/login',
-                // We keep transparenta/tranzactii allowed as it builds broad trust, 
-                // but we might want to prevent abuse of query params later via canonicals or headers.
-            ],
-        },
-        sitemap: `${baseUrl}/sitemap.xml`,
+        rules: [
+            {
+                userAgent: "*",
+                allow: ["/", "/llms.txt", "/llms-full.txt"],
+                disallow: DISALLOW,
+            },
+            ...AI_BOTS.map((userAgent) => ({
+                userAgent,
+                allow: ["/", "/llms.txt", "/llms-full.txt", "/scrisori", "/fapte", "/api/public/"],
+                disallow: DISALLOW,
+            })),
+        ],
+        sitemap: `${SITE_URL}/sitemap.xml`,
+        host: SITE_URL,
     }
 }

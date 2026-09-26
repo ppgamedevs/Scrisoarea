@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
 import { checkRateLimit } from "@/lib/rate-limit"
 import { headers } from "next/headers"
+import { SITE_URL } from "@/lib/seo/site"
 
 // Cache for 1 hour
 export const revalidate = 3600
@@ -35,7 +36,7 @@ export async function GET() {
             title: "Visuri pe hartie Public Stats",
             lastUpdated: new Date().toISOString(),
             license: "CC-BY-4.0",
-            documentation: "https://scrisoareamea.ro/fapte"
+            documentation: `${SITE_URL}/fapte`
         },
         data: {
             active_letters_count: activeLetters,

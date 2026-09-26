@@ -35,7 +35,7 @@ export function PartnerEditForm({ partner }: { partner: any }) {
                 <div className="space-y-2">
                     <label className="text-sm font-medium">Slug (URL)</label>
                     <Input name="slug" defaultValue={partner.slug || ''} placeholder="ex: fundatia-speranta" required />
-                    <p className="text-xs text-slate-500">scrisoareamea.ro/partener/slug</p>
+                    <p className="text-xs text-slate-500">visuripehartie.ro/partener/slug</p>
                 </div>
             </div>
 

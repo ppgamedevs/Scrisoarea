@@ -1,7 +1,12 @@
-export const metadata = {
-    title: "Procese Operaționale | Visuri pe hartie",
-    description: "Descrierea pas cu pas a fluxurilor operaționale: înregistrare, moderare, donație și livrare.",
-}
+import { pageMetadata } from "@/lib/seo/metadata"
+
+export const metadata = pageMetadata({
+    title: "Procese: de la scrisoare la livrare",
+    description:
+        "Fluxul operațional Visuri pe hârtie: înregistrare partener, moderare, donație, achiziție și dovadă de predare.",
+    path: "/procese",
+    keywords: ["proces donație", "moderare scrisori"],
+})
 
 export default function ProcesePage() {
     return (

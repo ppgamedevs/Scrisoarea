@@ -1,4 +1,13 @@
+import { pageMetadata } from "@/lib/seo/metadata"
 import prisma from "@/lib/prisma"
+
+export const metadata = pageMetadata({
+    title: "Impact: dovezi că darul a ajuns la copil",
+    description:
+        "Povești închise cu foto sau video de predare, moderate de echipă. Transparență reală, nu doar promisiuni.",
+    path: "/impact",
+    keywords: ["dovadă donație", "impact ONG", "livrare cadou"],
+})
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"

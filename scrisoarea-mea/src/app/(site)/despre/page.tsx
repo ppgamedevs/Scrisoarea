@@ -1,4 +1,13 @@
 import { TEAM_MEMBERS } from "@/lib/constants"
+import { pageMetadata } from "@/lib/seo/metadata"
+
+export const metadata = pageMetadata({
+    title: "Despre Asociația pentru visuri și oportunități",
+    description:
+        "Visuri pe hârtie este platforma tehnologică non-profit a Asociației pentru visuri și oportunități. Donații 100% către cadouri, fără intermediari opaci.",
+    path: "/despre",
+    keywords: ["asociație", "CUI 55406686", "ONG București"],
+})
 import { Users2, Target, Heart, Scale } from "lucide-react"
 
 export default function DesprePage() {

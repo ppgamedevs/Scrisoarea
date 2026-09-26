@@ -1,68 +1,42 @@
-import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import { Toaster } from "sonner";
-import { GoogleAnalytics } from "@/components/analytics/google-analytics";
+import type { Viewport } from "next"
+import { Inter } from "next/font/google"
+import "./globals.css"
+import { Toaster } from "sonner"
+import { GoogleAnalytics } from "@/components/analytics/google-analytics"
+import { JsonLd } from "@/components/seo/json-ld"
+import { defaultMetadata } from "@/lib/seo/metadata"
+import { generateOrganizationSchema, generateWebsiteSchema } from "@/lib/seo/jsonld"
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"] })
 
 export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  // Nu limităm zoom-ul — utilizatorul poate apropia cât are nevoie (accesibilitate)
-};
+    width: "device-width",
+    initialScale: 1,
+}
 
-export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://scrisoarea-mea.ro'),
-  title: {
-    default: 'Visuri pe hartie | Platformă de caritate transparentă',
-    template: '%s | Visuri pe hartie'
-  },
-  description: 'Îndeplinește dorința unui copil. Platformă verificată, 100% transparentă, fără comisioane.',
-  applicationName: 'Visuri pe hartie',
-  icons: {
-    icon: '/brand/visuri-pe-hartie-logo.png',
-    apple: '/brand/visuri-pe-hartie-logo.png',
-  },
-  openGraph: {
-    type: 'website',
-    locale: 'ro_RO',
-    siteName: 'Visuri pe hartie',
-    title: 'Visuri pe hartie | Platformă de caritate transparentă',
-    description: 'Îndeplinește dorința unui copil. Platformă verificată, 100% transparentă, fără comisioane.',
-    images: [
-      {
-        url: '/brand/visuri-pe-hartie-logo.png',
-        width: 1024,
-        height: 347,
-        alt: 'Visuri pe hartie',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Visuri pe hartie',
-    description: 'Îndeplinește dorința unui copil. Platformă verificată, 100% transparentă, fără comisioane.',
-    images: ['/brand/visuri-pe-hartie-logo.png'],
-  },
-  robots: {
-    index: true,
-    follow: true,
-  }
-};
+export const metadata = {
+    ...defaultMetadata,
+    verification: {
+        google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+        other: {
+            "msvalidate.01": process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION || "",
+        },
+    },
+}
 
 export default function RootLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode
 }>) {
-  return (
-    <html lang="ro">
-      <body className={inter.className} suppressHydrationWarning>
-        <GoogleAnalytics />
-        {children}
-        <Toaster position="top-center" richColors />
-      </body>
-    </html>
-  );
+    return (
+        <html lang="ro">
+            <body className={inter.className} suppressHydrationWarning>
+                <JsonLd data={[generateOrganizationSchema(), generateWebsiteSchema()]} />
+                <GoogleAnalytics />
+                {children}
+                <Toaster position="top-center" richColors />
+            </body>
+        </html>
+    )
 }

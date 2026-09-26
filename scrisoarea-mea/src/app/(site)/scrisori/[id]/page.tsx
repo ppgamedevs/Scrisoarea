@@ -8,7 +8,12 @@ import DonationModule from "@/components/donation-module"
 import FulfillmentModule from "@/components/fulfillment-module"
 import { Badge } from "@/components/ui/badge"
 import { Metadata } from 'next'
-import { generateLetterSchema, BASE_URL } from "@/lib/seo/jsonld"
+import { permanentRedirect } from "next/navigation"
+import { generateBreadcrumbSchema, generateLetterSchema } from "@/lib/seo/jsonld"
+import { JsonLd } from "@/components/seo/json-ld"
+import { pageMetadata } from "@/lib/seo/metadata"
+import { categoryLabel, resolveCategory } from "@/lib/seo/categories"
+import { ogImageUrl } from "@/lib/seo/site"
 import { Sparkles, PlayCircle, Heart, ArrowLeft } from "lucide-react"
 import { canManageLetter } from "@/lib/permissions"
 import {
@@ -22,6 +27,25 @@ import { parseWishlistItems, publicItemPrice } from "@/lib/letter-items"
 import PartnerActionsPanel from "@/components/partner-actions-panel"
 import { Button } from "@/components/ui/button"
 
+export const revalidate = 3600
+
+export async function generateStaticParams() {
+    try {
+        const letters = await prisma.scrisoare.findMany({
+            where: {
+                moderationStatus: {
+                    in: [LetterModeration.APPROVED, LetterModeration.FULFILLED, "APPROVED"],
+                },
+            },
+            select: { slug: true, id: true },
+            take: 2000,
+        })
+        return letters.map((letter) => ({ id: letter.slug || letter.id }))
+    } catch {
+        return []
+    }
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
     const { id } = await params
     const letter = await prisma.scrisoare.findFirst({
@@ -30,21 +54,35 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
             moderationStatus: {
                 in: [LetterModeration.APPROVED, LetterModeration.FULFILLED, "APPROVED"],
             },
-        }
+        },
+        include: { institution: true },
     })
 
-    if (!letter) return { title: 'Dorință Inexistentă' }
+    if (!letter) return { title: "Dorință inexistentă", robots: { index: false, follow: false } }
 
     const target = publicTargetAmount(letter)
-    const percent = Math.min(100, Math.round((Number(letter.collectedAmount) / target) * 100))
-    const ogUrl = `${BASE_URL}/og?title=${encodeURIComponent(`Dorința lui ${letter.childFirstName}`)}&subtitle=${encodeURIComponent(letter.childStory?.substring(0, 50) || '')}&label=Ajutor&progress=${percent}`
+    const remaining = Math.max(0, target - Number(letter.collectedAmount))
+    const location = [letter.institution?.city, letter.institution?.county].filter(Boolean).join(", ")
+    const category = categoryLabel(letter.category)
+    const title = `Donează pentru ${letter.childFirstName}, ${letter.childAge} ani${location ? ` — ${location}` : ""}`
+    const description = letter.childStory?.slice(0, 150)
+        || `Scrisoare verificată pe visuripehartie.ro: ajută-l pe ${letter.childFirstName} (${letter.childAge} ani) cu ${category.toLowerCase()}.${location ? ` Caz din ${location}.` : ""} Mai sunt ${remaining} RON până la țintă.`
+    const path = `/scrisori/${letter.slug || letter.id}`
+    const ogUrl = ogImageUrl(`Dorința lui ${letter.childFirstName}`, letter.childStory?.slice(0, 50) || category, "Ajutor")
 
     return {
-        title: `Fii erou pentru ${letter.childFirstName} | Scrisoare`,
-        description: `Citește povestea lui ${letter.childFirstName} (${letter.childAge} ani) și ajută-l să primească ${letter.category.toLowerCase()}. Gestul tău aduce bucurie pură.`,
-        openGraph: {
-            images: [ogUrl]
-        }
+        ...pageMetadata({
+            title,
+            description,
+            path,
+            keywords: [letter.childFirstName, category, location, "donație copii", "scrisoare verificată"],
+            image: ogUrl,
+            type: "article",
+        }),
+        other: {
+            "geo.region": "RO",
+            "geo.placename": location || "România",
+        },
     }
 }
 
@@ -87,6 +125,10 @@ export default async function ScrisoarePage({ params }: { params: Promise<{ id: 
 
     if (!letter) notFound()
 
+    if (letter.slug && id !== letter.slug) {
+        permanentRedirect(`/scrisori/${letter.slug}`)
+    }
+
     const moderation = normalizeModerationStatus(letter.moderationStatus)
     const isStaffOrOwner =
         session?.role === 'ADMIN' ||
@@ -101,7 +143,16 @@ export default async function ScrisoarePage({ params }: { params: Promise<{ id: 
         notFound()
     }
 
-    const jsonLd = generateLetterSchema(letter)
+    const jsonLd = generateLetterSchema({
+        ...letter,
+        targetAmount: publicTargetAmount(letter),
+    })
+    const breadcrumbs = generateBreadcrumbSchema([
+        { name: "Acasă", url: "/" },
+        { name: "Scrisori", url: "/scrisori" },
+        { name: categoryLabel(letter.category), url: `/scrisori/categorie/${resolveCategory(letter.category)?.slug || "altele"}` },
+        { name: `Dorința lui ${letter.childFirstName}`, url: `/scrisori/${letter.slug || letter.id}` },
+    ])
 
     // Matching Logic (View Only)
     const now = new Date()
@@ -135,10 +186,7 @@ export default async function ScrisoarePage({ params }: { params: Promise<{ id: 
 
     return (
         <main className="min-h-screen bg-[var(--pastel-sage)]/30 pb-20 font-sans">
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-            />
+            <JsonLd data={[jsonLd, breadcrumbs]} />
             {/* Header Status Bar */}
             <div className="container mx-auto px-4 py-8 max-w-6xl">
                 {/* Back Button */}
@@ -161,6 +209,11 @@ export default async function ScrisoarePage({ params }: { params: Promise<{ id: 
                     <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 tracking-tight">
                         Dorința lui {letter.childFirstName}, <span className="text-slate-400 font-light">{letter.childAge} ani</span>
                     </h1>
+                    <p data-seo-summary className="text-slate-600 max-w-2xl">
+                        Scrisoare verificată pe visuripehartie.ro. {letter.childFirstName} are {letter.childAge} ani
+                        {letter.institution.county ? ` și este ajutat printr-un partener din ${letter.institution.city}, ${letter.institution.county}` : ""}.
+                        Categoria: {categoryLabel(letter.category)}. Donațiile merg 100% către cadou, iar predarea se face la instituție, nu la adresa copilului.
+                    </p>
 
                     <div className="flex items-center gap-2 text-slate-500 text-lg">
                         <span>adusă de</span>

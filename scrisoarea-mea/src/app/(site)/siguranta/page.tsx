@@ -1,7 +1,12 @@
-export const metadata = {
-    title: "Siguranță și Protecția Datelor | Visuri pe hartie",
-    description: "Politici explicite privind protecția identității copiilor, moderarea conținutului și securitatea datelor.",
-}
+import { pageMetadata } from "@/lib/seo/metadata"
+
+export const metadata = pageMetadata({
+    title: "Siguranță și protecția datelor copiilor",
+    description:
+        "Publicăm doar prenumele. Fără CNP, adresă de domiciliu sau contact direct. Livrarea se face la instituția parteneră.",
+    path: "/siguranta",
+    keywords: ["GDPR copii", "protecția copilului", "siguranță donații"],
+})
 
 export default function SigurantaPage() {
     return (
@@ -45,7 +50,7 @@ export default function SigurantaPage() {
 
                 <section className="mb-8">
                     <h2 className="text-xl font-bold mb-4">Raportare Abuz</h2>
-                    <p>Pentru orice suspiciune legată de veridicitatea unui caz sau siguranța datelor, vă rugăm să ne contactați de urgență la <a href="mailto:safety@scrisoareamea.ro">safety@scrisoareamea.ro</a>.</p>
+                    <p>Pentru orice suspiciune legată de veridicitatea unui caz sau siguranța datelor, vă rugăm să ne contactați de urgență la <a href="mailto:safety@visuripehartie.ro">safety@visuripehartie.ro</a>.</p>
                 </section>
             </div>
         </main>

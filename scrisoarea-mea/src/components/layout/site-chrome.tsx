@@ -86,6 +86,9 @@ export function SiteFooter() {
                         <li><Link href="/siguranta" className="hover:text-teal-600 transition-colors inline-block py-2">Siguranță și GDPR</Link></li>
                         <li><Link href="/procese" className="hover:text-teal-600 transition-colors inline-block py-2">Procese Operaționale</Link></li>
                         <li><Link href="/intrebari" className="hover:text-teal-600 transition-colors inline-block py-2">Întrebări Frecvente</Link></li>
+                        <li><Link href="/scrisori/categorie/educatie" className="hover:text-teal-600 transition-colors inline-block py-2">Educație</Link></li>
+                        <li><Link href="/scrisori/categorie/jucarii" className="hover:text-teal-600 transition-colors inline-block py-2">Jucării</Link></li>
+                        <li><a href="/llms.txt" className="hover:text-teal-600 transition-colors inline-block py-2">llms.txt</a></li>
                     </ul>
                 </div>
 

@@ -1,3 +1,4 @@
+import { pageMetadata } from "@/lib/seo/metadata"
 import prisma from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import Link from "next/link"
@@ -5,6 +6,18 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { formatCurrency } from "@/lib/utils"
 import { ScrisoareCard } from "@/components/ui/scrisoare-card"
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params
+    const campaign = await prisma.campaign.findUnique({ where: { slug } })
+    if (!campaign) return { title: "Campanie inexistentă" }
+    return pageMetadata({
+        title: campaign.title,
+        description: campaign.descriptionShort || `Campanie Visuri pe hârtie: ${campaign.title}. Donații verificate, matching posibil.`,
+        path: `/campaign/${slug}`,
+        keywords: [campaign.title, "campanie donații", "matching"],
+    })
+}
 
 export default async function CampaignDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params
