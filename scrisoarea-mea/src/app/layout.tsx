@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
+import { GoogleAnalytics } from "@/components/analytics/google-analytics";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -37,6 +38,7 @@ export default function RootLayout({
   return (
     <html lang="ro">
       <body className={inter.className} suppressHydrationWarning>
+        <GoogleAnalytics />
         {children}
         <Toaster position="top-center" richColors />
       </body>
