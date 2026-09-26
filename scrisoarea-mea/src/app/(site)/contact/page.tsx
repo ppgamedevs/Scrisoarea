@@ -60,7 +60,7 @@ export default function ContactPage() {
                 </form>
 
                 <div className="mt-8 pt-8 border-t text-center text-sm text-slate-500 space-y-2">
-                    <p><strong>Email Direct:</strong> contact@scrisoareamea.ro</p>
+                    <p><strong>Email Direct:</strong> contact@visuripehartie.ro</p>
                     <p><strong>Program:</strong> Luni - Vineri, 09:00 - 17:00</p>
                 </div>
             </div>

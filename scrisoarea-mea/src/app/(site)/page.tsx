@@ -105,7 +105,7 @@ export default async function HomePage() {
                     </div>
                     <div>
                         <span className="block text-2xl sm:text-3xl font-black text-emerald-500">{stats.fulfilled}</span>
-                        <span className="text-xs uppercase tracking-wider text-slate-500 font-semibold">Vise Împlinite</span>
+                        <span className="text-xs uppercase tracking-wider text-slate-500 font-semibold">Visuri Împlinite</span>
                     </div>
                     <div>
                         <span className="block text-2xl sm:text-3xl font-black text-blue-600">{formatCurrency(stats.raised)}</span>

@@ -6,12 +6,13 @@ export function generateOrganizationSchema() {
     return {
         '@context': 'https://schema.org',
         '@type': 'Organization',
-        name: 'Asociația Visuri pe hartie',
+        name: 'Asociația pentru visuri și oportunități',
         url: BASE_URL,
         logo: `${BASE_URL}/brand/visuri-pe-hartie-logo.png`,
+        taxID: process.env.NEXT_PUBLIC_ASSOCIATION_CUI || '55406686',
         contactPoint: {
             '@type': 'ContactPoint',
-            email: 'contact@scrisoareamea.ro',
+            email: 'contact@visuripehartie.ro',
             contactType: 'customer support'
         },
         address: {

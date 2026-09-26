@@ -131,7 +131,7 @@ export default function TermeniPage() {
 
                     <h3>14. Contact</h3>
                     <p>Pentru întrebări sau clarificări, ne puteți contacta la:<br />
-                        📧 <a href="mailto:contact@visepehartie.ro">contact@visepehartie.ro</a></p>
+                        📧 <a href="mailto:contact@visuripehartie.ro">contact@visuripehartie.ro</a></p>
                 </article>
             </div>
         </main>

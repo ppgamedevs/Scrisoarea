@@ -55,10 +55,14 @@ export function SiteFooter() {
                         Platforma tehnologică 100% transparentă care conectează direct donatorii cu nevoile verificate ale copiilor din medii vulnerabile. Fără comisioane. Fără intermediari.
                     </p>
                     <div className="text-xs text-slate-400 space-y-1 mt-4">
-                        <p><strong>Asociația Visuri pe hartie</strong></p>
-                        <p>CUI: {process.env.NEXT_PUBLIC_ASSOCIATION_CUI || "—"}</p>
+                        <p><strong>Asociația pentru visuri și oportunități</strong></p>
+                        <p>CUI: {process.env.NEXT_PUBLIC_ASSOCIATION_CUI || "55406686"}</p>
                         <p>București, România</p>
-                        <p>contact@scrisoareamea.ro</p>
+                        <p>
+                            <a href="mailto:contact@visuripehartie.ro" className="hover:text-teal-700">
+                                contact@visuripehartie.ro
+                            </a>
+                        </p>
                     </div>
                 </div>
 
@@ -97,7 +101,7 @@ export function SiteFooter() {
 
             <div className="container mx-auto px-4 border-t pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-400 gap-6">
                 <div className="flex flex-col gap-2">
-                    <p>&copy; {new Date().getFullYear()} Asociația Visuri pe hartie. Cod Open Source.</p>
+                    <p>&copy; {new Date().getFullYear()} Asociația pentru visuri și oportunități. Cod Open Source.</p>
                     <div className="flex items-center gap-3 mt-2">
                         <span className="opacity-70">Plăți securizate prin</span>
                         <span className="font-bold text-slate-500">Netopia Payments</span>

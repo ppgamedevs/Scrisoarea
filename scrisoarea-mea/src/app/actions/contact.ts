@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma"
 import { sendEmail } from "@/lib/email"
 
-const CONTACT_EMAIL = process.env.CONTACT_EMAIL || "contact@scrisoareamea.ro"
+const CONTACT_EMAIL = process.env.CONTACT_EMAIL || "contact@visuripehartie.ro"
 
 export async function submitContactForm(formData: FormData) {
     const name = formData.get("name") as string

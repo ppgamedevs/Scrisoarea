@@ -58,7 +58,7 @@ export default async function ImpactDetailPage({ params }: { params: Promise<{ i
                     </div>
 
                     <div className="mt-auto pt-6 border-t text-xs text-slate-400">
-                        <p>Dovadă verificată de Asociația Visuri pe hartie.</p>
+                        <p>Dovadă verificată de Asociația pentru visuri și oportunități.</p>
                         <p>Partener logistic: {letter.institution.name}</p>
                     </div>
                 </div>

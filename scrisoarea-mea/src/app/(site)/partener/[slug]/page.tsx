@@ -92,7 +92,7 @@ export default async function PartnerPage({ params }: { params: Promise<{ slug: 
                     </div>
                     <div>
                         <div className="text-sm text-slate-500 uppercase font-bold text-xs tracking-wider mb-1">Dorințe Îndeplinite</div>
-                        <div className="text-2xl font-bold text-emerald-600">{fulfilledCount} Vise realizate</div>
+                        <div className="text-2xl font-bold text-emerald-600">{fulfilledCount} Visuri împlinite</div>
                     </div>
                     <div className="bg-blue-50 p-4 rounded-lg flex items-start gap-3">
                         <CheckCircle2 className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />

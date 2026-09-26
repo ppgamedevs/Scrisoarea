@@ -28,8 +28,9 @@ export default function ConfidentialitatePage() {
                     <h3>2. Cine suntem</h3>
                     <p>Visuri pe hartie este o platformă online care facilitează îndeplinirea unor dorințe concrete ale copiilor aflați în sistemul de protecție, prin scrisori publicate de instituții partenere verificate.</p>
                     <p><strong>Operatorul de date este:</strong><br />
-                        Asociația Visuri pe hartie (denumire provizorie, dacă este cazul)<br />
-                        Email: <a href="mailto:contact@visepehartie.ro">contact@visepehartie.ro</a></p>
+                        Asociația pentru visuri și oportunități<br />
+                        CUI: 55406686<br />
+                        Email: <a href="mailto:contact@visuripehartie.ro">contact@visuripehartie.ro</a></p>
 
                     <h3>3. Ce tipuri de date colectăm</h3>
                     <p>Colectăm doar datele strict necesare pentru funcționarea platformei.</p>
@@ -158,7 +159,7 @@ export default function ConfidentialitatePage() {
 
                     <h3>12. Contact</h3>
                     <p>Pentru întrebări legate de confidențialitate sau protecția datelor, ne puteți contacta la:<br />
-                        📧 <a href="mailto:contact@visepehartie.ro">contact@visepehartie.ro</a></p>
+                        📧 <a href="mailto:contact@visuripehartie.ro">contact@visuripehartie.ro</a></p>
                 </article>
             </div>
         </main>

@@ -16,7 +16,7 @@ const FAQ_INDEX = [
         category: "Despre Siguranță",
         questions: [
             { q: "Cum garantați că e un caz real?", a: "Lucrăm doar cu instituții juridice (ONG-uri, Școli) pe care le audităm contractual. Nu acceptăm cazuri 'de pe stradă' neverificate." },
-            { q: "Unde ajung banii?", a: "Într-un cont dedicat al Asociației Visuri pe hartie, de unde se fac plățile direct către furnizorii de produse (magazine)." }
+            { q: "Unde ajung banii?", a: "Într-un cont dedicat al Asociației pentru visuri și oportunități, de unde se fac plățile direct către furnizorii de produse (magazine)." }
         ]
     },
     {

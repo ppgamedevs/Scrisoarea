@@ -101,7 +101,7 @@ export default function CookiesPage() {
 
                     <h3>9. Contact</h3>
                     <p>Pentru întrebări legate de utilizarea cookie-urilor, ne puteți contacta la:<br />
-                        📧 <a href="mailto:contact@visepehartie.ro">contact@visepehartie.ro</a></p>
+                        📧 <a href="mailto:contact@visuripehartie.ro">contact@visuripehartie.ro</a></p>
                 </article>
             </div>
         </main>
