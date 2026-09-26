@@ -10,8 +10,40 @@ function withPathname(request: NextRequest) {
     })
 }
 
+const SEO_PATHS = new Set([
+    "/robots.txt",
+    "/sitemap.xml",
+    "/sitemaps.xml",
+    "/llms.txt",
+    "/llms-full.txt",
+    "/ai.txt",
+    "/manifest.webmanifest",
+])
+
+function isApexHost(host: string) {
+    return host.split(":")[0].toLowerCase() === "visuripehartie.ro"
+}
+
 export async function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl
+    const host = request.headers.get("host") || ""
+
+    if (isApexHost(host) && !SEO_PATHS.has(pathname)) {
+        const url = request.nextUrl.clone()
+        url.hostname = "www.visuripehartie.ro"
+        url.protocol = "https:"
+        url.port = ""
+        return NextResponse.redirect(url, 308)
+    }
+
+    const needsAuth =
+        pathname.startsWith("/admin") ||
+        pathname.startsWith("/partner") ||
+        pathname.startsWith("/profil")
+
+    if (!needsAuth) {
+        return withPathname(request)
+    }
 
     const publicPartner = [
         "/partner/login",
@@ -80,5 +112,7 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ["/admin/:path*", "/partner/:path*", "/profil", "/profil/:path*"],
+    matcher: [
+        "/((?!_next/static|_next/image|favicon.ico|robots\\.txt|sitemap\\.xml|sitemaps\\.xml|llms\\.txt|llms-full\\.txt|ai\\.txt|manifest\\.webmanifest).*)",
+    ],
 }
