@@ -96,9 +96,15 @@ export default function DonationModule({
 
     if (isFullyFunded) {
         return (
-            <div className="bg-emerald-50 border border-emerald-100 p-8 rounded-2xl text-center">
-                <h3 className="text-xl font-bold text-emerald-800 mb-2">Dorință Împlinită! 🎉</h3>
-                <p className="text-emerald-700">Acest copil va primi cadoul dorit mulțumită oamenilor cu suflet mare. Nu mai sunt necesare fonduri.</p>
+            <div className="bg-emerald-50 border border-emerald-100 p-8 rounded-2xl text-center space-y-3">
+                <div className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-emerald-600 text-white font-bold text-sm tracking-wide">
+                    Finanțat
+                </div>
+                <h3 className="text-xl font-bold text-emerald-800">Ținta a fost atinsă</h3>
+                <p className="text-emerald-700 text-sm">
+                    Donațiile pentru această scrisoare sunt închise. Cadoul va fi achiziționat și
+                    livrat; statusul „îndeplinit” apare după confirmarea livrării.
+                </p>
             </div>
         )
     }
@@ -187,9 +193,9 @@ export default function DonationModule({
             <Button
                 className="w-full text-lg h-14 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-lg shadow-blue-200 rounded-xl transition-all hover:scale-[1.02]"
                 onClick={handleDonate}
-                disabled={loading || !customAmount || Number(customAmount) < 5}
+                disabled={loading || !customAmount || Number(customAmount) < 5 || remainingAmount <= 0}
             >
-                {loading ? "Se procesează..." : "Donează și adu bucurie ✨"}
+                {loading ? "Se procesează..." : "Donează"}
             </Button>
 
             <p className="text-xs text-slate-400 text-center flex items-center justify-center gap-1">

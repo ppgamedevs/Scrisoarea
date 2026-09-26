@@ -49,20 +49,31 @@ async function main() {
   const bcrypt = await import('bcryptjs')
   const hashedPassword = await bcrypt.hash('parola123', 10)
 
+  const adminEmail = process.env.ADMIN_EMAIL?.trim()
+  const adminPassword = process.env.ADMIN_PASSWORD
+  if (!adminEmail || !adminPassword) {
+    throw new Error(
+      'ADMIN_EMAIL and ADMIN_PASSWORD must be set in the environment (e.g. .env / .env.local) before seeding.'
+    )
+  }
+  const adminPasswordHash = await bcrypt.hash(adminPassword, 10)
+
   // 2. Create Users
   await prisma.user.upsert({
-    where: { email: 'admin@scrisoarea.ro' },
+    where: { email: adminEmail },
     update: {
-      passwordHash: hashedPassword // Update password just in case
+      passwordHash: adminPasswordHash,
+      role: 'ADMIN',
     },
     create: {
-      email: 'admin@scrisoarea.ro',
-      passwordHash: hashedPassword,
+      email: adminEmail,
+      passwordHash: adminPasswordHash,
       role: 'ADMIN',
-      firstName: 'Super',
-      lastName: 'Admin'
+      firstName: 'Admin',
+      lastName: 'Vise'
     }
   })
+  console.log(`Admin user ready: ${adminEmail}`)
 
   await prisma.user.upsert({
     where: { email: 'partner@speranta.ro' },
@@ -142,10 +153,13 @@ async function main() {
         wishList: l.wishList,
         category: l.category,
         targetAmount: l.targetAmount,
+        submittedTargetAmount: l.targetAmount,
+        approvedTargetAmount: l.targetAmount,
         originalImgUrl: l.originalImgUrl,
         institutionId: institution.id,
         status: 'ACTIV',
-        moderationStatus: 'APPROVED'
+        moderationStatus: 'approved',
+        approvedAt: new Date(),
       }
     })
   }

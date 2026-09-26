@@ -1,10 +1,9 @@
 import prisma from "@/lib/prisma"
 import Link from "next/link"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { formatCurrency } from "@/lib/utils"
 import { LetterFilters } from "@/components/letters/letter-filters"
 import { ScrisoareCard } from "@/components/ui/scrisoare-card"
+import { LetterModeration, publicWishlistWhere } from "@/lib/letter-moderation"
 
 export default async function ScrisoriPage({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
     const params = await searchParams
@@ -14,14 +13,14 @@ export default async function ScrisoriPage({ searchParams }: { searchParams: Pro
     const category = typeof params.category === 'string' && params.category !== 'all' ? params.category : undefined
     const status = typeof params.status === 'string' && params.status !== 'all' ? params.status : undefined
 
-    // Build Query
+    // Always require admin approval for public wishlist
     const where: any = {
-        // Default show public statuses if no status selected, usually standard listing
-        // status: status ? status : { not: 'NOU' } // Let's respect user choice properly
+        ...publicWishlistWhere,
+    }
 
-        status: status
-            ? status
-            : { in: ['NOU', 'ACTIV', 'FINANTAT', 'IN_ACHIZITIE', 'LIVRAT', 'INCHIS'] } // Show all public statuses
+    if (status) {
+        where.status = status
+        where.moderationStatus = LetterModeration.APPROVED
     }
 
     if (category) where.category = category

@@ -55,7 +55,7 @@ export default function AdminLoginPage() {
                         <Input
                             name="email"
                             type="email"
-                            placeholder="admin@scrisoarea.ro"
+                            placeholder="admin@example.com"
                             required
                             disabled={isPending}
                         />

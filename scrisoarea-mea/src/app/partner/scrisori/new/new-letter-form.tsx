@@ -188,8 +188,17 @@ export default function NewScrisoareForm({ campaigns }: { campaigns: CampaignSum
                             </div>
 
                             <div className="space-y-2">
-                                <Label>Povestea Copilului</Label>
+                                <Label>Povestea Copilului / Text scrisoare</Label>
                                 <Textarea name="childStory" placeholder="Descrie pe scurt situația și de ce are nevoie..." required className="h-32" />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label>Note pentru administrator (opțional)</Label>
+                                <Textarea
+                                    name="partnerNotes"
+                                    placeholder="Informații interne pentru echipa de moderare (nu apar public)."
+                                    className="h-20"
+                                />
                             </div>
                         </Card>
 
@@ -197,9 +206,12 @@ export default function NewScrisoareForm({ campaigns }: { campaigns: CampaignSum
                             <div className="flex justify-between items-center">
                                 <h3 className="font-semibold">Obiecte Dorite (Max 5)</h3>
                                 <div className={`text-sm font-bold ${total > limit ? 'text-red-600' : 'text-slate-900'}`}>
-                                    Total: {total} / {limit} RON
+                                    Estimare: {total} / {limit} RON
                                 </div>
                             </div>
+                            <p className="text-xs text-slate-500">
+                                Prețurile de mai jos sunt doar estimări pentru administrator. Suma publică finală este stabilită exclusiv de admin (max. 500 RON).
+                            </p>
 
                             {items.map((item, idx) => (
                                 <div key={idx} className="flex gap-2 items-end">
@@ -211,8 +223,8 @@ export default function NewScrisoareForm({ campaigns }: { campaigns: CampaignSum
                                         <Label className="text-xs">Mărime</Label>
                                         <Input value={item.size} onChange={e => updateItem(idx, 'size', e.target.value)} placeholder="38" />
                                     </div>
-                                    <div className="w-24">
-                                        <Label className="text-xs">Preț (RON)</Label>
+                                    <div className="w-28">
+                                        <Label className="text-xs">Est. preț (RON)</Label>
                                         <Input type="number" value={item.estimatedValue} onChange={e => updateItem(idx, 'estimatedValue', e.target.value)} required min="1" step="1" />
                                     </div>
                                 </div>

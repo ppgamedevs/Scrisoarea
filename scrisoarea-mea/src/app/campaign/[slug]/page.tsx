@@ -13,7 +13,10 @@ export default async function CampaignDetailPage({ params }: { params: Promise<{
         include: {
             matchingRules: { include: { sponsor: true } },
             scrisori: {
-                where: { status: { in: ['NOU', 'ACTIV', 'FINANTAT'] } }, // Show these public statuses
+                where: {
+                    moderationStatus: 'approved',
+                    status: { in: ['ACTIV', 'FINANTAT'] },
+                },
                 include: { institution: true, campaign: true }
             }
         }

@@ -50,7 +50,8 @@ export async function approveProof(proofId: string) {
             where: { id: proof.scrisoareId },
             data: {
                 proofApproved: true,
-                status: 'INCHIS'
+                status: 'INCHIS',
+                moderationStatus: 'fulfilled',
             }
         })
     })

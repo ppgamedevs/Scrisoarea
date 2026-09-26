@@ -10,11 +10,12 @@
     "postinstall": "prisma generate",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
-    "db:seed": "npx tsx --env-file=.env.local prisma/seed.ts",
+    "db:seed": "npx tsx --env-file=.env prisma/seed.ts",
+    "db:sync-admin": "npx tsx --env-file=.env scripts/sync-admin.ts",
     "db:push-turso": "npx tsx scripts/push-turso.ts"
   },
   "prisma": {
-    "seed": "npx tsx --env-file=.env.local prisma/seed.ts"
+    "seed": "npx tsx --env-file=.env prisma/seed.ts"
   },
   "dependencies": {
     "@bogdan-nita/netopia-card": "^1.1.31",

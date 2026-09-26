@@ -9,8 +9,17 @@ export const metadata = {
 
 async function getFacts() {
     const totalDonations = await prisma.donation.aggregate({ _sum: { amount: true, matchedAmount: true }, where: { status: 'SUCCEEDED' } })
-    const activeLetters = await prisma.scrisoare.count({ where: { status: 'ACTIV' } })
-    const fulfilledLetters = await prisma.scrisoare.count({ where: { status: 'INCHIS' } })
+    const activeLetters = await prisma.scrisoare.count({
+        where: { status: 'ACTIV', moderationStatus: 'approved' },
+    })
+    const fulfilledLetters = await prisma.scrisoare.count({
+        where: {
+            OR: [
+                { moderationStatus: 'fulfilled' },
+                { status: 'INCHIS', proofApproved: true },
+            ],
+        },
+    })
 
     // Simulating Average Time (would be complex SQL otherwise)
     const avgTime = "14 zile"

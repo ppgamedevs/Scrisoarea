@@ -152,31 +152,41 @@ model Scrisoare {
   wishList        String          
   category        String          @default("ALTCEVA")
 
-  targetAmount    Decimal
-  collectedAmount Decimal         @default(0)
+  targetAmount            Decimal
+  submittedTargetAmount   Decimal         @default(0)
+  approvedTargetAmount    Decimal?
+  collectedAmount         Decimal         @default(0)
   
-  status          String          @default("NOU") 
-  moderationStatus String         @default("DRAFT") 
-  rejectionReason String?
-  proofApproved   Boolean         @default(false) 
-  
-  childLastName   String          
-  childCnpHash    String?         
-  
-  institution     Institution     @relation(fields: [institutionId], references: [id])
-  institutionId   String
+  // draft | pending_review | approved | rejected | fulfilled | archived
+  status                  String          @default("NOU") 
+  moderationStatus        String          @default("draft") 
+  rejectionReason         String?
+  partnerNotes            String?
+  adminNotes              String?
+  proofApproved           Boolean         @default(false)
 
-  campaign        Campaign?       @relation(fields: [campaignId], references: [id])
-  campaignId      String?
+  approvedAt              DateTime?
+  approvedById            String?
+  rejectedAt              DateTime?
+  rejectedById            String?
   
-  donations       Donation[]
-  reservations    Reservation[]
-  proofs          ProofMedia[]
-  fulfillmentClaims FulfillmentClaim[]
-  updates         Update[]
+  childLastName           String          
+  childCnpHash            String?         
+  
+  institution             Institution     @relation(fields: [institutionId], references: [id])
+  institutionId           String
 
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  campaign                Campaign?       @relation(fields: [campaignId], references: [id])
+  campaignId              String?
+  
+  donations               Donation[]
+  reservations            Reservation[]
+  proofs                  ProofMedia[]
+  fulfillmentClaims       FulfillmentClaim[]
+  updates                 Update[]
+
+  createdAt               DateTime        @default(now())
+  updatedAt               DateTime        @updatedAt
 
   @@index([status])
   @@index([moderationStatus]) 

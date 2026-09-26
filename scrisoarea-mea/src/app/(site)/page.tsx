@@ -8,8 +8,18 @@ import { CheckCircle2, Heart, Sparkles, TrendingUp, FileText, BarChart3, ArrowRi
 import { ScrisoareCard } from "@/components/ui/scrisoare-card"
 
 async function getStats() {
-    const activeLetters = await prisma.scrisoare.count({ where: { status: 'ACTIV' } })
-    const fulfilledLetters = await prisma.scrisoare.count({ where: { status: 'INCHIS' } })
+    const { LetterModeration } = await import("@/lib/letter-moderation")
+    const activeLetters = await prisma.scrisoare.count({
+        where: { moderationStatus: LetterModeration.APPROVED, status: 'ACTIV' }
+    })
+    const fulfilledLetters = await prisma.scrisoare.count({
+        where: {
+            OR: [
+                { moderationStatus: LetterModeration.FULFILLED },
+                { status: 'INCHIS', proofApproved: true },
+            ]
+        }
+    })
     const donations = await prisma.donation.aggregate({ _sum: { amount: true }, where: { status: 'SUCCEEDED' } })
     return {
         active: activeLetters,
@@ -19,8 +29,9 @@ async function getStats() {
 }
 
 async function getFeaturedLetters() {
+    const { publicWishlistWhere } = await import("@/lib/letter-moderation")
     return prisma.scrisoare.findMany({
-        where: { status: 'ACTIV' },
+        where: { ...publicWishlistWhere, status: 'ACTIV' },
         take: 6,
         orderBy: { createdAt: 'desc' },
         include: { institution: true, campaign: true }

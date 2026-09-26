@@ -6,6 +6,7 @@ import { redirect } from "next/navigation"
 
 import { getSession } from "@/lib/auth"
 import { canDonate } from "@/lib/permissions"
+import { isApprovedPublic, publicTargetAmount } from "@/lib/letter-moderation"
 
 export async function initiateNetopiaPayment(formData: FormData) {
     const session = await getSession()
@@ -21,9 +22,31 @@ export async function initiateNetopiaPayment(formData: FormData) {
 
     // Permission Check
     if (scrisoareId) {
-        const letter = await prisma.scrisoare.findUnique({ where: { id: scrisoareId } })
-        if (letter && !canDonate(session, letter)) {
+        const letter = await prisma.scrisoare.findUnique({
+            where: { id: scrisoareId },
+            include: {
+                reservations: { where: { status: 'PENDING', expiresAt: { gt: new Date() } } },
+            },
+        })
+        if (!letter) throw new Error("Scrisoare inexistentă")
+        if (!isApprovedPublic(letter.moderationStatus)) {
+            throw new Error("Această scrisoare nu acceptă donații (nu este aprobată).")
+        }
+        if (!canDonate(session, letter)) {
             throw new Error("Nu aveți permisiunea de a dona pentru această scrisoare (rol Partener).")
+        }
+        if (['FINANTAT', 'INCHIS', 'LIVRAT', 'IN_ACHIZITIE'].includes(letter.status)) {
+            throw new Error("Această scrisoare este deja finanțată sau închisă.")
+        }
+
+        const reserved = letter.reservations.reduce((acc, r) => acc + Number(r.amount), 0)
+        const target = publicTargetAmount(letter)
+        const remaining = Math.max(0, target - Number(letter.collectedAmount) - reserved)
+        if (remaining <= 0) {
+            throw new Error("Ținta a fost atinsă. Donațiile sunt închise.")
+        }
+        if (amount > remaining) {
+            throw new Error(`Suma maximă rămasă este ${remaining} RON.`)
         }
     }
 

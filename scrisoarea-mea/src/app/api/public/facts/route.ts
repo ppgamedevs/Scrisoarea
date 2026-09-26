@@ -16,8 +16,17 @@ export async function GET() {
     }
 
     const totalDonations = await prisma.donation.aggregate({ _sum: { amount: true, matchedAmount: true }, where: { status: 'SUCCEEDED' } })
-    const activeLetters = await prisma.scrisoare.count({ where: { status: 'ACTIV' } })
-    const fulfilledLetters = await prisma.scrisoare.count({ where: { status: 'INCHIS' } })
+    const activeLetters = await prisma.scrisoare.count({
+        where: { status: 'ACTIV', moderationStatus: 'approved' },
+    })
+    const fulfilledLetters = await prisma.scrisoare.count({
+        where: {
+            OR: [
+                { moderationStatus: 'fulfilled' },
+                { status: 'INCHIS', proofApproved: true },
+            ],
+        },
+    })
 
     const raised = Number(totalDonations._sum.amount || 0) + Number(totalDonations._sum.matchedAmount || 0)
 

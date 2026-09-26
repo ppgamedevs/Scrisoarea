@@ -2,9 +2,10 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Environment variables
 
-Copy `.env.example` to `.env.local` and fill in the values.
+Copy `.env.example` to `.env` (or `.env.local`) and fill in the values.
 
 Required for production: `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, `BLOB_READ_WRITE_TOKEN`, `NEXT_PUBLIC_APP_URL`.
+Admin account: `ADMIN_EMAIL`, `ADMIN_PASSWORD` (used by `npm run db:seed` and `npm run db:sync-admin`).
 Optional: `RESEND_API_KEY`, `CONTACT_EMAIL`, `NEXT_PUBLIC_ASSOCIATION_CUI`, `NEXT_PUBLIC_SOCIAL_*`, `CRON_SECRET` (protects `/api/cron/*`).
 
 ## Database (Turso / libSQL)

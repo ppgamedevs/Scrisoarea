@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma"
 import { Prisma } from "@prisma/client"
+import { publicWishlistWhere, publicTargetAmount } from "@/lib/letter-moderation"
 
 export type LetterFilter = {
     category?: string
@@ -14,7 +15,7 @@ const PAGE_SIZE = 12
 export async function getLetters(filter: LetterFilter) {
     const { category, ageRange, county, page = 1 } = filter
     const where: Prisma.ScrisoareWhereInput = {
-        status: { in: ['ACTIV', 'FINANTAT'] }
+        ...publicWishlistWhere,
     }
     if (category) where.category = category
     if (county) where.institution = { county: { equals: county } }
@@ -52,7 +53,7 @@ export async function getLetters(filter: LetterFilter) {
     const processed = letters.map(letter => {
         const reserved = letter.reservations.reduce((acc, r) => acc + Number(r.amount), 0)
         const paid = Number(letter.collectedAmount)
-        const target = Number(letter.targetAmount)
+        const target = publicTargetAmount(letter)
         const total = paid + reserved
 
         // Active claim check

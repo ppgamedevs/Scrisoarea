@@ -18,8 +18,13 @@ export async function GET(request: Request) {
         return new NextResponse(JSON.stringify({ error: "Rate limit exceeded" }), { status: 429 })
     }
 
+    const { LetterModeration, publicTargetAmount } = await import("@/lib/letter-moderation")
+
     const letters = await prisma.scrisoare.findMany({
-        where: { status: 'ACTIV' },
+        where: {
+            moderationStatus: LetterModeration.APPROVED,
+            status: 'ACTIV',
+        },
         select: {
             id: true,
             slug: true,
@@ -28,6 +33,7 @@ export async function GET(request: Request) {
             childFirstName: true,
             childAge: true,
             targetAmount: true,
+            approvedTargetAmount: true,
             collectedAmount: true,
             createdAt: true,
             institution: {
@@ -50,7 +56,7 @@ export async function GET(request: Request) {
             city: l.institution.city
         },
         financial: {
-            target: Number(l.targetAmount),
+            target: publicTargetAmount(l),
             collected: Number(l.collectedAmount),
             currency: 'RON'
         },

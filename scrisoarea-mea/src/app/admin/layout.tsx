@@ -26,7 +26,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <aside className="bg-neutral-900 text-white p-6 flex flex-col gap-6">
                 <div className="font-bold text-xl tracking-tight">AdminPanel</div>
                 <nav className="flex flex-col gap-2">
-                    <Link href="/admin/scrisori" className="p-2 hover:bg-neutral-800 rounded">Scrisori Noi</Link>
+                    <Link href="/admin/scrisori" className="p-2 hover:bg-neutral-800 rounded">Scrisori</Link>
                     <Link href="/admin/partners" className="p-2 hover:bg-neutral-800 rounded">Parteneri</Link>
                     <Link href="/admin/stats" className="p-2 hover:bg-neutral-800 rounded opacity-50 cursor-not-allowed">Statistici</Link>
                 </nav>

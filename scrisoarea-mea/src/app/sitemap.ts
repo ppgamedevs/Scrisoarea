@@ -31,10 +31,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: route === '' ? 1 : 0.8,
     }))
 
-    // Dynamic Letters (Public statuses only)
+    // Dynamic Letters — only admin-approved (or fulfilled impact stories)
+    const { LetterModeration } = await import("@/lib/letter-moderation")
     const letters = await prisma.scrisoare.findMany({
         where: {
-            status: { in: ['NOU', 'ACTIV', 'FINANTAT', 'IN_ACHIZITIE', 'LIVRAT', 'INCHIS'] }
+            moderationStatus: {
+                in: [LetterModeration.APPROVED, LetterModeration.FULFILLED],
+            },
         },
         select: { slug: true, id: true, updatedAt: true },
         take: 5000 // Limit for MVP

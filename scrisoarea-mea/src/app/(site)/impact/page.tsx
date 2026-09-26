@@ -7,8 +7,10 @@ export default async function ImpactPage() {
     // Fetch letters that have an approved proof
     const closedLetters = await prisma.scrisoare.findMany({
         where: {
-            proofApproved: true,
-            status: 'INCHIS'
+            OR: [
+                { moderationStatus: 'fulfilled', proofApproved: true },
+                { proofApproved: true, status: 'INCHIS' },
+            ],
         },
         include: {
             proofs: { where: { moderationStatus: 'APPROVED' }, take: 1 },

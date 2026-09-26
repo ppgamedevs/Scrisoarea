@@ -23,7 +23,10 @@ export default async function PartnerPage({ params }: { params: Promise<{ slug: 
         where: { slug },
         include: {
             scrisori: {
-                where: { status: { in: ['NOU', 'ACTIV', 'FINANTAT', 'IN_ACHIZITIE', 'LIVRAT', 'INCHIS'] } },
+                where: {
+                    moderationStatus: 'approved',
+                    status: { in: ['ACTIV', 'FINANTAT', 'IN_ACHIZITIE', 'LIVRAT'] },
+                },
                 orderBy: { createdAt: 'desc' },
                 include: { institution: true, campaign: true }
             }

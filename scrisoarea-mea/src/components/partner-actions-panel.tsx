@@ -22,11 +22,11 @@ export default function PartnerActionsPanel({
 }: PartnerActionsPanelProps) {
 
     // Status mapping helpers
-    const isDraft = status === 'NOU' || moderationStatus === 'DRAFT'
-    const isApproved = moderationStatus === 'APPROVED'
+    const isDraft = moderationStatus === 'draft' || moderationStatus === 'DRAFT' || moderationStatus === 'pending_review' || moderationStatus === 'SUBMITTED'
+    const isApproved = moderationStatus === 'approved' || moderationStatus === 'APPROVED'
     const isFunded = status === 'FINANTAT'
     const isShipped = status === 'LIVRAT'
-    const isCompleted = status === 'FINALIZAT'
+    const isCompleted = status === 'FINALIZAT' || status === 'INCHIS' || moderationStatus === 'fulfilled'
 
     return (
         <div className="bg-purple-50 text-purple-900 border border-purple-200 shadow-xl shadow-purple-100 rounded-2xl p-8 space-y-6">

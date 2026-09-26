@@ -10,7 +10,14 @@ import { Badge } from "@/components/ui/badge"
 import { Metadata } from 'next'
 import { generateLetterSchema, BASE_URL } from "@/lib/seo/jsonld"
 import { Sparkles, PlayCircle, Heart, ArrowLeft } from "lucide-react"
-import { canManageLetter, canDonate } from "@/lib/permissions"
+import { canManageLetter } from "@/lib/permissions"
+import {
+    LetterModeration,
+    isApprovedPublic,
+    normalizeModerationStatus,
+    publicTargetAmount,
+} from "@/lib/letter-moderation"
+import { parseWishlistItems, publicItemPrice } from "@/lib/letter-items"
 
 import PartnerActionsPanel from "@/components/partner-actions-panel"
 import { Button } from "@/components/ui/button"
@@ -18,12 +25,18 @@ import { Button } from "@/components/ui/button"
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
     const { id } = await params
     const letter = await prisma.scrisoare.findFirst({
-        where: { id: id.length < 20 ? undefined : id, slug: id.length < 20 ? id : undefined }
+        where: {
+            OR: [{ slug: id }, { id }],
+            moderationStatus: {
+                in: [LetterModeration.APPROVED, LetterModeration.FULFILLED, "APPROVED"],
+            },
+        }
     })
 
     if (!letter) return { title: 'Dorință Inexistentă' }
 
-    const percent = Math.min(100, Math.round((Number(letter.collectedAmount) / Number(letter.targetAmount)) * 100))
+    const target = publicTargetAmount(letter)
+    const percent = Math.min(100, Math.round((Number(letter.collectedAmount) / target) * 100))
     const ogUrl = `${BASE_URL}/og?title=${encodeURIComponent(`Dorința lui ${letter.childFirstName}`)}&subtitle=${encodeURIComponent(letter.childStory?.substring(0, 50) || '')}&label=Ajutor&progress=${percent}`
 
     return {
@@ -74,6 +87,20 @@ export default async function ScrisoarePage({ params }: { params: Promise<{ id: 
 
     if (!letter) notFound()
 
+    const moderation = normalizeModerationStatus(letter.moderationStatus)
+    const isStaffOrOwner =
+        session?.role === 'ADMIN' ||
+        (session?.role === 'PARTNER' && session.institutionId === letter.institutionId)
+
+    // Non-approved letters are not publicly accessible (404), except owner/admin preview
+    const publiclyVisible =
+        moderation === LetterModeration.APPROVED ||
+        moderation === LetterModeration.FULFILLED
+
+    if (!publiclyVisible && !isStaffOrOwner) {
+        notFound()
+    }
+
     const jsonLd = generateLetterSchema(letter)
 
     // Matching Logic (View Only)
@@ -85,19 +112,23 @@ export default async function ScrisoarePage({ params }: { params: Promise<{ id: 
         Number(r.currentMatchTotal) < Number(r.maxMatchTotal)
     )
 
-    // Calc Logic
+    // Calc Logic — public target is admin-approved amount only
     const paid = Number(letter.collectedAmount)
     const reserved = letter.reservations.reduce((acc: number, r: any) => acc + Number(r.amount), 0)
-    const target = Number(letter.targetAmount)
+    const target = publicTargetAmount(letter)
+    const wishlistItems = parseWishlistItems(letter.items)
 
     const activeClaim = letter.fulfillmentClaims[0] || null
 
     const totalOccupied = paid + reserved
     const remaining = Math.max(0, target - totalOccupied)
-    const percentage = Math.min(100, Math.round((totalOccupied / target) * 100))
+    const percentage = target > 0 ? Math.min(100, Math.round((totalOccupied / target) * 100)) : 0
     const isFullyFunded = totalOccupied >= target || letter.status === 'FINANTAT' || letter.status === 'INCHIS'
-    const isDonationDisabled = ['IN_ACHIZITIE', 'LIVRAT', 'FINALIZAT', 'ANULAT', 'RESPINS', 'INCHIS'].includes(letter.status)
-    const isVideo = letter.mediaType === 'VIDEO' // Assuming schema update propagated
+    const isDonationDisabled =
+        !isApprovedPublic(letter.moderationStatus) ||
+        isFullyFunded ||
+        ['IN_ACHIZITIE', 'LIVRAT', 'FINALIZAT', 'ANULAT', 'RESPINS', 'INCHIS'].includes(letter.status)
+    const isVideo = letter.mediaType === 'VIDEO'
 
     const isManaging = canManageLetter(session, letter)
     const isPartnerLoggedIn = session?.role === 'PARTNER'
@@ -190,14 +221,44 @@ export default async function ScrisoarePage({ params }: { params: Promise<{ id: 
                                 <span className="text-2xl">🎁</span> Ce își dorește
                             </h3>
                             <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-                                <div className="p-6 md:p-8 flex flex-col md:flex-row gap-6 items-center justify-between">
+                                <ul className="divide-y">
+                                    {wishlistItems.length > 0 ? (
+                                        wishlistItems.map((item, idx) => {
+                                            const publicPrice = publicItemPrice(item)
+                                            return (
+                                                <li
+                                                    key={idx}
+                                                    className="p-4 flex justify-between gap-4 text-sm"
+                                                >
+                                                    <span className="font-medium text-slate-900">
+                                                        {item.name}
+                                                        {item.size ? ` (${item.size})` : ""}
+                                                    </span>
+                                                    {publicPrice != null ? (
+                                                        <span className="font-mono text-slate-600">
+                                                            {formatCurrency(publicPrice)}
+                                                        </span>
+                                                    ) : null}
+                                                </li>
+                                            )
+                                        })
+                                    ) : (
+                                        <li className="p-4 text-slate-700">{letter.wishList}</li>
+                                    )}
+                                </ul>
+                                <div className="p-6 md:p-8 flex flex-col md:flex-row gap-6 items-center justify-between border-t bg-slate-50">
                                     <div className="flex-1">
-                                        <p className="text-lg font-medium text-slate-900">{letter.wishList}</p>
-                                        <p className="text-sm text-slate-500 mt-1">Estimare costuri necesare achiziției și livrării.</p>
+                                        <p className="text-sm text-slate-500">
+                                            Suma necesară este stabilită de administrator după verificare.
+                                        </p>
                                     </div>
-                                    <div className="text-right shrink-0 bg-slate-50 px-6 py-4 rounded-xl border border-slate-100">
-                                        <div className="text-xs uppercase tracking-wider text-slate-500 font-bold mb-1">Valoare Necesară</div>
-                                        <div className="text-2xl font-black text-slate-900">{formatCurrency(Number(letter.targetAmount))}</div>
+                                    <div className="text-right shrink-0 bg-white px-6 py-4 rounded-xl border border-slate-100">
+                                        <div className="text-xs uppercase tracking-wider text-slate-500 font-bold mb-1">
+                                            Necesar
+                                        </div>
+                                        <div className="text-2xl font-black text-slate-900">
+                                            {formatCurrency(target)}
+                                        </div>
                                     </div>
                                 </div>
                             </div>

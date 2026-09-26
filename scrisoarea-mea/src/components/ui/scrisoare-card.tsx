@@ -9,7 +9,10 @@ interface ScrisoareCardProps {
 }
 
 export function ScrisoareCard({ letter }: ScrisoareCardProps) {
-    const percent = Math.min(100, Math.round((Number(letter.collectedAmount) / Number(letter.targetAmount)) * 100))
+    const target = Number(letter.approvedTargetAmount ?? letter.targetAmount)
+    const percent = target > 0
+        ? Math.min(100, Math.round((Number(letter.collectedAmount) / target) * 100))
+        : 0
     const isFunded = letter.status === 'FINANTAT' || letter.status === 'IN_ACHIZITIE' || letter.status === 'LIVRAT' || letter.status === 'INCHIS' || percent >= 100
     const institution = letter.institution
     const isVideo = letter.mediaType === 'VIDEO'
@@ -95,7 +98,7 @@ export function ScrisoareCard({ letter }: ScrisoareCardProps) {
                     </div>
                     <div className="flex justify-between text-xs font-medium text-slate-500">
                         <span className="text-slate-900">{formatCurrency(Number(letter.collectedAmount))}</span>
-                        <span>necesar {formatCurrency(Number(letter.targetAmount))}</span>
+                        <span>necesar {formatCurrency(target)}</span>
                     </div>
                 </div>
 
