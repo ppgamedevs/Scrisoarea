@@ -6,9 +6,9 @@ export function generateOrganizationSchema() {
     return {
         '@context': 'https://schema.org',
         '@type': 'Organization',
-        name: 'Asociația Vise pe hârtie',
+        name: 'Asociația Visuri pe hartie',
         url: BASE_URL,
-        logo: `${BASE_URL}/logo.png`,
+        logo: `${BASE_URL}/brand/visuri-pe-hartie-logo.png`,
         contactPoint: {
             '@type': 'ContactPoint',
             email: 'contact@scrisoareamea.ro',
@@ -32,7 +32,7 @@ export function generateWebsiteSchema() {
     return {
         '@context': 'https://schema.org',
         '@type': 'WebSite',
-        name: 'Vise pe hârtie',
+        name: 'Visuri pe hartie',
         url: BASE_URL,
         potentialAction: {
             '@type': 'SearchAction',
@@ -64,7 +64,7 @@ export function generateLetterSchema(letter: any) {
         '@type': 'CreativeWork', // Using CreativeWork for broad compatibility, or 'SocialMediaPosting' but CreativeWork is safer for "Donation Request/Story"
         headline: `Scrisoare verificată: ${letter.childFirstName}`,
         name: `Dorința lui ${letter.childFirstName}`,
-        description: `Ajută la îndeplinirea dorinței pentru ${letter.childFirstName} (${letter.category}). Verificat de Vise pe hârtie.`,
+        description: `Ajută la îndeplinirea dorinței pentru ${letter.childFirstName} (${letter.category}). Verificat de Visuri pe hartie.`,
         datePublished: letter.createdAt.toISOString(),
         dateModified: letter.updatedAt.toISOString(),
         url: `${BASE_URL}/scrisori/${letter.slug || letter.id}`,

@@ -1,5 +1,5 @@
 export const metadata = {
-    title: "Siguranță și Protecția Datelor | Vise pe hârtie",
+    title: "Siguranță și Protecția Datelor | Visuri pe hartie",
     description: "Politici explicite privind protecția identității copiilor, moderarea conținutului și securitatea datelor.",
 }
 

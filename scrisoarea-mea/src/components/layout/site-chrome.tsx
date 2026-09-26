@@ -4,17 +4,29 @@ import { getSession } from "@/lib/auth"
 import { HeaderNavClient } from "@/components/layout/header-nav-client"
 import { Button } from "@/components/ui/button"
 
+const LOGO_SRC = "/brand/visuri-pe-hartie-logo.webp"
+const LOGO_WIDTH = 2050
+const LOGO_HEIGHT = 695
+
 export async function SiteHeader() {
     const session = await getSession()
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-slate-200/80 bg-white/95 shadow-sm shadow-slate-200/50 backdrop-blur-md overflow-hidden">
+        <header className="sticky top-0 z-50 w-full border-b border-slate-200/80 bg-white/95 shadow-sm shadow-slate-200/50 backdrop-blur-md">
             <div className="container mx-auto px-3 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-2 sm:gap-4">
-                <Link href="/" className="text-sm font-medium text-slate-600 hover:text-teal-600 transition-colors flex items-center gap-0 shrink-0 min-h-[44px] -ml-1 sm:ml-0">
-                    <div className="overflow-hidden w-20 sm:w-28 h-[72px] sm:h-[400px] flex-shrink-0 -mr-2 sm:-mr-3">
-                        <Image src="/logo.svg" alt="Vise pe hârtie" width={400} height={400} className="object-contain object-left h-[72px] sm:h-[400px] w-auto -translate-y-2 sm:-translate-y-3" priority />
-                    </div>
-                    <span className="self-center ml-0">Vise pe hârtie</span>
+                <Link
+                    href="/"
+                    aria-label="Visuri pe hartie – Acasă"
+                    className="flex items-center shrink-0 min-h-[44px] -ml-1 sm:ml-0"
+                >
+                    <Image
+                        src={LOGO_SRC}
+                        alt="Visuri pe hartie"
+                        width={LOGO_WIDTH}
+                        height={LOGO_HEIGHT}
+                        priority
+                        className="h-8 sm:h-9 md:h-10 w-auto max-w-[min(52vw,220px)] sm:max-w-[260px] object-contain"
+                    />
                 </Link>
 
                 <div className="flex items-center gap-1 sm:gap-2 md:gap-6 flex-1 justify-end min-w-0">
@@ -30,24 +42,20 @@ export function SiteFooter() {
         <footer className="bg-[var(--pastel-sage)]/50 border-t pt-16 pb-12 text-slate-600 text-sm">
             <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-12 mb-12">
                 <div className="space-y-4">
-                    <Link href="/" className="group block">
-                        <h3 className="font-bold text-[var(--brand)] text-lg mb-2 flex items-center gap-0">
-                            <div className="overflow-hidden w-24 h-20 flex-shrink-0 -mr-2 relative">
-                                <Image
-                                    src="/logo.svg"
-                                    alt="Vise pe hârtie"
-                                    fill
-                                    className="object-contain object-left"
-                                />
-                            </div>
-                            <span className="self-center mt-2">Vise pe hârtie</span>
-                        </h3>
+                    <Link href="/" aria-label="Visuri pe hartie – Acasă" className="inline-block">
+                        <Image
+                            src={LOGO_SRC}
+                            alt="Visuri pe hartie"
+                            width={LOGO_WIDTH}
+                            height={LOGO_HEIGHT}
+                            className="h-12 md:h-14 w-auto object-contain"
+                        />
                     </Link>
                     <p className="leading-relaxed text-slate-500">
                         Platforma tehnologică 100% transparentă care conectează direct donatorii cu nevoile verificate ale copiilor din medii vulnerabile. Fără comisioane. Fără intermediari.
                     </p>
                     <div className="text-xs text-slate-400 space-y-1 mt-4">
-                        <p><strong>Asociația Vise pe hârtie</strong></p>
+                        <p><strong>Asociația Visuri pe hartie</strong></p>
                         <p>CUI: {process.env.NEXT_PUBLIC_ASSOCIATION_CUI || "—"}</p>
                         <p>București, România</p>
                         <p>contact@scrisoareamea.ro</p>
@@ -89,7 +97,7 @@ export function SiteFooter() {
 
             <div className="container mx-auto px-4 border-t pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-400 gap-6">
                 <div className="flex flex-col gap-2">
-                    <p>&copy; {new Date().getFullYear()} Asociația Vise pe hârtie. Cod Open Source.</p>
+                    <p>&copy; {new Date().getFullYear()} Asociația Visuri pe hartie. Cod Open Source.</p>
                     <div className="flex items-center gap-3 mt-2">
                         <span className="opacity-70">Plăți securizate prin</span>
                         <span className="font-bold text-slate-500">Netopia Payments</span>

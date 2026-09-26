@@ -24,7 +24,7 @@ function requireEmailConfig() {
 
     if (!from) {
         const msg =
-            "EMAIL_FROM is missing. Set it to: Vise pe hârtie <cont@YOUR_VERIFIED_DOMAIN>"
+            "EMAIL_FROM is missing. Set it to: Visuri pe hartie <cont@YOUR_VERIFIED_DOMAIN>"
         console.error(`[AUTH EMAIL] ${msg}`)
         throw new Error(msg)
     }
@@ -124,11 +124,11 @@ export async function sendVerificationEmail({
     }
 
     const greeting = name ? `Salut, ${name},` : "Salut,"
-    const subject = "Confirmă adresa de email – Vise pe hârtie"
+    const subject = "Confirmă adresa de email – Visuri pe hartie"
     const html = `
       <div style="font-family:system-ui,sans-serif;line-height:1.5;color:#0f172a;max-width:560px">
         <p>${greeting}</p>
-        <p>Pentru a activa contul tău Vise pe hârtie, confirmă adresa de email folosind butonul de mai jos.</p>
+        <p>Pentru a activa contul tău Visuri pe hartie, confirmă adresa de email folosind butonul de mai jos.</p>
         ${buttonHtml(url, "Confirmă adresa de email")}
         ${fallbackLinkHtml(url)}
         <p style="color:#64748b;font-size:14px">Linkul expiră în curând. Dacă nu ai creat acest cont, ignoră acest mesaj.</p>
@@ -154,13 +154,13 @@ export async function sendPartnerVerificationEmail({
     }
 
     const greeting = name ? `Salut, ${name},` : "Salut,"
-    const subject = "Confirmă contul instituției – Vise pe hârtie"
+    const subject = "Confirmă contul instituției – Visuri pe hartie"
     const html = `
       <div style="font-family:system-ui,sans-serif;line-height:1.5;color:#0f172a;max-width:560px">
         <p>${greeting}</p>
         <p>Confirmă adresa de email a contului instituției pentru Portal Instituții.</p>
         <p><strong>Important:</strong> confirmarea emailului nu înseamnă aprobarea instituției.
-        După verificare, echipa Vise pe hârtie va analiza datele organizației înainte ca aceasta să poată publica scrisori.</p>
+        După verificare, echipa Visuri pe hartie va analiza datele organizației înainte ca aceasta să poată publica scrisori.</p>
         ${buttonHtml(url, "Confirmă adresa de email")}
         ${fallbackLinkHtml(url)}
         <p style="color:#64748b;font-size:14px">Linkul expiră în curând.</p>
@@ -186,7 +186,7 @@ export async function sendPasswordResetEmail({
     }
 
     const greeting = name ? `Salut, ${name},` : "Salut,"
-    const subject = "Resetează parola – Vise pe hârtie"
+    const subject = "Resetează parola – Visuri pe hartie"
     const html = `
       <div style="font-family:system-ui,sans-serif;line-height:1.5;color:#0f172a;max-width:560px">
         <p>${greeting}</p>
@@ -243,7 +243,7 @@ export async function sendEmail({ to, template, data }: EmailData) {
 
     switch (template) {
         case "DONATION_CONFIRMATION":
-            subject = "Confirmare donație - Vise pe hârtie"
+            subject = "Confirmare donație - Visuri pe hartie"
             html = `
                 <div style="font-family: sans-serif;">
                     <h2>Mulțumim pentru donație!</h2>
@@ -258,7 +258,7 @@ export async function sendEmail({ to, template, data }: EmailData) {
             `
             break
         case "DONATION_SUCCESS":
-            subject = "Mulțumim pentru donație - Vise pe hârtie"
+            subject = "Mulțumim pentru donație - Visuri pe hartie"
             html = `<p>Salut,</p><p>Îți mulțumim pentru donația de ${data.amount} RON pentru ${data.childName}.</p>`
             break
         case "MATCHING_APPLIED":

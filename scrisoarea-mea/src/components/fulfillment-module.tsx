@@ -161,7 +161,7 @@ export default function FulfillmentModule({
                         <p>2. Nu include datele tale personale sau scrisori în pachet.</p>
                         <p>3. Expediază prin orice curier la adresa:</p>
                         <div className="bg-neutral-100 p-3 rounded font-mono text-xs select-all">
-                            Asociația Vise pe hârtie - Centru Logistic<br />
+                            Asociația Visuri pe hartie - Centru Logistic<br />
                             Str. Exemplului Nr. 10, Sector 1, București<br />
                             Tel: 0700 000 000<br />
                             COD Scrisoare: {scrisoareId.slice(0, 8)} (Scrie pe cutie!)

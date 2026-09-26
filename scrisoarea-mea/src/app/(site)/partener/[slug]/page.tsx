@@ -12,8 +12,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     if (!partner) return { title: 'Partener Inexistent' }
 
     return {
-        title: `${partner.publicName || partner.name} | Partener Verificat | Vise pe hârtie`,
-        description: partner.descriptionPublic?.substring(0, 160) || `Profil oficial pentru ${partner.publicName || partner.name}. Instituție verificată pe platforma Vise pe hârtie.`,
+        title: `${partner.publicName || partner.name} | Partener Verificat | Visuri pe hartie`,
+        description: partner.descriptionPublic?.substring(0, 160) || `Profil oficial pentru ${partner.publicName || partner.name}. Instituție verificată pe platforma Visuri pe hartie.`,
     }
 }
 

@@ -17,11 +17,11 @@ export default function TermeniPage() {
 
                 <article className="prose prose-slate max-w-none">
                     <h1>Termeni și Condiții</h1>
-                    <p className="lead">Platforma „Vise pe Hârtie”</p>
+                    <p className="lead">Platforma „Visuri pe hartie”</p>
                     <p><strong>Ultima actualizare:</strong> 5 februarie 2026</p>
 
                     <h3>1. Despre platformă</h3>
-                    <p>Vise pe Hârtie este o platformă online care ajută la îndeplinirea unor dorințe concrete ale copiilor aflați în centre de plasament sau alte forme de protecție, prin intermediul unor scrisori reale, publicate de instituții partenere verificate.</p>
+                    <p>Visuri pe hartie este o platformă online care ajută la îndeplinirea unor dorințe concrete ale copiilor aflați în centre de plasament sau alte forme de protecție, prin intermediul unor scrisori reale, publicate de instituții partenere verificate.</p>
                     <p>Platforma oferă infrastructura necesară pentru:</p>
                     <ul>
                         <li>publicarea dorințelor,</li>
@@ -33,7 +33,7 @@ export default function TermeniPage() {
                     <p>Platforma nu este un magazin online și nu comercializează bunuri sau servicii.</p>
 
                     <h3>2. Acceptarea termenilor</h3>
-                    <p>Prin utilizarea platformei Vise pe Hârtie, prin navigare, completarea formularelor sau efectuarea unei donații, confirmați că ați citit, înțeles și acceptat acești Termeni și Condiții.</p>
+                    <p>Prin utilizarea platformei Visuri pe hartie, prin navigare, completarea formularelor sau efectuarea unei donații, confirmați că ați citit, înțeles și acceptat acești Termeni și Condiții.</p>
                     <p>Dacă nu sunteți de acord cu acești termeni, vă rugăm să nu utilizați platforma.</p>
 
                     <h3>3. Principii fundamentale</h3>
@@ -72,7 +72,7 @@ export default function TermeniPage() {
                         <li>nerambursabile;</li>
                         <li>direcționate exclusiv către scopul afișat.</li>
                     </ul>
-                    <p>Vise pe Hârtie nu reține comisioane din donațiile pentru dorințe.</p>
+                    <p>Visuri pe hartie nu reține comisioane din donațiile pentru dorințe.</p>
                     <p>Contribuțiile pentru susținerea funcționării platformei (ex. „Susține platforma”) sunt opționale și clar separate de donațiile către copii.</p>
 
                     <h3>7. Îndeplinirea personală a dorințelor</h3>

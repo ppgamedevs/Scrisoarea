@@ -28,7 +28,7 @@ async function main() {
     }
     if (!from) {
         console.error(
-            "EMAIL_FROM is missing. Expected format: Vise pe hârtie <cont@YOUR_VERIFIED_DOMAIN>"
+            "EMAIL_FROM is missing. Expected format: Visuri pe hartie <cont@YOUR_VERIFIED_DOMAIN>"
         )
         process.exit(1)
     }
@@ -47,7 +47,7 @@ async function main() {
     const { data, error } = await resend.emails.send({
         from,
         to,
-        subject: "Test email – Vise pe hârtie",
+        subject: "Test email – Visuri pe hartie",
         html: `
           <div style="font-family:system-ui,sans-serif;line-height:1.5">
             <p>Salut,</p>

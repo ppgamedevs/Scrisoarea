@@ -32,7 +32,7 @@ export async function GET() {
 
     const facts = {
         meta: {
-            title: "Vise pe hârtie Public Stats",
+            title: "Visuri pe hartie Public Stats",
             lastUpdated: new Date().toISOString(),
             license: "CC-BY-4.0",
             documentation: "https://scrisoareamea.ro/fapte"

@@ -15,14 +15,35 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://scrisoarea-mea.ro'),
   title: {
-    default: 'Vise pe hârtie | Platformă de caritate transparentă',
-    template: '%s | Vise pe hârtie'
+    default: 'Visuri pe hartie | Platformă de caritate transparentă',
+    template: '%s | Visuri pe hartie'
   },
   description: 'Îndeplinește dorința unui copil. Platformă verificată, 100% transparentă, fără comisioane.',
+  applicationName: 'Visuri pe hartie',
+  icons: {
+    icon: '/brand/visuri-pe-hartie-logo.png',
+    apple: '/brand/visuri-pe-hartie-logo.png',
+  },
   openGraph: {
     type: 'website',
     locale: 'ro_RO',
-    siteName: 'Vise pe hârtie',
+    siteName: 'Visuri pe hartie',
+    title: 'Visuri pe hartie | Platformă de caritate transparentă',
+    description: 'Îndeplinește dorința unui copil. Platformă verificată, 100% transparentă, fără comisioane.',
+    images: [
+      {
+        url: '/brand/visuri-pe-hartie-logo.png',
+        width: 1024,
+        height: 347,
+        alt: 'Visuri pe hartie',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Visuri pe hartie',
+    description: 'Îndeplinește dorința unui copil. Platformă verificată, 100% transparentă, fără comisioane.',
+    images: ['/brand/visuri-pe-hartie-logo.png'],
   },
   robots: {
     index: true,

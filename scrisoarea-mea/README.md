@@ -7,7 +7,7 @@ Copy `.env.example` to `.env` (or `.env.local`) and fill in the values.
 Required for production: `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, `BLOB_READ_WRITE_TOKEN`, `NEXT_PUBLIC_APP_URL`.
 Admin account: `ADMIN_EMAIL`, `ADMIN_PASSWORD` (used by `npm run db:seed` and `npm run db:sync-admin`).
 Auth: `BETTER_AUTH_SECRET` (required — generate with `openssl rand -base64 32`), optional `BETTER_AUTH_URL` (defaults to `NEXT_PUBLIC_APP_URL`).
-Email (Resend, required for verification/reset): `RESEND_API_KEY`, `EMAIL_FROM` (verified domain, e.g. `Vise pe hârtie <noreply@your-domain.ro>`).
+Email (Resend, required for verification/reset): `RESEND_API_KEY`, `EMAIL_FROM` (verified domain, e.g. `Visuri pe hartie <noreply@your-domain.ro>`).
 Test Resend: `npm run email:test -- you@example.com`
 Optional: `CONTACT_EMAIL`, `NEXT_PUBLIC_ASSOCIATION_CUI`, `NEXT_PUBLIC_SOCIAL_*`, `CRON_SECRET` (protects `/api/cron/*`).
 

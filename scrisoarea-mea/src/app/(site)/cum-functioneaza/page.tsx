@@ -5,7 +5,7 @@ export default function CumFunctioneazaPage() {
                 <div className="text-center mb-16 space-y-4">
                     <h1 className="text-4xl font-bold tracking-tight text-neutral-900">Un proces simplu, verificabil</h1>
                     <p className="text-xl text-neutral-500">
-                        Transparența este fundația pe care construim. Iată cum funcționează Vise pe hârtie.
+                        Transparența este fundația pe care construim. Iată cum funcționează Visuri pe hartie.
                     </p>
                 </div>
 

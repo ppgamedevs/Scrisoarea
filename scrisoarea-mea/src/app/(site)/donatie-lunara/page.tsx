@@ -4,7 +4,7 @@ import { Heart } from "lucide-react"
 
 export const metadata = {
     title: "Donație lunară",
-    description: "Susține lunar Vise pe hârtie și ajută copiii să își îndeplinească dorințele.",
+    description: "Susține lunar Visuri pe hartie și ajută copiii să își îndeplinească dorințele.",
 }
 
 export default function DonatieLunaraPage() {

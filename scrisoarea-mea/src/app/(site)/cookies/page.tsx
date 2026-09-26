@@ -17,7 +17,7 @@ export default function CookiesPage() {
 
                 <article className="prose prose-slate max-w-none">
                     <h1>Politica de Cookies</h1>
-                    <p className="lead">Platforma „Vise pe Hârtie”</p>
+                    <p className="lead">Platforma „Visuri pe hartie”</p>
                     <p><strong>Ultima actualizare:</strong> 5 februarie 2026</p>
 
                     <h3>1. Ce sunt cookie-urile</h3>
@@ -25,7 +25,7 @@ export default function CookiesPage() {
                     <p>Acestea ajută site-ul să funcționeze corect, să fie sigur și să ofere o experiență mai bună utilizatorilor.</p>
 
                     <h3>2. De ce folosim cookie-uri</h3>
-                    <p>Platforma Vise pe Hârtie folosește cookie-uri exclusiv pentru:</p>
+                    <p>Platforma Visuri pe hartie folosește cookie-uri exclusiv pentru:</p>
                     <ul>
                         <li>funcționarea corectă a site-ului;</li>
                         <li>reținerea preferințelor de consimțământ;</li>
@@ -56,7 +56,7 @@ export default function CookiesPage() {
                     <p>Aceste cookie-uri sunt utilizate doar dacă vă exprimați consimțământul.</p>
 
                     <h4>3.3. Cookie-uri de analiză</h4>
-                    <p>În prezent, Vise pe Hârtie nu utilizează cookie-uri de analiză invazive (ex. tracking publicitar).</p>
+                    <p>În prezent, Visuri pe hartie nu utilizează cookie-uri de analiză invazive (ex. tracking publicitar).</p>
                     <p>Dacă, în viitor, vor fi introduse instrumente de analiză statistică, acestea vor fi:</p>
                     <ul>
                         <li>limitate;</li>

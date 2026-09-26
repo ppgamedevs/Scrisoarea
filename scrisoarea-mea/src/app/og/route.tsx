@@ -7,7 +7,7 @@ export async function GET(request: Request) {
         const { searchParams } = new URL(request.url)
 
         // Dynamic Params
-        const title = searchParams.get('title') || 'Vise pe hârtie'
+        const title = searchParams.get('title') || 'Visuri pe hartie'
         const subtitle = searchParams.get('subtitle') || 'Îndeplinește o dorință.'
         const label = searchParams.get('label') || 'ONG'
         const progress = searchParams.get('progress')
@@ -39,7 +39,7 @@ export async function GET(request: Request) {
                             borderRadius: '50%',
                             marginRight: '16px'
                         }}></div>
-                        <span style={{ fontSize: 32, fontWeight: 'bold', color: '#0f172a' }}>Vise pe hârtie</span>
+                        <span style={{ fontSize: 32, fontWeight: 'bold', color: '#0f172a' }}>Visuri pe hartie</span>
                     </div>
 
                     <div style={{
@@ -98,7 +98,7 @@ export async function GET(request: Request) {
                         fontSize: 20,
                         color: '#94a3b8'
                     }}>
-                        Vise pe hârtie • Verified Platform
+                        Visuri pe hartie • Verified Platform
                     </div>
                 </div>
             ),

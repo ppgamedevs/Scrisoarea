@@ -1,5 +1,5 @@
 export const metadata = {
-    title: "Procese Operaționale | Vise pe hârtie",
+    title: "Procese Operaționale | Visuri pe hartie",
     description: "Descrierea pas cu pas a fluxurilor operaționale: înregistrare, moderare, donație și livrare.",
 }
 
@@ -13,7 +13,7 @@ export default function ProcesePage() {
                     <h2 className="text-xl font-bold mb-4">1. Înregistrare Partener (Onboarding)</h2>
                     <ul className="list-disc pl-5">
                         <li>Instituția aplică prin formularul dedicat.</li>
-                        <li>Echipa Vise pe hârtie verifică CUI-ul și statutul juridic în ANAF.</li>
+                        <li>Echipa Visuri pe hartie verifică CUI-ul și statutul juridic în ANAF.</li>
                         <li>Se semnează contractul de colaborare și GDPR.</li>
                         <li>Partenerul primește acces în Dashboard.</li>
                     </ul>
@@ -24,7 +24,7 @@ export default function ProcesePage() {
                     <ul className="list-disc pl-5">
                         <li>Asistentul social încarcă povestea și necesarul.</li>
                         <li>Status inițial: <code>PENDING_MODERATION</code>.</li>
-                        <li>Moderator Vise pe hârtie verifică textul și costurile estimate.</li>
+                        <li>Moderator Visuri pe hartie verifică textul și costurile estimate.</li>
                         <li>Dacă e aprobată, scrisoarea devine <code>ACTIV</code> și apare pe site.</li>
                     </ul>
                 </section>

@@ -17,18 +17,18 @@ export default function ConfidentialitatePage() {
 
                 <article className="prose prose-slate max-w-none">
                     <h1>Politica de Confidențialitate</h1>
-                    <p className="lead">Platforma „Vise pe Hârtie”</p>
+                    <p className="lead">Platforma „Visuri pe hartie”</p>
                     <p><strong>Ultima actualizare:</strong> 5 februarie 2026</p>
 
                     <h3>1. Introducere</h3>
-                    <p>Protejarea datelor personale este o prioritate pentru Vise pe Hârtie.</p>
+                    <p>Protejarea datelor personale este o prioritate pentru Visuri pe hartie.</p>
                     <p>Această Politică explică ce date colectăm, de ce le colectăm, cum le folosim și ce drepturi aveți în legătură cu datele dumneavoastră, în conformitate cu Regulamentul (UE) 2016/679 (GDPR).</p>
                     <p>Prin utilizarea platformei, confirmați că ați citit și înțeles această Politică.</p>
 
                     <h3>2. Cine suntem</h3>
-                    <p>Vise pe Hârtie este o platformă online care facilitează îndeplinirea unor dorințe concrete ale copiilor aflați în sistemul de protecție, prin scrisori publicate de instituții partenere verificate.</p>
+                    <p>Visuri pe hartie este o platformă online care facilitează îndeplinirea unor dorințe concrete ale copiilor aflați în sistemul de protecție, prin scrisori publicate de instituții partenere verificate.</p>
                     <p><strong>Operatorul de date este:</strong><br />
-                        Asociația Vise pe Hârtie (denumire provizorie, dacă este cazul)<br />
+                        Asociația Visuri pe hartie (denumire provizorie, dacă este cazul)<br />
                         Email: <a href="mailto:contact@visepehartie.ro">contact@visepehartie.ro</a></p>
 
                     <h3>3. Ce tipuri de date colectăm</h3>
@@ -86,7 +86,7 @@ export default function ConfidentialitatePage() {
                     </ul>
 
                     <h3>4. Datele copiilor</h3>
-                    <p>Vise pe Hârtie nu colectează și nu prelucrează date personale ale copiilor în mod direct.</p>
+                    <p>Visuri pe hartie nu colectează și nu prelucrează date personale ale copiilor în mod direct.</p>
                     <ul>
                         <li>copiii nu au conturi;</li>
                         <li>nu pot fi contactați;</li>
