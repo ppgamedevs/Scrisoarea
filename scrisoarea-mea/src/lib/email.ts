@@ -24,7 +24,17 @@ function requireEmailConfig() {
 
     if (!from) {
         const msg =
-            "EMAIL_FROM is missing. Set it to: Visuri pe hartie <cont@YOUR_VERIFIED_DOMAIN>"
+            "EMAIL_FROM is missing. Set it to: Visuri pe hartie <contact@your-verified-domain.ro>"
+        console.error(`[AUTH EMAIL] ${msg}`)
+        throw new Error(msg)
+    }
+
+    // Resend requires: email@domain.com  OR  Name <email@domain.com>
+    const emailOnly = /^[^\s<>]+@[^\s<>]+\.[^\s<>]+$/
+    const nameAndEmail = /^.+\s<[^\s<>]+@[^\s<>]+\.[^\s<>]+>$/
+    if (!emailOnly.test(from) && !nameAndEmail.test(from)) {
+        const msg =
+            `EMAIL_FROM is invalid ("${from}"). Use: email@domain.com or Name <email@domain.com>`
         console.error(`[AUTH EMAIL] ${msg}`)
         throw new Error(msg)
     }
