@@ -1,6 +1,15 @@
 import Link from "next/link"
 import Form177 from "@/components/forms/form-177"
 import { ArrowLeft } from "lucide-react"
+import { pageMetadata } from "@/lib/seo/metadata"
+
+export const metadata = pageMetadata({
+    title: "Sponsorizare 20% din impozitul pe profit — formular 177",
+    description:
+        "Companii din România: direcționează 20% din impozitul pe profit către Asociația pentru visuri și oportunități. Formular 177, CUI 55406686.",
+    path: "/directioneaza-20",
+    keywords: ["formular 177", "sponsorizare", "20% impozit profit", "CSR"],
+})
 
 export default function Directioneaza20Page() {
     return (

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
+import { SITE_URL } from "@/lib/seo/site"
 
 // Cache for 1 hour
 export const revalidate = 3600
@@ -25,7 +26,7 @@ export async function GET() {
     return NextResponse.json({
         data: campaigns.map(c => ({
             name: c.title,
-            url: `https://scrisoareamea.ro/campaign/${c.slug}`,
+            url: `${SITE_URL}/campaign/${c.slug}`,
             dates: {
                 start: c.startsAt,
                 end: c.endsAt

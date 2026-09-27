@@ -2,10 +2,15 @@ import prisma from "@/lib/prisma"
 import { formatCurrency } from "@/lib/utils"
 // import { Metadata } from "next"
 
-export const metadata = {
-    title: "Fapte și Cifre | Visuri pe hartie",
-    description: "Sursa de adevăr pentru datele platformei: scrisori active, sume colectate și definiții oficiale.",
-}
+import { pageMetadata } from "@/lib/seo/metadata"
+
+export const metadata = pageMetadata({
+    title: "Fapte și cifre publice",
+    description:
+        "Sursa de adevăr pentru motoare de căutare și AI: scrisori active, sume colectate, definiții. Datele JSON sunt la /api/public/facts.",
+    path: "/fapte",
+    keywords: ["statistici ONG", "transparență financiară", "date deschise"],
+})
 
 async function getFacts() {
     const totalDonations = await prisma.donation.aggregate({ _sum: { amount: true, matchedAmount: true }, where: { status: 'SUCCEEDED' } })

@@ -27,11 +27,29 @@ export function LetterFilters() {
         const finalCat = newParams?.category !== undefined ? newParams.category : category
         const finalStatus = newParams?.status !== undefined ? newParams.status : status
 
-        if (finalQ) params.set("q", finalQ); else params.delete("q")
-        if (finalCat && finalCat !== "all") params.set("category", finalCat); else params.delete("category")
-        if (finalStatus && finalStatus !== "all") params.set("status", finalStatus); else params.delete("status")
+        if (finalCat && finalCat !== "all") {
+            const slugMap: Record<string, string> = {
+                EDUCATIE: "educatie",
+                RECHIZITE: "educatie",
+                IMBRACAMINTE: "imbracaminte",
+                HAINE: "imbracaminte",
+                JUCARII: "jucarii",
+                SPORT: "sport",
+                ARTISTIC: "artistic",
+                PROVIZII: "provizii",
+                MEDICAL: "medical",
+                ALTCEVA: "altele",
+            }
+            router.push(`/scrisori/categorie/${slugMap[finalCat] || finalCat.toLowerCase()}`)
+            return
+        }
 
-        router.push(`/scrisori?${params.toString()}`)
+        if (finalQ) params.set("q", finalQ); else params.delete("q")
+        if (finalStatus && finalStatus !== "all") params.set("status", finalStatus); else params.delete("status")
+        params.delete("category")
+
+        const query = params.toString()
+        router.push(query ? `/scrisori?${query}` : "/scrisori")
     }
 
     // Effect to sync local state with URL if URL changes externally (e.g. back button)
@@ -85,9 +103,12 @@ export function LetterFilters() {
                     <SelectTrigger><SelectValue placeholder="Categorie" /></SelectTrigger>
                     <SelectContent>
                         <SelectItem value="all">Toate categoriile</SelectItem>
-                        <SelectItem value="HAINE">Haine & Încălțăminte</SelectItem>
-                        <SelectItem value="RECHIZITE">Rechizite Școlare</SelectItem>
+                        <SelectItem value="EDUCATIE">Educație</SelectItem>
+                        <SelectItem value="IMBRACAMINTE">Îmbrăcăminte</SelectItem>
                         <SelectItem value="JUCARII">Jucării</SelectItem>
+                        <SelectItem value="SPORT">Sport</SelectItem>
+                        <SelectItem value="ARTISTIC">Artistic</SelectItem>
+                        <SelectItem value="PROVIZII">Alimente/Igienă</SelectItem>
                         <SelectItem value="MEDICAL">Medical</SelectItem>
                         <SelectItem value="ALTCEVA">Altele</SelectItem>
                     </SelectContent>

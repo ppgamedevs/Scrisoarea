@@ -1,7 +1,15 @@
-export const metadata = {
-    title: "Întrebări Frecvente (FAQ) | Visuri pe hartie",
-    description: "Index complet de întrebări despre donații, procese și siguranță.",
-}
+import { JsonLd } from "@/components/seo/json-ld"
+import { FAQ_ITEMS } from "@/lib/constants"
+import { generateFaqSchema } from "@/lib/seo/jsonld"
+import { pageMetadata } from "@/lib/seo/metadata"
+
+export const metadata = pageMetadata({
+    title: "Întrebări frecvente despre donații și scrisori",
+    description:
+        "Răspunsuri clare: cum donezi, cum ajunge cadoul, cum se verifică cazurile, 3,5% și sponsorizare 20%. Visuri pe hârtie, visuripehartie.ro.",
+    path: "/intrebari",
+    keywords: ["FAQ donații", "formular 230", "cadou copil", "ONG verificat"],
+})
 
 const FAQ_INDEX = [
     {
@@ -31,6 +39,7 @@ const FAQ_INDEX = [
 export default function IntrebariPage() {
     return (
         <main className="min-h-screen bg-white py-12 px-4">
+            <JsonLd data={generateFaqSchema([...FAQ_ITEMS, ...FAQ_INDEX.flatMap((cat) => cat.questions)])} />
             <div className="container mx-auto max-w-3xl prose prose-slate">
                 <h1 className="text-3xl font-bold mb-12">Index Întrebări Frecvente</h1>
 

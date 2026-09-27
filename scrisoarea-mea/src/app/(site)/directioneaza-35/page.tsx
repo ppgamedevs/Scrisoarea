@@ -1,4 +1,13 @@
 import Form230 from "@/components/forms/form-230"
+import { pageMetadata } from "@/lib/seo/metadata"
+
+export const metadata = pageMetadata({
+    title: "Redirecționează 3,5% din impozit — formular 230",
+    description:
+        "Completează formularul 230 și redirecționează 3,5% din impozitul pe venit către Asociația pentru visuri și oportunități. Gratuit, în România.",
+    path: "/directioneaza-35",
+    keywords: ["formular 230", "redirecționare 3.5%", "impozit venit", "ANA F"],
+})
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 
