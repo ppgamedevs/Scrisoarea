@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
+import { createPortal } from "react-dom"
 import { Button } from "@/components/ui/button"
 import { User, Menu, X, LogOut, LayoutDashboard } from "lucide-react"
 import { logout, logoutAdmin, logoutPartner } from "@/app/actions/auth-actions"
@@ -31,7 +32,12 @@ type Session = {
 export function HeaderNavClient({ session }: { session: Session }) {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const drawerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     setOpen(false)
@@ -44,6 +50,17 @@ export function HeaderNavClient({ session }: { session: Session }) {
     window.addEventListener("keydown", onKeyDown)
     return () => window.removeEventListener("keydown", onKeyDown)
   }, [])
+
+  useEffect(() => {
+    if (!open) return
+
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = "hidden"
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [open])
 
   useEffect(() => {
     if (!open) return
@@ -170,90 +187,110 @@ export function HeaderNavClient({ session }: { session: Session }) {
         </button>
       </div>
 
-      {open && (
-        <div className="fixed inset-0 z-50 md:hidden" aria-modal="true" role="dialog" aria-label="Meniu navigare">
-          <button
-            type="button"
-            aria-label="Închide meniul"
-            className="absolute inset-0 bg-slate-800/40 backdrop-blur-[2px]"
-            onClick={() => setOpen(false)}
-          />
+      {mounted &&
+        open &&
+        createPortal(
           <div
-            ref={drawerRef}
-            className="absolute right-0 top-0 bottom-0 w-full max-w-sm bg-[var(--pastel-cream)]/98 flex flex-col p-6 pt-8 border-l border-slate-200/80"
+            className="fixed inset-0 z-[100] md:hidden"
+            aria-modal="true"
+            role="dialog"
+            aria-label="Meniu navigare"
           >
-            <div className="flex justify-between items-center mb-8">
-              <span className="font-bold text-slate-800 text-lg">Meniu</span>
-              <button
-                type="button"
-                aria-label="Închide"
-                className="flex items-center justify-center w-11 h-11 rounded-lg text-slate-600 hover:bg-slate-100"
-                onClick={() => setOpen(false)}
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <nav className="flex flex-col gap-1">
-              {NAV_LINKS.map(({ href, label }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  className="py-3 px-3 rounded-lg text-slate-700 hover:bg-slate-100 font-medium min-h-[44px] flex items-center"
+            <button
+              type="button"
+              aria-label="Închide meniul"
+              className="absolute inset-0 z-0 bg-slate-900/40"
+              onClick={() => setOpen(false)}
+            />
+            <div
+              ref={drawerRef}
+              className="absolute right-0 top-0 bottom-0 z-10 flex h-dvh w-full max-w-sm flex-col border-l border-slate-200 bg-white p-6 pt-8 shadow-2xl"
+            >
+              <div className="mb-8 flex items-center justify-between">
+                <span className="text-lg font-bold text-slate-800">Meniu</span>
+                <button
+                  type="button"
+                  aria-label="Închide"
+                  className="flex h-11 w-11 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100"
                   onClick={() => setOpen(false)}
                 >
-                  {label}
-                </Link>
-              ))}
-            </nav>
-            <div className="mt-6 pt-6 border-t border-slate-200 flex flex-col gap-2">
-              {session ? (
-                <>
-                  {session.role === "ADMIN" && (
-                    <Link href="/admin" className="py-3 px-3 rounded-lg hover:bg-slate-100" onClick={() => setOpen(false)}>
-                      Admin Panel
-                    </Link>
-                  )}
-                  {session.role === "PARTNER" && (
-                    <Link href="/partner" className="py-3 px-3 rounded-lg hover:bg-slate-100" onClick={() => setOpen(false)}>
-                      Portal Instituție
-                    </Link>
-                  )}
-                  {(session.role === "DONOR" || session.role === "SPONSOR") && (
-                    <Link href="/profil" className="py-3 px-3 rounded-lg hover:bg-slate-100" onClick={() => setOpen(false)}>
-                      Profilul meu
-                    </Link>
-                  )}
-                  <button
-                    className="flex items-center gap-2 py-3 px-3 rounded-lg text-red-600 hover:bg-red-50 text-sm font-medium w-full text-left"
-                    onClick={async () => {
-                      await handleLogout()
-                      setOpen(false)
-                    }}
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+              <nav className="flex flex-col gap-1">
+                {NAV_LINKS.map(({ href, label }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    className="flex min-h-[44px] items-center rounded-lg px-3 py-3 font-medium text-slate-700 hover:bg-slate-100"
+                    onClick={() => setOpen(false)}
                   >
-                    <LogOut className="w-4 h-4" /> Ieșire din cont
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Button asChild variant="outline" className="w-full min-h-[44px]">
-                    <Link href="/partner/login" onClick={() => setOpen(false)}>
-                      Portal Instituții
-                    </Link>
-                  </Button>
-                  <Button
-                    asChild
-                    className="w-full bg-[var(--brand)] hover:bg-teal-600 text-[var(--brand-foreground)] rounded-full min-h-[44px] font-semibold"
-                  >
-                    <Link href="/login" onClick={() => setOpen(false)}>
-                      Intră în cont
-                    </Link>
-                  </Button>
-                </>
-              )}
+                    {label}
+                  </Link>
+                ))}
+              </nav>
+              <div className="mt-6 flex flex-col gap-2 border-t border-slate-200 pt-6">
+                {session ? (
+                  <>
+                    {session.role === "ADMIN" && (
+                      <Link
+                        href="/admin"
+                        className="rounded-lg px-3 py-3 text-slate-700 hover:bg-slate-100"
+                        onClick={() => setOpen(false)}
+                      >
+                        Admin Panel
+                      </Link>
+                    )}
+                    {session.role === "PARTNER" && (
+                      <Link
+                        href="/partner"
+                        className="rounded-lg px-3 py-3 text-slate-700 hover:bg-slate-100"
+                        onClick={() => setOpen(false)}
+                      >
+                        Portal Instituție
+                      </Link>
+                    )}
+                    {(session.role === "DONOR" || session.role === "SPONSOR") && (
+                      <Link
+                        href="/profil"
+                        className="rounded-lg px-3 py-3 text-slate-700 hover:bg-slate-100"
+                        onClick={() => setOpen(false)}
+                      >
+                        Profilul meu
+                      </Link>
+                    )}
+                    <button
+                      className="flex w-full items-center gap-2 rounded-lg px-3 py-3 text-left text-sm font-medium text-red-600 hover:bg-red-50"
+                      onClick={async () => {
+                        await handleLogout()
+                        setOpen(false)
+                      }}
+                    >
+                      <LogOut className="h-4 w-4" /> Ieșire din cont
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Button asChild variant="outline" className="min-h-[44px] w-full">
+                      <Link href="/partner/login" onClick={() => setOpen(false)}>
+                        Portal Instituții
+                      </Link>
+                    </Button>
+                    <Button
+                      asChild
+                      className="min-h-[44px] w-full rounded-full bg-[var(--brand)] font-semibold text-[var(--brand-foreground)] hover:bg-teal-600"
+                    >
+                      <Link href="/login" onClick={() => setOpen(false)}>
+                        Intră în cont
+                      </Link>
+                    </Button>
+                  </>
+                )}
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </>
   )
 }
