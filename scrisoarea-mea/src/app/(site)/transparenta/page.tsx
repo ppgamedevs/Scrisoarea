@@ -64,7 +64,7 @@ export default async function TransparentaPage() {
                                 </div>
                                 <div className="flex justify-between text-xs mt-2 text-slate-500">
                                     <span>95% Fonduri Cadouri</span>
-                                    <span>5% Procesare Plăți (Netopia)</span>
+                                    <span>Procesare plăți (Stripe)</span>
                                 </div>
                             </CardContent>
                         </Card>

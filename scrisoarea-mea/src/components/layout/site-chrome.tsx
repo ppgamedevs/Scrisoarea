@@ -107,7 +107,7 @@ export function SiteFooter() {
                     <p>&copy; {new Date().getFullYear()} Asociația pentru visuri și oportunități. Cod Open Source.</p>
                     <div className="flex items-center gap-3 mt-2">
                         <span className="opacity-70">Plăți securizate prin</span>
-                        <span className="font-bold text-slate-500">Netopia Payments</span>
+                        <span className="font-bold text-slate-500">Stripe</span>
                     </div>
                 </div>
                 <div className="flex flex-wrap gap-4 items-center justify-center">

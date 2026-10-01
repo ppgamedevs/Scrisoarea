@@ -13,6 +13,7 @@ const DISALLOW = [
     "/reset-password",
     "/profil",
     "/donatie/cancel",
+    "/donatie/confirmare",
     "/donatie/success",
 ]
 

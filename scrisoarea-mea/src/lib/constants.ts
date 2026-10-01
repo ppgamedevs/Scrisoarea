@@ -5,7 +5,11 @@ export const FAQ_ITEMS = [
     },
     {
         q: "Cum donez pentru un copil din România?",
-        a: "Intră pe visuripehartie.ro, alege o scrisoare aprobată, donează online în RON sau rezervă trimiterea pachetului către instituția parteneră. Nu livrăm la adresa copilului."
+        a: "Intră pe visuripehartie.ro, alege o scrisoare aprobată și plătește cu cardul prin Stripe, în RON. Poți dona și anonim. Nu livrăm la adresa copilului."
+    },
+    {
+        q: "Pot dona anonim?",
+        a: "Da. Bifează «Donează anonim» înainte de plată. Nu îți cerem numele, iar pe site nu apare identitatea ta. Emailul este opțional, doar dacă vrei chitanța de la noi. Stripe poate cere un email pe pagina de plată pentru chitanța procesatorului; nu îl publicăm."
     },
     {
         q: "Cum ajunge cadoul la copil?",

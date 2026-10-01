@@ -194,7 +194,7 @@ export default async function HomePage() {
                                 <Button asChild size="lg" className="h-14 px-10 text-lg bg-slate-900 text-white hover:bg-slate-800 rounded-full font-bold shadow-xl shadow-slate-200 hover:shadow-slate-300 transition-all hover:-translate-y-1">
                                     <Link href="/donatie-lunara">Activează Donația Lunară</Link>
                                 </Button>
-                                <p className="text-xs text-slate-400 mt-4 font-medium">✨ Securizat prin Netopia • Poți anula oricând</p>
+                                <p className="text-xs text-slate-400 mt-4 font-medium">✨ Securizat prin Stripe • Poți dona și anonim</p>
                             </div>
                         </div>
                     </div>

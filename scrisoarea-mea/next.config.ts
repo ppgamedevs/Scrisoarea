@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
-  serverExternalPackages: ["@prisma/client", "prisma", "@libsql/client", "@prisma/adapter-libsql"],
+  serverExternalPackages: ["@prisma/client", "prisma", "@libsql/client", "@prisma/adapter-libsql", "stripe"],
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "*.public.blob.vercel-storage.com" },

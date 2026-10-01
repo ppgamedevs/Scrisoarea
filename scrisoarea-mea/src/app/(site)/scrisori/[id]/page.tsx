@@ -425,7 +425,7 @@ export default async function ScrisoarePage({ params }: { params: Promise<{ id: 
                                 )}
 
                                 <p className="text-center text-xs text-slate-400 max-w-xs mx-auto mt-6">
-                                    Donațiile sunt procesate securizat. Nu percepem comisioane ascunse.
+                                    Donațiile sunt procesate securizat prin Stripe. Poți dona și anonim.
                                 </p>
                             </div>
                         </div>

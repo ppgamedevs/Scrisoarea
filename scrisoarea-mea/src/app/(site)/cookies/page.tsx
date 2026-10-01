@@ -67,7 +67,7 @@ export default function CookiesPage() {
                     <h3>4. Cookie-uri terțe</h3>
                     <p>Anumite funcționalități pot implica furnizori terți, de exemplu:</p>
                     <ul>
-                        <li>procesatori de plăți (ex. Netopia);</li>
+                        <li>procesatori de plăți (Stripe);</li>
                         <li>servicii de hosting;</li>
                         <li>servicii de email.</li>
                     </ul>

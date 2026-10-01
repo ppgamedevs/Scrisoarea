@@ -29,7 +29,7 @@ export default function DonatieLunaraPage() {
                         <Link href="/contact">Contactează-ne</Link>
                     </Button>
                 </div>
-                <p className="text-sm text-slate-500">Securizat prin Netopia • Transparență totală</p>
+                <p className="text-sm text-slate-500">Securizat prin Stripe • Poți dona și anonim</p>
             </div>
         </main>
     )

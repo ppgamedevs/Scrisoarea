@@ -239,14 +239,10 @@ model Donation {
   id                   String         @id @default(uuid())
   stripePaymentIntentId String?       @unique
   stripeSessionId      String?        @unique
-  
-  // Netopia Fields
-  netopiaTransactionId String?        @unique
-  netopiaStatus        String?        // e.g. NEW, PENDING, CONFIRMED
-  
-  amount               Decimal 
+
+  amount               Decimal
   currency             String         @default("RON")
-  
+
   donorEmail           String
   donorName            String?
   donorPhone           String?       // Often required by payment processors

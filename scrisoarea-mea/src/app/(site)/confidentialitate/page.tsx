@@ -46,7 +46,7 @@ export default function ConfidentialitatePage() {
                         <li>adresă de email;</li>
                         <li>suma donată;</li>
                         <li>scrisoarea susținută (dacă este cazul);</li>
-                        <li>date de plată procesate exclusiv de procesatori terți (ex. Netopia).</li>
+                        <li>date de plată procesate exclusiv de procesatori terți (Stripe).</li>
                     </ul>
                     <p>Platforma nu stochează datele cardului.</p>
                     <p>Crearea unui cont de donator este opțională.</p>
@@ -131,7 +131,7 @@ export default function ConfidentialitatePage() {
                     <h3>8. Partajarea datelor</h3>
                     <p>Datele pot fi partajate doar cu:</p>
                     <ul>
-                        <li>procesatori de plăți (ex. Netopia);</li>
+                        <li>procesatori de plăți (Stripe);</li>
                         <li>furnizori de servicii tehnice (hosting, email);</li>
                         <li>autorități publice, dacă este impus de lege.</li>
                     </ul>

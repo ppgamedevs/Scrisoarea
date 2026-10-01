@@ -17,7 +17,8 @@ const FAQ_INDEX = [
         questions: [
             { q: "Pot deduce donația din impozit?", a: "Da, pentru companii (prin contract de sponsorizare) și parțial pentru persoane fizice dacă legislația permite redirecționarea." },
             { q: "Pot trimite produse folosite?", a: "În general nu, pentru a asigura demnitatea și calitatea, dar acceptăm electrocasnice funcționale verificate în cazuri speciale." },
-            { q: "Primesc confirmare pe email?", a: "Da, la fiecare pas important: preluare plată, finanțare completă, livrare cadou." }
+            { q: "Pot dona anonim?", a: "Da. Bifează «Donează anonim». Nu publicăm numele tău. Emailul este opțional și îl folosim doar pentru chitanță." },
+            { q: "Primesc confirmare pe email?", a: "Da, dacă lași o adresă de email. Fără email, Stripe îți poate trimite chitanța procesatorului, iar noi nu publicăm datele tale." }
         ]
     },
     {

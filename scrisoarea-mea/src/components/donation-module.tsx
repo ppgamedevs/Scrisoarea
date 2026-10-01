@@ -1,13 +1,10 @@
 "use client"
 
-import Link from "next/link"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { formatCurrency } from "@/lib/utils"
-
-import { initiateNetopiaPayment } from "@/app/actions/netopia"
-import { useEffect, useRef } from "react"
+import { startStripeDonation } from "@/app/actions/donate"
 
 export default function DonationModule({
     scrisoareId,
@@ -22,59 +19,42 @@ export default function DonationModule({
     userEmail?: string | null,
     userRole?: string | null
 }) {
-    const [customAmount, setCustomAmount] = useState<string>('')
+    const [customAmount, setCustomAmount] = useState<string>("")
     const [loading, setLoading] = useState(false)
-    const [error, setError] = useState('')
+    const [error, setError] = useState("")
+    const [isAnonymous, setIsAnonymous] = useState(false)
+    const [firstName, setFirstName] = useState("")
+    const [lastName, setLastName] = useState("")
+    const [email, setEmail] = useState(userEmail || "")
 
-    // Donor Details for Netopia
-    const [firstName, setFirstName] = useState('')
-    const [lastName, setLastName] = useState('')
-    const [email, setEmail] = useState(userEmail || '')
-
-    // Netopia Form Data
-    const [netopiaForm, setNetopiaForm] = useState<{ url: string, env_key: string, data: string } | null>(null)
-    const netopiaFormRef = useRef<HTMLFormElement>(null)
-
-    // Auto-submit Netopia form
-    useEffect(() => {
-        if (netopiaForm && netopiaFormRef.current) {
-            netopiaFormRef.current.submit()
-        }
-    }, [netopiaForm])
-
-    // Presets: 50, 100, 200, but filter out if > remaining
-    const presets = [50, 100, 200].filter(p => p <= remainingAmount)
+    const presets = [50, 100, 200].filter((preset) => preset <= remainingAmount)
 
     const handleDonate = async () => {
         setLoading(true)
-        setError('')
+        setError("")
         try {
             const amount = Number(customAmount)
             if (!amount || amount < 5) throw new Error("Minim 5 RON")
             if (amount > remainingAmount) throw new Error("Suma depășește necesarul.")
-
-            // Netopia Flow
-            if (!firstName || !lastName || !email) throw new Error("Te rugăm să completezi datele de contact pentru facturare.")
+            if (!isAnonymous && (!firstName.trim() || !lastName.trim() || !email.trim())) {
+                throw new Error("Completează prenumele, numele și emailul, sau bifează donația anonimă.")
+            }
 
             const formData = new FormData()
-            formData.append('amount', amount.toString())
-            formData.append('firstName', firstName)
-            formData.append('lastName', lastName)
-            formData.append('email', email)
-            formData.append('scrisoareId', scrisoareId)
+            formData.append("amount", amount.toString())
+            formData.append("scrisoareId", scrisoareId)
+            formData.append("isAnonymous", isAnonymous ? "1" : "0")
+            formData.append("firstName", firstName)
+            formData.append("lastName", lastName)
+            formData.append("email", email)
 
-            const result = await initiateNetopiaPayment(formData)
-            if (result.success && result.url && result.env_key && result.data) {
-                setNetopiaForm({
-                    url: result.url,
-                    env_key: result.env_key,
-                    data: result.data
-                })
-            } else {
-                throw new Error(result.error || "Eroare la inițierea plății Netopia.")
+            const result = await startStripeDonation(formData)
+            if (!result.success) {
+                throw new Error(result.error)
             }
-        } catch (e: any) {
-            setError(e.message)
+            window.location.assign(result.url)
+        } catch (e: unknown) {
+            setError(e instanceof Error ? e.message : "Plata nu a putut fi inițiată.")
             setLoading(false)
         }
     }
@@ -89,9 +69,8 @@ export default function DonationModule({
         setCustomAmount(val.toString())
     }
 
-    // Double Check: Partners should not see this.
-    if (userRole === 'PARTNER') {
-        return null;
+    if (userRole === "PARTNER") {
+        return null
     }
 
     if (isFullyFunded) {
@@ -121,16 +100,15 @@ export default function DonationModule({
                 </p>
             </div>
 
-            {/* Presets */}
             <div className="grid grid-cols-3 gap-2">
-                {presets.map(p => (
+                {presets.map((preset) => (
                     <Button
-                        key={p}
-                        variant={Number(customAmount) === p ? "default" : "outline"}
-                        className={`min-h-[44px] ${Number(customAmount) === p ? "bg-blue-600 hover:bg-blue-700" : "hover:bg-blue-50 hover:text-blue-600 border-slate-200"}`}
-                        onClick={() => handlePreset(p)}
+                        key={preset}
+                        variant={Number(customAmount) === preset ? "default" : "outline"}
+                        className={`min-h-[44px] ${Number(customAmount) === preset ? "bg-blue-600 hover:bg-blue-700" : "hover:bg-blue-50 hover:text-blue-600 border-slate-200"}`}
+                        onClick={() => handlePreset(preset)}
                     >
-                        {p} LEI
+                        {preset} LEI
                     </Button>
                 ))}
                 {remainingAmount > 0 && !presets.includes(remainingAmount) && (
@@ -144,7 +122,6 @@ export default function DonationModule({
                 )}
             </div>
 
-            {/* Custom Input */}
             <div className="space-y-2">
                 <label className="text-sm font-semibold text-slate-700">Sau introdu o altă sumă</label>
                 <div className="relative">
@@ -161,27 +138,62 @@ export default function DonationModule({
                 </div>
             </div>
 
-            {/* Netopia Fields (Always Visible) */}
-            <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                <p className="text-sm font-medium text-slate-700 mb-2">Detalii donator (necesare pentru facturare):</p>
-                <div className="grid grid-cols-2 gap-3">
-                    <Input
-                        placeholder="Prenume"
-                        value={firstName}
-                        onChange={e => setFirstName(e.target.value)}
-                    />
-                    <Input
-                        placeholder="Nume"
-                        value={lastName}
-                        onChange={e => setLastName(e.target.value)}
-                    />
-                </div>
-                <Input
-                    placeholder="Email"
-                    type="email"
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
+            <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-slate-200 bg-white p-4">
+                <input
+                    type="checkbox"
+                    checked={isAnonymous}
+                    onChange={(e) => setIsAnonymous(e.target.checked)}
+                    className="mt-0.5 h-5 w-5 shrink-0 accent-blue-600"
                 />
+                <span>
+                    <span className="block text-sm font-semibold text-slate-800">Donează anonim</span>
+                    <span className="block text-sm text-slate-500 mt-1">
+                        Numele tău nu apare pe site. Emailul rămâne opțional, doar pentru chitanță.
+                    </span>
+                </span>
+            </label>
+
+            <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                {isAnonymous ? (
+                    <>
+                        <p className="text-sm font-medium text-slate-700">Chitanță (opțional)</p>
+                        <Input
+                            placeholder="Email, dacă vrei chitanța"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            autoComplete="email"
+                        />
+                        <p className="text-xs text-slate-500">
+                            Fără email, Stripe îți poate cere unul pe pagina de plată pentru chitanța lor. Nu îl publicăm.
+                        </p>
+                    </>
+                ) : (
+                    <>
+                        <p className="text-sm font-medium text-slate-700">Detalii pentru chitanță</p>
+                        <div className="grid grid-cols-2 gap-3">
+                            <Input
+                                placeholder="Prenume"
+                                value={firstName}
+                                onChange={(e) => setFirstName(e.target.value)}
+                                autoComplete="given-name"
+                            />
+                            <Input
+                                placeholder="Nume"
+                                value={lastName}
+                                onChange={(e) => setLastName(e.target.value)}
+                                autoComplete="family-name"
+                            />
+                        </div>
+                        <Input
+                            placeholder="Email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            autoComplete="email"
+                        />
+                    </>
+                )}
             </div>
 
             {error && (
@@ -199,16 +211,8 @@ export default function DonationModule({
             </Button>
 
             <p className="text-xs text-slate-400 text-center flex items-center justify-center gap-1">
-                <span className="text-green-500">🔒</span> Plată securizată prin Netopia Payments.
+                <span className="text-green-500">🔒</span> Plată securizată prin Stripe.
             </p>
-
-            {/* Hidden Form for Netopia Auto-Submit */}
-            {netopiaForm && (
-                <form ref={netopiaFormRef} action={netopiaForm.url} method="POST">
-                    <input type="hidden" name="env_key" value={netopiaForm.env_key} />
-                    <input type="hidden" name="data" value={netopiaForm.data} />
-                </form>
-            )}
         </div>
     )
 }
