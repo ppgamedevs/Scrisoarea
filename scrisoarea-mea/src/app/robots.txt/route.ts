@@ -15,6 +15,7 @@ const DISALLOW = [
     "/donatie/cancel",
     "/donatie/confirmare",
     "/donatie/success",
+    "/donatie-lunara/confirmare",
 ]
 
 const AI_BOTS = [

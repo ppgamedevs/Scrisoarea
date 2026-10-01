@@ -6,6 +6,7 @@ import { formatCurrency } from "@/lib/utils"
 // import { FAQ_ITEMS } from "@/lib/constants"
 import { CheckCircle2, Heart, Sparkles, TrendingUp, FileText, BarChart3, ArrowRight } from "lucide-react"
 import { ScrisoareCard } from "@/components/ui/scrisoare-card"
+import { MonthlySupportCard } from "@/components/monthly-support"
 import { JsonLd } from "@/components/seo/json-ld"
 import { FAQ_ITEMS } from "@/lib/constants"
 import { generateFaqSchema, generateHowToSchema } from "@/lib/seo/jsonld"
@@ -63,7 +64,7 @@ const FAQ_ITEMS_REFINED = [
     { q: "Sunt datele copiilor sigure?", a: "Da. Folosim doar prenumele și nu publicăm niciodată locația exactă. Siguranța lor este prioritatea noastră zero." },
     { q: "Pot cumpăra eu cadoul?", a: "Sigur! Poți rezerva o dorință și să trimiți pachetul personal. Noi îți dăm detaliile de livrare imediat după rezervare." },
     { q: "Ce este un 'Matching'?", a: "E magie! ✨ O companie sponsor alege să dubleze donațiile. Dacă tu donezi 50 lei, ei pun încă 50 lei." },
-    { q: "Pot ajuta lunar?", a: "Chiar ne-ar ajuta enorm. O sumă mică lunară ne permite să funcționăm și să acoperim urgențele." },
+    { q: "Pot ajuta lunar?", a: "Da. Donația lunară este un abonament Stripe de 10, 25 sau 50 lei, separat de cadoul pentru o scrisoare. Îl poți opri oricând." },
     { q: "Ce fac dacă am o întrebare?", a: "Scrie-ne oricând. Suntem doar doi oameni, dar răspundem cât de repede putem!" }
 ]
 
@@ -158,45 +159,7 @@ export default async function HomePage() {
                     </div>
 
                     <div className="container mx-auto px-4 max-w-4xl relative z-10">
-                        <div className="bg-white/80 backdrop-blur-xl border border-white/40 shadow-2xl rounded-3xl p-8 md:p-12 text-center">
-                            <span className="inline-flex items-center gap-2 bg-rose-50 text-rose-600 px-4 py-1.5 rounded-full text-sm font-bold border border-rose-100 mb-6">
-                                <Heart className="w-4 h-4 fill-rose-600" />
-                                Devino Eroul Nostru
-                            </span>
-
-                            <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">
-                                Ajută-ne să ținem <span className="text-blue-600">lumina aprinsă.</span>
-                            </h2>
-
-                            <p className="text-slate-600 text-lg leading-relaxed max-w-2xl mx-auto mb-10">
-                                Suntem o echipă mică cu vise mari. Contribuția ta lunară ne asigură continuitatea și ne ajută să găsim copiii, să verificăm poveștile și să livrăm bucurie constant, lună de lună.
-                            </p>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-lg mx-auto mb-8">
-                                <Button asChild variant="outline" className="h-16 text-lg font-bold border-2 border-slate-100 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-700 transition-all rounded-2xl group">
-                                    <Link href="/donatie-lunara">
-                                        <span className="group-hover:scale-110 transition-transform">10 Lei</span>
-                                    </Link>
-                                </Button>
-                                <Button asChild variant="outline" className="h-16 text-lg font-bold border-2 border-blue-100 bg-blue-50/50 text-blue-800 hover:border-blue-600 hover:bg-blue-100 transition-all rounded-2xl scale-105 shadow-sm group">
-                                    <Link href="/donatie-lunara">
-                                        <span className="group-hover:scale-110 transition-transform">25 Lei</span>
-                                    </Link>
-                                </Button>
-                                <Button asChild variant="outline" className="h-16 text-lg font-bold border-2 border-slate-100 hover:border-purple-500 hover:bg-purple-50 hover:text-purple-700 transition-all rounded-2xl group">
-                                    <Link href="/donatie-lunara">
-                                        <span className="group-hover:scale-110 transition-transform">50 Lei</span>
-                                    </Link>
-                                </Button>
-                            </div>
-
-                            <div>
-                                <Button asChild size="lg" className="h-14 px-10 text-lg bg-slate-900 text-white hover:bg-slate-800 rounded-full font-bold shadow-xl shadow-slate-200 hover:shadow-slate-300 transition-all hover:-translate-y-1">
-                                    <Link href="/donatie-lunara">Activează Donația Lunară</Link>
-                                </Button>
-                                <p className="text-xs text-slate-400 mt-4 font-medium">✨ Securizat prin Stripe • Poți dona și anonim</p>
-                            </div>
-                        </div>
+                        <MonthlySupportCard initialAmount={25} />
                     </div>
                 </section>
             )}
