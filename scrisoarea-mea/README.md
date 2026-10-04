@@ -9,7 +9,9 @@ Admin account: `ADMIN_EMAIL`, `ADMIN_PASSWORD` (used by `npm run db:seed` and `n
 Auth: `BETTER_AUTH_SECRET` (required — generate with `openssl rand -base64 32`), optional `BETTER_AUTH_URL` (defaults to `NEXT_PUBLIC_APP_URL`).
 Email (Resend, required for verification/reset): `RESEND_API_KEY`, `EMAIL_FROM` (verified domain, e.g. `Visuri pe hartie <noreply@your-domain.ro>`).
 Test Resend: `npm run email:test -- you@example.com`
-Optional: `CONTACT_EMAIL`, `NEXT_PUBLIC_ASSOCIATION_CUI`, `NEXT_PUBLIC_SOCIAL_*`, `CRON_SECRET` (protects `/api/cron/*`).
+Optional: `CONTACT_EMAIL`, `NEXT_PUBLIC_ASSOCIATION_CUI`, `ASSOCIATION_LEGAL_NAME`, `ASSOCIATION_IBAN` (Form 230 destination), `FORM_230_FISCAL_YEAR` / `NEXT_PUBLIC_FORM_230_FISCAL_YEAR` (income year on Form 230, e.g. `2025`), `FORM_230_DEFAULT_PERCENT`, `NEXT_PUBLIC_SOCIAL_*`, `CRON_SECRET` (protects `/api/cron/*`).
+
+Form 230 PDF uses the official ANAF template at `private/forms/formular-230-OPANAF-103-2025.pdf` (OPANAF 103/2025), filled server-side with `pdf-lib`.
 
 ## Database (Turso / libSQL)
 

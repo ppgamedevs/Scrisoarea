@@ -39,6 +39,10 @@ yarn-error.log*
 /prisma/*.db-journal
 /prisma/turso-schema.sql
 /public/uploads
+/private/forms/_smoke-*.pdf
+/private/forms/form230-*.json
+/private/forms/form230-*.pdf
+/private/forms/*.png
 
 # vercel
 .vercel

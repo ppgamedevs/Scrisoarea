@@ -392,10 +392,18 @@ model TaxRedirectionRequest {
   // Individual Form 230
   firstName   String?
   lastName    String?
+  fatherInitial String?         // Inițiala tatălui (Form 230)
   cnp         String?           // Ideally encrypted or hashed in code before storing if strictly needed, but for MVP storing plain (or simple encrypt) is common if DB is secure.
   county      String?
   city        String?
-  address     String?
+  address     String?           // Legacy/full address line
+  street      String?
+  streetNumber String?
+  bloc        String?
+  scara       String?
+  etaj        String?
+  apartament  String?
+  postalCode  String?
   
   // Company Form 177
   companyName String?
