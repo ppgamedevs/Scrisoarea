@@ -129,12 +129,15 @@ export function getForm230FiscalYear(): number {
 }
 
 export function getAssociationForm230Defaults() {
+    const ibanRaw =
+        process.env.ASSOCIATION_IBAN?.trim() || "RO22RNCB0280187121730001"
     return {
         name:
             process.env.ASSOCIATION_LEGAL_NAME?.trim() ||
             "Asociatia pentru visuri si oportunitati",
         cui: process.env.NEXT_PUBLIC_ASSOCIATION_CUI?.trim() || "55406686",
-        iban: process.env.ASSOCIATION_IBAN?.trim() || "",
+        // ANAF IBAN field: letters/digits only (no spaces)
+        iban: ibanRaw.replace(/\s+/g, "").toUpperCase(),
         percent: Number(process.env.FORM_230_DEFAULT_PERCENT || "3.5"),
     }
 }
@@ -242,22 +245,22 @@ export async function generateOfficialForm230(data: Form230Input): Promise<Uint8
         drawInRect(page, font, F.amount, String(data.amountLei))
     }
 
-    // Signature – larger area above the thin signature line field
+    // Signature – centered in the official AcroForm signature widget (#field[29])
     if (data.signatureBase64) {
         try {
             const img = await embedSignature(pdfDoc, data.signatureBase64)
             const box = {
-                x: 50,
-                y: 95,
-                w: 200,
-                h: 48,
+                x: F.signature.x - 8,
+                y: F.signature.y - 6,
+                w: F.signature.w + 16,
+                h: 38,
             }
-            const scale = Math.min(box.w / img.width, box.h / img.height)
+            const scale = Math.min(box.w / img.width, box.h / img.height) * 0.9
             const w = img.width * scale
             const h = img.height * scale
             page.drawImage(img, {
-                x: box.x,
-                y: box.y,
+                x: box.x + (box.w - w) / 2,
+                y: box.y + (box.h - h) / 2,
                 width: w,
                 height: h,
             })

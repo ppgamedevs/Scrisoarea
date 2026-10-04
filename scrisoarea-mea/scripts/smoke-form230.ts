@@ -26,8 +26,8 @@ const pngB64 =
     "iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mP8z8BQz0AEYBxVSF+FABJADveWkH6oAAAAAElFTkSuQmCC"
 
 async function main() {
-    process.env.FORM_230_FISCAL_YEAR ||= "2025"
-    process.env.ASSOCIATION_IBAN ||= "RO49AAAA1B31007593840000"
+    process.env.FORM_230_FISCAL_YEAR ||= "2026"
+    process.env.ASSOCIATION_IBAN ||= "RO22RNCB0280187121730001"
     console.log("fiscalYear", getForm230FiscalYear())
 
     const bytes = await generateOfficialForm230({
