@@ -1,5 +1,6 @@
 import { readFileSync, existsSync } from "fs"
 import path from "path"
+import sharp from "sharp"
 import {
     PDFDocument,
     StandardFonts,
@@ -128,6 +129,11 @@ export function getForm230FiscalYear(): number {
     return year
 }
 
+export function formatIban(iban: string) {
+    const compact = iban.replace(/\s+/g, "").toUpperCase()
+    return compact.replace(/(.{4})/g, "$1 ").trim()
+}
+
 export function getAssociationForm230Defaults() {
     const ibanRaw =
         process.env.ASSOCIATION_IBAN?.trim() || "RO22RNCB0280187121730001"
@@ -136,8 +142,7 @@ export function getAssociationForm230Defaults() {
             process.env.ASSOCIATION_LEGAL_NAME?.trim() ||
             "Asociatia pentru visuri si oportunitati",
         cui: process.env.NEXT_PUBLIC_ASSOCIATION_CUI?.trim() || "55406686",
-        // ANAF IBAN field: letters/digits only (no spaces)
-        iban: ibanRaw.replace(/\s+/g, "").toUpperCase(),
+        iban: formatIban(ibanRaw),
         percent: Number(process.env.FORM_230_DEFAULT_PERCENT || "3.5"),
     }
 }
@@ -146,11 +151,23 @@ async function embedSignature(pdfDoc: PDFDocument, signatureBase64: string) {
     const raw = signatureBase64.includes(",")
         ? signatureBase64.split(",")[1]
         : signatureBase64
-    const bytes = Buffer.from(raw, "base64")
+    const input = Buffer.from(raw, "base64")
+
+    // Signature pad is a large blank canvas — trim transparent padding so ink fills the box.
+    let trimmed: Buffer
     try {
-        return await pdfDoc.embedPng(bytes)
+        trimmed = await sharp(input)
+            .trim({ threshold: 10 })
+            .png()
+            .toBuffer()
     } catch {
-        return await pdfDoc.embedJpg(bytes)
+        trimmed = input
+    }
+
+    try {
+        return await pdfDoc.embedPng(trimmed)
+    } catch {
+        return await pdfDoc.embedJpg(trimmed)
     }
 }
 
@@ -239,25 +256,27 @@ export async function generateOfficialForm230(data: Form230Input): Promise<Uint8
     // Section II – association destination
     drawInRect(page, font, F.entityCui, assoc.cui)
     drawInRect(page, font, F.entityName, assoc.name)
-    if (assoc.iban) drawInRect(page, font, F.iban, assoc.iban)
+    if (assoc.iban) drawInRect(page, font, F.iban, assoc.iban, 8)
     drawInRect(page, font, F.percent, String(percent).replace(".", ","))
     if (data.amountLei != null && data.amountLei > 0) {
         drawInRect(page, font, F.amount, String(data.amountLei))
     }
 
-    // Signature – centered in the official AcroForm signature widget (#field[29])
+    // Signature – thin box immediately to the RIGHT of "Semnătură contribuabil"
+    // (AcroForm #field[29]: x≈138, y≈100, w≈134, h≈15)
     if (data.signatureBase64) {
         try {
             const img = await embedSignature(pdfDoc, data.signatureBase64)
+            const pad = 1.5
             const box = {
-                x: F.signature.x - 8,
-                y: F.signature.y - 6,
-                w: F.signature.w + 16,
-                h: 38,
+                x: F.signature.x + pad,
+                y: F.signature.y + pad,
+                w: F.signature.w - pad * 2,
+                h: F.signature.h - pad * 2,
             }
-            const scale = Math.min(box.w / img.width, box.h / img.height) * 0.9
-            const w = img.width * scale
-            const h = img.height * scale
+            const scale = Math.min(box.w / img.width, box.h / img.height)
+            const w = Math.max(img.width * scale, 1)
+            const h = Math.max(img.height * scale, 1)
             page.drawImage(img, {
                 x: box.x + (box.w - w) / 2,
                 y: box.y + (box.h - h) / 2,
