@@ -12,7 +12,7 @@ export default function SponsorInfoPage() {
                     Devino <span className="text-purple-600">Sponsor</span> și dublează bucuria
                 </h1>
                 <p className="text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-                    Companiile pot redirecționa până la 20% din impozitul pe profit/venit către cauze sociale.
+                    Companiile pot susține asociația prin sponsorizare directă sau, dacă sunt eligibile, prin redirecționarea impozitului pe profit (Formular 177).
                     Fără costuri extra, doar impact real.
                 </p>
 

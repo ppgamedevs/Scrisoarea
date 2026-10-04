@@ -25,7 +25,7 @@ ${faqs}
 
 ## Redirecționare fiscală (România)
 - Persoane fizice: redirecționarea a 3,5% din impozitul pe venit, formular 230. Pagină: ${SITE_URL}/directioneaza-35
-- Companii: sponsorizare / 20% din impozitul pe profit, formular 177. Pagină: ${SITE_URL}/directioneaza-20
+- Companii: sponsorizare directă (contract Legea 32/1994) sau redirecționare impozit pe profit prin Formularul 177 (OPANAF 3562/2024), dacă sunt eligibile. Plafon: min(0,75% cifră afaceri, 20% impozit pe profit). Pagină: ${SITE_URL}/directioneaza-20
 - CUI asociație: ${SITE_CUI}
 
 ## Protecția copilului

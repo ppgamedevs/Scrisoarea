@@ -15,23 +15,52 @@ import Link from "next/link"
 
 export default async function AdminRedirectionsPage() {
     const session = await getSession()
-    if (session?.role !== 'ADMIN') redirect('/login')
+    if (session?.role !== "ADMIN") redirect("/login")
 
-    const requests = await prisma.taxRedirectionRequest.findMany({
-        orderBy: { createdAt: 'desc' },
-        take: 100
-    })
+    const [individuals, companies] = await Promise.all([
+        prisma.taxRedirectionRequest.findMany({
+            where: { type: "INDIVIDUAL_230" },
+            orderBy: { createdAt: "desc" },
+            take: 100,
+        }),
+        prisma.companySponsorshipRequest.findMany({
+            orderBy: { createdAt: "desc" },
+            take: 100,
+        }),
+    ])
+
+    const rows = [
+        ...individuals.map((r) => ({
+            id: r.id,
+            kind: "230" as const,
+            createdAt: r.createdAt,
+            label: `${r.lastName || ""} ${r.firstName || ""}`.trim() || r.email,
+            email: r.email,
+            status: r.status,
+            detail: "—",
+            href: `/admin/redirectionari/${r.id}`,
+            badge: "230 (Indiv.)",
+        })),
+        ...companies.map((r) => ({
+            id: r.id,
+            kind: "company" as const,
+            createdAt: r.createdAt,
+            label: r.companyName,
+            email: r.email,
+            status: r.status,
+            detail: `${Number(r.sponsorshipAmount || r.requestedRedirectAmount || 0)} RON · ${r.flowType}`,
+            href: `/admin/redirectionari/s/${r.id}`,
+            badge: r.flowType === "FORM_177" ? "177 Draft" : "Sponsorizare",
+        })),
+    ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold">Redirecționări Impozit</h1>
-                <div className="flex gap-2">
-                    <Button variant="outline">Export CSV</Button>
-                </div>
+            <div className="flex items-center justify-between">
+                <h1 className="text-2xl font-bold">Redirecționări & Sponsorizări</h1>
             </div>
 
-            <div className="bg-white rounded-md border">
+            <div className="rounded-md border bg-white">
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -44,46 +73,32 @@ export default async function AdminRedirectionsPage() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {requests.map((req) => (
-                            <TableRow key={req.id}>
-                                <TableCell>{req.createdAt.toLocaleDateString('ro-RO')}</TableCell>
+                        {rows.map((req) => (
+                            <TableRow key={`${req.kind}-${req.id}`}>
+                                <TableCell>{req.createdAt.toLocaleDateString("ro-RO")}</TableCell>
                                 <TableCell>
-                                    <Badge variant={req.type === 'COMPANY_177' ? 'default' : 'secondary'}>
-                                        {req.type === 'COMPANY_177' ? '177 (Firma)' : '230 (Indiv.)'}
+                                    <Badge variant={req.kind === "company" ? "default" : "secondary"}>
+                                        {req.badge}
                                     </Badge>
                                 </TableCell>
                                 <TableCell>
-                                    <div className="font-medium">
-                                        {req.type === 'COMPANY_177' ? req.companyName : `${req.lastName} ${req.firstName}`}
-                                    </div>
+                                    <div className="font-medium">{req.label}</div>
                                     <div className="text-xs text-slate-500">{req.email}</div>
                                 </TableCell>
                                 <TableCell>
-                                    <Badge variant="outline" className={
-                                        req.status === 'SUBMITTED' ? 'bg-yellow-50 text-yellow-700 border-yellow-200' :
-                                            req.status === 'FILED' ? 'bg-green-50 text-green-700 border-green-200' :
-                                                ''
-                                    }>
-                                        {req.status}
-                                    </Badge>
+                                    <Badge variant="outline">{req.status}</Badge>
                                 </TableCell>
-                                <TableCell>
-                                    {req.type === 'COMPANY_177' ? (
-                                        <span>{req.amountRON?.toString()} RON</span>
-                                    ) : (
-                                        <span className="text-slate-400">-</span>
-                                    )}
-                                </TableCell>
+                                <TableCell>{req.detail}</TableCell>
                                 <TableCell className="text-right">
                                     <Button asChild size="sm" variant="ghost">
-                                        <Link href={`/admin/redirectionari/${req.id}`}>Vezi</Link>
+                                        <Link href={req.href}>Vezi</Link>
                                     </Button>
                                 </TableCell>
                             </TableRow>
                         ))}
-                        {requests.length === 0 && (
+                        {rows.length === 0 && (
                             <TableRow>
-                                <TableCell colSpan={6} className="text-center h-24 text-slate-500">
+                                <TableCell colSpan={6} className="h-24 text-center text-slate-500">
                                     Nicio cerere înregistrată.
                                 </TableCell>
                             </TableRow>

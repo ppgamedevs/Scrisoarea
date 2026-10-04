@@ -375,6 +375,31 @@ enum RedirectionStatus {
   READY_FOR_ANAF
   FILED
   REJECTED
+  CONTRACT_SIGNED
+  READY_FOR_PAYMENT
+  COMPLETED
+  CANCELLED
+}
+
+enum CompanySponsorshipFlow {
+  DIRECT_SPONSORSHIP
+  FORM_177
+}
+
+enum CompanyTaxRegime {
+  PROFIT_TAX
+  MICROENTERPRISE
+  UNKNOWN
+}
+
+enum CompanySponsorshipStatus {
+  DRAFT
+  CONTRACT_SIGNED
+  READY_FOR_PAYMENT
+  READY_FOR_ANAF
+  FILED
+  COMPLETED
+  CANCELLED
 }
 
 model TaxRedirectionRequest {
@@ -426,6 +451,83 @@ model TaxRedirectionRequest {
   @@index([status])
   @@index([year])
   @@index([email])
+  @@index([createdAt])
+}
+
+model ContractNumberSequence {
+  year     Int @id
+  lastSeq  Int @default(0)
+}
+
+model CompanySponsorshipRequest {
+  id        String                   @id @default(uuid())
+  flowType  CompanySponsorshipFlow
+  status    CompanySponsorshipStatus @default(DRAFT)
+  fiscalYear Int
+
+  // Company
+  companyName String
+  companyCif  String
+  regCom      String?
+  taxRegime   CompanyTaxRegime       @default(UNKNOWN)
+
+  representativeName String
+  representativeRole String?
+  email              String
+  phone              String?
+
+  // Fiscal domicile
+  county      String
+  city        String
+  street      String
+  streetNumber String
+  building    String?
+  entrance    String?
+  floor       String?
+  apartment   String?
+  postalCode  String?
+
+  // Amounts
+  sponsorshipAmount          Decimal?
+  maximumRedirectableAmount  Decimal?
+  previouslyRedirectedAmount Decimal?
+  remainingRedirectableAmount Decimal?
+  requestedRedirectAmount    Decimal?
+
+  // Optional Form 177 fiscal period (modified year)
+  periodStart DateTime?
+  periodEnd   DateTime?
+
+  // Contract
+  contractNumber String?   @unique
+  contractDate   DateTime?
+  contractPdfUrl String?
+
+  // Form 177 draft
+  draft177PdfUrl    String?
+  disclosureConsent Boolean @default(false)
+
+  // Beneficiary snapshot (at generation time)
+  beneficiaryName  String?
+  beneficiaryCif   String?
+  beneficiaryIban  String?
+
+  // Signature / consents
+  signatureUrl   String?
+  consentTerms   Boolean @default(false)
+  consentPrivacy Boolean @default(false)
+  profitTaxConfirm Boolean @default(false)
+
+  anafNotes String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([flowType])
+  @@index([status])
+  @@index([fiscalYear])
+  @@index([email])
+  @@index([companyCif])
   @@index([createdAt])
 }
 

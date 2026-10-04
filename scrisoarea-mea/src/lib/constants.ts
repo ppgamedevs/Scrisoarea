@@ -40,8 +40,8 @@ export const FAQ_ITEMS = [
         a: "Da. Persoanele fizice din România pot redirecționa 3,5% din impozitul pe venit prin formularul 230, din pagina Redirecționează 3,5%."
     },
     {
-        q: "O firmă poate sponsoriza 20% din impozit?",
-        a: "Da. Companiile pot folosi mecanismul de sponsorizare / 20% din impozitul pe profit, prin formularul 177, din pagina Sponsorizează 20%."
+        q: "O firmă poate sponsoriza din impozitul pe profit?",
+        a: "Da. Companiile plătitoare de impozit pe profit pot face o sponsorizare directă (contract) sau, dacă sunt eligibile, pot solicita redirecționarea sumei rămase prin Formularul 177. Plafonul fiscal este minimul dintre 0,75% din cifra de afaceri și 20% din impozitul pe profit datorat — confirmă suma cu contabilul."
     }
 ]
 

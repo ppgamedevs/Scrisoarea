@@ -72,7 +72,7 @@ export function SiteFooter() {
                         <li><Link href="/cum-functioneaza" className="hover:text-teal-600 transition-colors inline-block py-2">Cum funcționează</Link></li>
                         <li><Link href="/scrisori" className="hover:text-teal-600 transition-colors inline-block py-2">Toate Scrisorile</Link></li>
                         <li><Link href="/directioneaza-35" className="text-[var(--brand)] font-semibold hover:underline inline-block py-2">Redirecționează 3.5%</Link></li>
-                        <li><Link href="/directioneaza-20" className="text-[var(--brand)] font-semibold hover:underline inline-block py-2">Sponsorizează 20%</Link></li>
+                        <li><Link href="/directioneaza-20" className="text-[var(--brand)] font-semibold hover:underline inline-block py-2">Sponsorizare companii</Link></li>
                         <li><Link href="/impact" className="hover:text-teal-600 transition-colors inline-block py-2">Dovezi de Impact</Link></li>
                         <li><Link href="/transparenta" className="hover:text-teal-600 transition-colors inline-block py-2">Rapoarte Financiare</Link></li>
                         <li><Link href="/contact" className="hover:text-teal-600 transition-colors inline-block py-2">Contact</Link></li>

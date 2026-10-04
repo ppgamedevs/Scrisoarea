@@ -1,8 +1,8 @@
 "use server"
 
-import { generateForm230, generateContract177, getForm230FiscalYear } from "@/lib/pdf/generators"
+import { generateForm230, getForm230FiscalYear } from "@/lib/pdf/generators"
 import prisma from "@/lib/prisma"
-import { validateCNP, validateCUI } from "@/lib/validations/ro-tax"
+import { validateCNP } from "@/lib/validations/ro-tax"
 import { redirect } from "next/navigation"
 import { checkRateLimit } from "@/lib/rate-limit"
 import { headers } from "next/headers"
@@ -122,58 +122,9 @@ export async function submitForm230(formData: FormData) {
     redirect("/directioneaza-35/confirmare?id=" + record.id)
 }
 
-export async function submitForm177(formData: FormData) {
-    // 1. Honeypot
-    if (formData.get('_hp')) throw new Error("Spam detected.")
-
-    // 2. Rate Limit
-    const headerList = await headers()
-    const ip = headerList.get("x-forwarded-for") || "unknown"
-    if (!checkRateLimit(ip)) throw new Error("Prea multe cereri.")
-
-    const raw = {
-        companyName: formData.get('companyName') as string,
-        cui: formData.get('cui') as string,
-        regCom: formData.get('regCom') as string,
-        contactName: formData.get('contactName') as string,
-        email: formData.get('email') as string,
-        phone: formData.get('phone') as string,
-        amount: Number(formData.get('amount') || 0),
-        signatureBase64: formData.get('signature') as string,
-        consentTerms: formData.get('consentTerms') === 'on',
-        consentPrivacy: formData.get('consentPrivacy') === 'on'
-    }
-
-    // Validate
-    if (!validateCUI(raw.cui)) throw new Error("CUI Invalid")
-    if (!raw.signatureBase64) throw new Error("Semnatura lipseste")
-    if (raw.amount < 1) throw new Error("Suma invalida")
-
-    // Generate Contract PDF
-    const pdfBytes = await generateContract177({
-        ...raw
-    })
-    const pdfBase64 = Buffer.from(pdfBytes).toString('base64')
-    const pdfDataUrl = `data:application/pdf;base64,${pdfBase64}`
-
-    const record = await prisma.taxRedirectionRequest.create({
-        data: {
-            type: 'COMPANY_177',
-            year: new Date().getFullYear(),
-            email: raw.email,
-            phone: raw.phone,
-            companyName: raw.companyName,
-            cui: raw.cui,
-            regCom: raw.regCom,
-            contactName: raw.contactName,
-            amountRON: raw.amount,
-            signatureUrl: raw.signatureBase64,
-            contractUrl: pdfDataUrl, // Using contractUrl field
-            status: 'SUBMITTED',
-            consentTerms: true,
-            consentPrivacy: true
-        }
-    })
-
-    redirect('/directioneaza-20/confirmare?id=' + record.id)
+/** @deprecated Use submitDirectSponsorship / submitForm177Prep from sponsorship-actions */
+export async function submitForm177() {
+    throw new Error(
+        "Fluxul vechi Formular 177 a fost înlocuit. Folosește pagina /directioneaza-20."
+    )
 }

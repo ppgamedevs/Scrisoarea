@@ -49,7 +49,7 @@ export const INDEXABLE_ROUTES = [
     { path: "/fapte", title: "Fapte și statistici", priority: 0.8, changeFrequency: "daily" as const },
     { path: "/despre", title: "Despre noi", priority: 0.8, changeFrequency: "monthly" as const },
     { path: "/directioneaza-35", title: "Redirecționează 3,5%", priority: 0.85, changeFrequency: "yearly" as const },
-    { path: "/directioneaza-20", title: "Sponsorizare 20%", priority: 0.8, changeFrequency: "yearly" as const },
+    { path: "/directioneaza-20", title: "Sponsorizare pentru companii", priority: 0.8, changeFrequency: "yearly" as const },
     { path: "/donatie-lunara", title: "Donație lunară", priority: 0.7, changeFrequency: "monthly" as const },
     { path: "/protectia-copiilor", title: "Protecția copiilor", priority: 0.7, changeFrequency: "yearly" as const },
     { path: "/verificare-institutii", title: "Verificarea instituțiilor", priority: 0.7, changeFrequency: "yearly" as const },

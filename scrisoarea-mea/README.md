@@ -13,6 +13,8 @@ Optional: `CONTACT_EMAIL`, `NEXT_PUBLIC_ASSOCIATION_CUI`, `ASSOCIATION_LEGAL_NAM
 
 Form 230 PDF uses the official ANAF template at `private/forms/formular-230-OPANAF-103-2025.pdf` (OPANAF 103/2025), filled server-side with `pdf-lib`.
 
+Company sponsorship (`/directioneaza-20`) supports two separate flows: direct sponsorship contract (Law 32/1994) and Draft Form 177 (OPANAF 3562/2024). Configure `SPONSORSHIP_BENEFICIARY_*` and `BENEFICIARY_ANAF_REGISTRY_CONFIRMED`.
+
 ## Database (Turso / libSQL)
 
 The app uses [Turso](https://turso.tech) (hosted libSQL). Prisma talks to it through `@prisma/adapter-libsql`.

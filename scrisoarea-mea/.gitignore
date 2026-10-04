@@ -42,6 +42,7 @@ yarn-error.log*
 /private/forms/_smoke-*.pdf
 /private/forms/form230-*.json
 /private/forms/form230-*.pdf
+/private/forms/form177-*.json
 /private/forms/*.png
 
 # vercel
