@@ -541,6 +541,18 @@ model ContactSubmission {
   @@index([createdAt])
 }
 
+model TeamMember {
+  id        String   @id @default(uuid())
+  name      String
+  title     String
+  imageUrl  String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([sortOrder])
+}
+
 model SponsorProfile {
   id          String   @id @default(uuid())
   userId      String   @unique

@@ -11,6 +11,7 @@ import { JsonLd } from "@/components/seo/json-ld"
 import { FAQ_ITEMS } from "@/lib/constants"
 import { generateFaqSchema, generateHowToSchema } from "@/lib/seo/jsonld"
 import { pageMetadata } from "@/lib/seo/metadata"
+import { pendingReservationInclude } from "@/lib/letters"
 
 export const metadata = pageMetadata({
     title: "Donează pentru copii din România — scrisori verificate",
@@ -47,7 +48,7 @@ async function getFeaturedLetters() {
         where: { ...publicWishlistWhere, status: 'ACTIV' },
         take: 6,
         orderBy: { createdAt: 'desc' },
-        include: { institution: true, campaign: true }
+        include: { institution: true, campaign: true, fulfillmentClaims: pendingReservationInclude() }
     })
 }
 

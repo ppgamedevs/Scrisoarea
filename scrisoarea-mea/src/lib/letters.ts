@@ -12,6 +12,30 @@ export type LetterFilter = {
 
 const PAGE_SIZE = 12
 
+export function pendingReservationInclude() {
+    const now = new Date()
+    return {
+        where: {
+            OR: [
+                { status: "PENDING", expiresAt: { gt: now } },
+                {
+                    status: { in: ["SHIPPED", "COMPLETED"] },
+                    expiresAt: { gt: now },
+                    AND: [
+                        { awbNumber: { not: null } },
+                        { NOT: { awbNumber: "" } },
+                        { awbProvider: { not: null } },
+                        { NOT: { awbProvider: "" } },
+                    ],
+                },
+            ],
+        },
+        select: { status: true, expiresAt: true },
+        orderBy: { updatedAt: "desc" as const },
+        take: 2,
+    }
+}
+
 export async function getLetters(filter: LetterFilter) {
     const { category, ageRange, county, page = 1 } = filter
     const where: Prisma.ScrisoareWhereInput = {

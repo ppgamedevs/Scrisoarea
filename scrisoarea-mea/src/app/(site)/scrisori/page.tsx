@@ -9,6 +9,7 @@ import { LetterModeration, publicWishlistWhere } from "@/lib/letter-moderation"
 import { LETTER_CATEGORIES } from "@/lib/seo/categories"
 import { generateBreadcrumbSchema, generateCollectionPageSchema, generateItemListSchema } from "@/lib/seo/jsonld"
 import { pageMetadata } from "@/lib/seo/metadata"
+import { pendingReservationInclude } from "@/lib/letters"
 
 export const revalidate = 600
 
@@ -61,7 +62,7 @@ export default async function ScrisoriPage({
     const letters = await prisma.scrisoare.findMany({
         where,
         orderBy: { createdAt: "desc" },
-        include: { institution: true, campaign: true },
+        include: { institution: true, campaign: true, fulfillmentClaims: pendingReservationInclude() },
     })
 
     return (

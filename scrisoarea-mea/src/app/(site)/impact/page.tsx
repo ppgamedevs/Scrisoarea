@@ -9,8 +9,8 @@ export const metadata = pageMetadata({
     keywords: ["dovadă donație", "impact ONG", "livrare cadou"],
 })
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { isVideoProof } from "@/lib/proof-media"
 
 export default async function ImpactPage() {
     // Fetch letters that have an approved proof
@@ -22,7 +22,7 @@ export default async function ImpactPage() {
             ],
         },
         include: {
-            proofs: { where: { moderationStatus: 'APPROVED' }, take: 1 },
+            proofs: { where: { moderationStatus: 'APPROVED' }, orderBy: { createdAt: 'asc' } },
             institution: true
         },
         orderBy: { updatedAt: 'desc' }
@@ -42,14 +42,14 @@ export default async function ImpactPage() {
             <div className="container mx-auto px-6 py-12">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {closedLetters.map(letter => {
-                        const proof = letter.proofs[0]
+                        const proof = letter.proofs.find((item) => !isVideoProof(item.type, item.url)) || letter.proofs[0]
                         if (!proof) return null
 
                         return (
                             <div key={letter.id} className="bg-white rounded-xl shadow-sm border overflow-hidden hover:shadow-md transition-shadow">
                                 <div className="aspect-video bg-neutral-100 relative group">
                                     {/* Thumbnail */}
-                                    {proof.type === 'VIDEO' ? (
+                                    {isVideoProof(proof.type, proof.url) ? (
                                         <div className="w-full h-full flex items-center justify-center bg-black text-white">
                                             <span className="text-4xl">▶</span>
                                         </div>
@@ -72,7 +72,7 @@ export default async function ImpactPage() {
                                         {letter.category} • {letter.institution.county}
                                     </p>
                                     <p className="text-xs text-slate-400">
-                                        Închis la {letter.updatedAt.toLocaleDateString()}
+                                        {letter.proofs.length} {letter.proofs.length === 1 ? "dovadă aprobată" : "dovezi aprobate"} · Închis la {letter.updatedAt.toLocaleDateString()}
                                     </p>
                                 </div>
                             </div>

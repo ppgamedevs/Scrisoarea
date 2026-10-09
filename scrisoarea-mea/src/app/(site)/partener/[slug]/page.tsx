@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { ExternalLink, CheckCircle2 } from "lucide-react"
 import { Metadata } from 'next'
 import { generateOrganizationSchema } from "@/lib/seo/jsonld"
+import { pendingReservationInclude } from "@/lib/letters"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const { slug } = await params
@@ -34,7 +35,7 @@ export default async function PartnerPage({ params }: { params: Promise<{ slug: 
                     status: { in: ['ACTIV', 'FINANTAT', 'IN_ACHIZITIE', 'LIVRAT'] },
                 },
                 orderBy: { createdAt: 'desc' },
-                include: { institution: true, campaign: true }
+                include: { institution: true, campaign: true, fulfillmentClaims: pendingReservationInclude() }
             }
         }
     })

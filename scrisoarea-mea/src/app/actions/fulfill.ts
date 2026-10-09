@@ -2,12 +2,17 @@
 
 import prisma from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
+import { getSession } from "@/lib/auth"
 
-// 1. Create a claim to fulfill the wish (Lock it for 48h)
-export async function createFulfillmentClaim(scrisoareId: string, email: string) {
-    if (!email || !email.includes('@')) {
-        throw new Error("Adresa de email invalidă.")
+const RESERVATION_MS = 72 * 60 * 60 * 1000
+
+// 1. Create a claim to fulfill the wish (Lock it for 72h)
+export async function createFulfillmentClaim(scrisoareId: string) {
+    const session = await getSession()
+    if (!session || (session.role !== "DONOR" && session.role !== "SPONSOR")) {
+        throw new Error("Trebuie să te autentifici cu succes pentru a putea pregăti acest cadou.")
     }
+    const donorEmail = session.email.trim().toLowerCase()
 
     // Atomic check: Is it already claimed or fully funded?
     // We capture result here
@@ -42,28 +47,44 @@ export async function createFulfillmentClaim(scrisoareId: string, email: string)
         const claim = await tx.fulfillmentClaim.create({
             data: {
                 scrisoareId,
-                donorEmail: email,
+                donorEmail,
                 status: 'PENDING',
-                expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000) // 48h
+                expiresAt: new Date(Date.now() + RESERVATION_MS)
             }
         })
 
-        return { success: true, claimId: claim.id }
+        return {
+            success: true,
+            claimId: claim.id,
+            expiresAt: claim.expiresAt.toISOString(),
+            slug: letter.slug,
+        }
     })
 
+    revalidatePath(`/scrisori/${result.slug || scrisoareId}`)
     revalidatePath(`/scrisori/${scrisoareId}`)
     return result
 }
 
 // 2. Upload AWB (Confirm shipping)
 export async function submitAwb(claimId: string, awbNumber: string, awbProvider: string) {
-    if (!awbNumber) throw new Error("Lipseste AWB.")
+    const awb = awbNumber.trim()
+    const provider = awbProvider.trim()
+    if (!awb || !provider) throw new Error("Completează curierul și numărul AWB.")
+
+    const session = await getSession()
+    if (!session) throw new Error("Trebuie să fii autentificat.")
+
+    const claim = await prisma.fulfillmentClaim.findUnique({ where: { id: claimId } })
+    if (!claim || claim.donorEmail?.toLowerCase() !== session.email.trim().toLowerCase()) {
+        throw new Error("Această rezervare nu îți aparține.")
+    }
 
     await prisma.fulfillmentClaim.update({
         where: { id: claimId },
         data: {
-            awbNumber,
-            awbProvider,
+            awbNumber: awb,
+            awbProvider: provider,
             status: 'SHIPPED',
             expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
         }

@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress"
 import DonationModule from "@/components/donation-module"
 import FulfillmentModule from "@/components/fulfillment-module"
 import { Badge } from "@/components/ui/badge"
+import { InDeliveryTag, ReservedHoursTag } from "@/components/letters/reserved-tag"
 import { Metadata } from 'next'
 import { permanentRedirect } from "next/navigation"
 import { generateBreadcrumbSchema, generateLetterSchema } from "@/lib/seo/jsonld"
@@ -170,6 +171,23 @@ export default async function ScrisoarePage({ params }: { params: Promise<{ id: 
     const wishlistItems = parseWishlistItems(letter.items)
 
     const activeClaim = letter.fulfillmentClaims[0] || null
+    const ownsReservation = Boolean(
+        session?.email &&
+        activeClaim?.status === "PENDING" &&
+        activeClaim.expiresAt > new Date() &&
+        activeClaim.donorEmail?.toLowerCase() === session.email.trim().toLowerCase()
+    )
+    const inDelivery = Boolean(
+        activeClaim &&
+        (activeClaim.status === "SHIPPED" || activeClaim.status === "COMPLETED") &&
+        activeClaim.awbNumber?.trim() &&
+        activeClaim.awbProvider?.trim()
+    )
+    const ownsShipment = Boolean(
+        inDelivery &&
+        session?.email &&
+        activeClaim?.donorEmail?.toLowerCase() === session.email.trim().toLowerCase()
+    )
 
     const totalOccupied = paid + reserved
     const remaining = Math.max(0, target - totalOccupied)
@@ -202,13 +220,24 @@ export default async function ScrisoarePage({ params }: { params: Promise<{ id: 
                         <Badge variant="secondary" className="bg-slate-100 text-slate-700 hover:bg-slate-200">{letter.category}</Badge>
                         {letter.status === 'FINANTAT' && <Badge className="bg-emerald-100 text-emerald-800 border-none flex gap-1 items-center"><Sparkles className="w-3 h-3" /> Finanțat</Badge>}
                         {letter.status === 'INCHIS' && <Badge className="bg-emerald-100 text-emerald-800 border-none">Livrat cu succes</Badge>}
-                        {activeClaim && <Badge className="bg-amber-100 text-amber-800 border-none">În curs de îndeplinire</Badge>}
+                        {activeClaim?.status === "PENDING" && activeClaim.expiresAt > new Date() ? (
+                            <ReservedHoursTag expiresAt={activeClaim.expiresAt.toISOString()} />
+                        ) : inDelivery ? (
+                            <InDeliveryTag />
+                        ) : null}
                         {activeRule && <Badge className="bg-purple-100 text-purple-800 border-none">⚡ Matching 1:1 Activ</Badge>}
                     </div>
 
                     <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 tracking-tight">
                         Dorința lui {letter.childFirstName}, <span className="text-slate-400 font-light">{letter.childAge} ani</span>
                     </h1>
+                    {ownsShipment && activeClaim?.awbProvider && activeClaim.awbNumber ? (
+                        <p className="mb-4 text-sm text-slate-600">
+                            Curier: <span className="font-semibold text-slate-900">{activeClaim.awbProvider}</span>
+                            {" · "}
+                            AWB: <span className="font-semibold text-slate-900">{activeClaim.awbNumber}</span>
+                        </p>
+                    ) : null}
                     <p data-seo-summary className="text-slate-600 max-w-2xl">
                         Scrisoare verificată pe visuripehartie.ro. {letter.childFirstName} are {letter.childAge} ani
                         {letter.institution.county ? ` și este ajutat printr-un partener din ${letter.institution.city}, ${letter.institution.county}` : ""}.
@@ -361,11 +390,32 @@ export default async function ScrisoarePage({ params }: { params: Promise<{ id: 
                                     </div>
                                 )}
 
-                                {!isDonationDisabled && !isFullyFunded && (
+                                {((!isDonationDisabled && !isFullyFunded) || ownsReservation || ownsShipment) && (
                                     <div className="mb-6 pb-6 border-b border-slate-100">
                                         <FulfillmentModule
                                             scrisoareId={letter.id}
-                                            activeClaim={activeClaim}
+                                            activeClaim={
+                                                activeClaim
+                                                    ? {
+                                                          status: activeClaim.status,
+                                                          ...(ownsReservation
+                                                              ? {
+                                                                    id: activeClaim.id,
+                                                                    expiresAt: activeClaim.expiresAt.toISOString(),
+                                                                }
+                                                              : {}),
+                                                      }
+                                                    : null
+                                            }
+                                            shipment={
+                                                ownsShipment && activeClaim?.awbProvider && activeClaim.awbNumber
+                                                    ? { provider: activeClaim.awbProvider, awb: activeClaim.awbNumber }
+                                                    : null
+                                            }
+                                            isLoggedIn={Boolean(session)}
+                                            userEmail={session?.role === "DONOR" || session?.role === "SPONSOR" ? session.email : null}
+                                            loginHref={`/login?returnTo=${encodeURIComponent(`/scrisori/${letter.slug || letter.id}`)}`}
+                                            registerHref="/register"
                                         />
                                     </div>
                                 )}
@@ -399,10 +449,12 @@ export default async function ScrisoarePage({ params }: { params: Promise<{ id: 
                                 ) : (
                                     <>
                                         {activeClaim ? (
+                                            ownsReservation ? null : (
                                             <div className="text-center text-sm text-amber-700 bg-amber-50 p-4 rounded-xl border border-amber-100">
                                                 <p className="font-medium">O familie minunată pregătește acest pachet.</p>
                                                 <p className="opacity-80 mt-1">Donațiile sunt oprite temporar.</p>
                                             </div>
+                                            )
                                         ) : (
                                             <>
                                                 {isDonationDisabled ? (

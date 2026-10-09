@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { formatCurrency } from "@/lib/utils"
 import { ScrisoareCard } from "@/components/ui/scrisoare-card"
+import { pendingReservationInclude } from "@/lib/letters"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params
@@ -30,7 +31,7 @@ export default async function CampaignDetailPage({ params }: { params: Promise<{
                     moderationStatus: 'approved',
                     status: { in: ['ACTIV', 'FINANTAT'] },
                 },
-                include: { institution: true, campaign: true }
+                include: { institution: true, campaign: true, fulfillmentClaims: pendingReservationInclude() }
             }
         }
     })

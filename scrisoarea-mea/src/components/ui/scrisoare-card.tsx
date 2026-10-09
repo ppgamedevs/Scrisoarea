@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
+import { InDeliveryTag, ReservedHoursTag } from "@/components/letters/reserved-tag"
 import { formatCurrency } from "@/lib/utils"
 import { PlayCircle } from "lucide-react"
 
@@ -16,6 +17,14 @@ export function ScrisoareCard({ letter }: ScrisoareCardProps) {
     const isFunded = letter.status === 'FINANTAT' || letter.status === 'IN_ACHIZITIE' || letter.status === 'LIVRAT' || letter.status === 'INCHIS' || percent >= 100
     const institution = letter.institution
     const isVideo = letter.mediaType === 'VIDEO'
+    const claims = Array.isArray(letter.fulfillmentClaims) ? letter.fulfillmentClaims : []
+    const inDelivery = claims.some((claim: { status?: string }) => claim.status === "SHIPPED" || claim.status === "COMPLETED")
+    const pendingClaim = claims.find((claim: { status?: string; expiresAt?: string | Date }) => {
+        if (claim.status && claim.status !== "PENDING") return false
+        if (!claim.expiresAt) return false
+        return new Date(claim.expiresAt).getTime() > Date.now()
+    })
+    const reservedUntil = !inDelivery && pendingClaim?.expiresAt ? new Date(pendingClaim.expiresAt).toISOString() : null
 
     return (
         <article className="bg-[var(--pastel-cream)] rounded-xl shadow-sm border border-[var(--pastel-lavender)]/30 overflow-hidden hover:shadow-md transition-all h-full flex flex-col relative group">
@@ -49,6 +58,11 @@ export function ScrisoareCard({ letter }: ScrisoareCardProps) {
                     </div>
                 )}
 
+                {(inDelivery || reservedUntil) && (
+                    <div className="absolute top-2 left-2 z-20">
+                        {inDelivery ? <InDeliveryTag /> : <ReservedHoursTag expiresAt={reservedUntil!} />}
+                    </div>
+                )}
                 {letter.campaign && (
                     <div className="absolute top-2 right-2 bg-purple-600 text-white text-[10px] font-bold px-2 py-1 rounded z-10 shadow-sm">
                         ⚡ Dublăm bucuria

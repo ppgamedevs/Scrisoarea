@@ -15,6 +15,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { LegalLink } from "@/components/legal/legal-dialog"
 
 type ActionState = { error?: string } | null
 
@@ -271,16 +272,13 @@ export default function PartnerRegisterPage() {
                             )}
                             <span>
                                 Accept{" "}
-                                <Link href="/termeni" className="text-teal-700 hover:underline">
+                                <LegalLink doc="termeni" className="text-teal-700 hover:underline">
                                     Termenii și Condițiile
-                                </Link>{" "}
+                                </LegalLink>{" "}
                                 și{" "}
-                                <Link
-                                    href="/confidentialitate"
-                                    className="text-teal-700 hover:underline"
-                                >
+                                <LegalLink doc="confidentialitate" className="text-teal-700 hover:underline">
                                     Politica de Confidențialitate
-                                </Link>
+                                </LegalLink>
                                 .
                             </span>
                         </label>

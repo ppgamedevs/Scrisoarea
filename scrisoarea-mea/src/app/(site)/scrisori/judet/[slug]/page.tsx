@@ -7,6 +7,7 @@ import { LetterModeration, publicWishlistWhere } from "@/lib/letter-moderation"
 import { slugifyRo } from "@/lib/seo/categories"
 import { generateBreadcrumbSchema, generateCollectionPageSchema, generateItemListSchema } from "@/lib/seo/jsonld"
 import { pageMetadata } from "@/lib/seo/metadata"
+import { pendingReservationInclude } from "@/lib/letters"
 
 export const revalidate = 1800
 
@@ -55,7 +56,7 @@ export default async function CountyLettersPage({ params }: { params: Promise<{ 
             institution: { county },
         },
         orderBy: { createdAt: "desc" },
-        include: { institution: true, campaign: true },
+        include: { institution: true, campaign: true, fulfillmentClaims: pendingReservationInclude() },
     })
 
     const path = `/scrisori/judet/${slug}`

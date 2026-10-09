@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { formatCurrency } from "@/lib/utils"
+import { isVideoProof } from "@/lib/proof-media"
 
 export default async function ImpactDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params
@@ -16,21 +17,22 @@ export default async function ImpactDetailPage({ params }: { params: Promise<{ i
 
     if (!letter || !letter.proofApproved || letter.proofs.length === 0) notFound()
 
-    const proof = letter.proofs[0]
     const items = letter.items ? JSON.parse(letter.items) : []
 
     // For MVP, handling simpler wishlist text fallback
-    const itemsList = items.length > 0 ? items.map((i: any) => i.name).join(", ") : letter.wishList
+    const itemsList = items.length > 0 ? items.map((i: { name?: string }) => i.name).filter(Boolean).join(", ") : letter.wishList
 
     return (
         <div className="min-h-screen bg-black flex items-center justify-center p-4">
             <div className="bg-white rounded-xl overflow-hidden max-w-4xl w-full grid md:grid-cols-2">
                 {/* Media Side */}
-                <div className="bg-black flex items-center justify-center relative aspect-square md:aspect-auto">
-                    {proof.type === 'VIDEO' ? (
-                        <video src={proof.url} controls className="max-w-full max-h-[80vh] w-full" autoPlay muted />
-                    ) : (
-                        <img src={proof.url} alt="Proof" className="object-contain max-h-[80vh] w-full" />
+                <div className="bg-black flex flex-col gap-3 p-3 relative max-h-[80vh] overflow-auto">
+                    {letter.proofs.map((proof) =>
+                        isVideoProof(proof.type, proof.url) ? (
+                            <video key={proof.id} src={proof.url} controls className="max-w-full max-h-[70vh] w-full" />
+                        ) : (
+                            <img key={proof.id} src={proof.url} alt="Proof" className="object-contain max-h-[70vh] w-full" />
+                        )
                     )}
                 </div>
 

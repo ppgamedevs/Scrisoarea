@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo, useState, useTransition } from "react"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -13,6 +14,7 @@ import {
     saveLetterModeration,
 } from "@/app/actions/admin-actions"
 import {
+    amountExceedsMaxMessage,
     MAX_APPROVED_TARGET_RON,
     MIN_APPROVED_TARGET_RON,
     MODERATION_LABELS,
@@ -111,14 +113,39 @@ export default function AdminLetterModerationForm({ letter }: { letter: LetterPr
         }
     }
 
-    const run = (fn: () => Promise<void>) => {
+    const targetAmount = Number(approvedTarget)
+
+    const warnIfOverMax = (value: number) => {
+        if (Number.isFinite(value) && value > MAX_APPROVED_TARGET_RON) {
+            toast.warning(amountExceedsMaxMessage(), { id: "amount-limit" })
+            return true
+        }
+        return false
+    }
+
+    const run = (fn: () => Promise<{ error?: string } | void>, options?: { checkAmount?: boolean }) => {
         setError("")
+        if (options?.checkAmount && warnIfOverMax(targetAmount)) {
+            setError(amountExceedsMaxMessage())
+            return
+        }
         startTransition(async () => {
             try {
-                await fn()
+                const result = await fn()
+                if (result?.error) {
+                    const overMax = result.error.includes("depășește maximum")
+                    if (overMax) toast.warning(result.error, { id: "amount-limit" })
+                    else toast.error(result.error)
+                    setError(result.error)
+                }
             } catch (e: any) {
                 if (e?.digest?.includes("NEXT_REDIRECT") || e?.message === "NEXT_REDIRECT") return
-                setError(e?.message || "A apărut o eroare.")
+                const raw = typeof e?.message === "string" ? e.message : ""
+                const safe = raw.startsWith("0:") || raw.includes('{"digest"') || raw.includes('{"a":')
+                    ? "A apărut o eroare. Verifică suma și încearcă din nou."
+                    : raw || "A apărut o eroare."
+                toast.error(safe)
+                setError(safe)
             }
         })
     }
@@ -322,7 +349,11 @@ export default function AdminLetterModerationForm({ letter }: { letter: LetterPr
                                     min={MIN_APPROVED_TARGET_RON}
                                     max={MAX_APPROVED_TARGET_RON}
                                     value={approvedTarget}
-                                    onChange={(e) => setApprovedTarget(e.target.value)}
+                                    onChange={(e) => {
+                                        const value = e.target.value
+                                        setApprovedTarget(value)
+                                        warnIfOverMax(Number(value))
+                                    }}
                                     required
                                 />
                             </div>
@@ -345,19 +376,19 @@ export default function AdminLetterModerationForm({ letter }: { letter: LetterPr
                             disabled={pending}
                             onClick={() =>
                                 run(async () => {
-                                    await saveLetterModeration(letter.id, buildFormData())
-                                })
+                                    return saveLetterModeration(letter.id, buildFormData())
+                                }, { checkAmount: true })
                             }
                         >
                             Salvează modificările
                         </Button>
-                        <Button
+                            <Button
                             className="w-full bg-green-600 hover:bg-green-700"
                             disabled={pending}
                             onClick={() =>
                                 run(async () => {
-                                    await approveScrisoare(letter.id, buildFormData())
-                                })
+                                    return approveScrisoare(letter.id, buildFormData())
+                                }, { checkAmount: true })
                             }
                         >
                             Aprobă & Publică

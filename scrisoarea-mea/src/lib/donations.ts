@@ -2,6 +2,7 @@ import { revalidatePath } from "next/cache"
 import type Stripe from "stripe"
 import prisma from "@/lib/prisma"
 import { sendEmail } from "@/lib/email"
+import { absoluteUrl } from "@/lib/seo/site"
 import { applyMatchingToDonation } from "@/lib/matching"
 import { publicTargetAmount } from "@/lib/letter-moderation"
 import { getStripe } from "@/lib/stripe"
@@ -10,15 +11,6 @@ const HOLD_MS = 30 * 60 * 1000
 
 export function checkoutHoldSince() {
     return new Date(Date.now() - HOLD_MS)
-}
-
-function escapeHtml(value: string) {
-    return value.replace(/[&<>"]/g, (char) => {
-        if (char === "&") return "&amp;"
-        if (char === "<") return "&lt;"
-        if (char === ">") return "&gt;"
-        return "&quot;"
-    })
 }
 
 type FulfillInput = {
@@ -110,9 +102,17 @@ export async function fulfillPaidDonation(input: FulfillInput) {
                 template: "DONATION_CONFIRMATION",
                 data: {
                     amount: donorAmount,
-                    date: donation.createdAt.toLocaleDateString("ro-RO"),
+                    date: donation.createdAt.toLocaleString("ro-RO", {
+                        dateStyle: "long",
+                        timeStyle: "short",
+                        timeZone: "Europe/Bucharest",
+                    }),
                     transactionId: input.stripePaymentIntentId || input.stripeSessionId,
-                    childName: escapeHtml(donation.scrisoare?.childFirstName || "un copil"),
+                    childName: donation.scrisoare?.childFirstName || "",
+                    donorName: donation.donorName || "",
+                    letterUrl: donation.scrisoare?.slug
+                        ? absoluteUrl(`/scrisori/${donation.scrisoare.slug}`)
+                        : "",
                 },
             })
         } catch (error) {

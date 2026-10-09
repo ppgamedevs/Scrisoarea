@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { SignaturePad, SignaturePadRef } from "@/components/ui/signature-pad"
 import { validateCNP } from "@/lib/validations/ro-tax"
+import { LegalLink } from "@/components/legal/legal-dialog"
 
 const FISCAL_YEAR =
     typeof process !== "undefined" && process.env.NEXT_PUBLIC_FORM_230_FISCAL_YEAR
@@ -224,9 +225,9 @@ export default function Form230() {
                     />
                     <label htmlFor="terms" className="text-sm leading-snug">
                         Confirm corectitudinea datelor și sunt de acord cu{" "}
-                        <a href="/termeni" className="text-indigo-600 underline">
+                        <LegalLink doc="termeni" className="text-indigo-600 underline">
                             Termenii și Condițiile
-                        </a>
+                        </LegalLink>
                         .
                     </label>
                 </div>

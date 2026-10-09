@@ -3,6 +3,7 @@ import Image from "next/image"
 import { getSession } from "@/lib/auth"
 import { HeaderNavClient } from "@/components/layout/header-nav-client"
 import { Button } from "@/components/ui/button"
+import { LegalLink } from "@/components/legal/legal-dialog"
 
 const LOGO_SRC = "/brand/visuri-pe-hartie-logo.webp"
 const LOGO_WIDTH = 2050
@@ -37,7 +38,10 @@ export async function SiteHeader() {
     )
 }
 
-export function SiteFooter() {
+export async function SiteFooter() {
+    const session = await getSession()
+    const showPartnerAccess = session?.role !== "DONOR"
+
     return (
         <footer className="bg-[var(--pastel-sage)]/50 border-t pt-16 pb-12 text-slate-600 text-sm">
             <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-12 mb-12">
@@ -88,16 +92,15 @@ export function SiteFooter() {
                         <li><Link href="/intrebari" className="hover:text-teal-600 transition-colors inline-block py-2">Întrebări Frecvente</Link></li>
                         <li><Link href="/scrisori/categorie/educatie" className="hover:text-teal-600 transition-colors inline-block py-2">Educație</Link></li>
                         <li><Link href="/scrisori/categorie/jucarii" className="hover:text-teal-600 transition-colors inline-block py-2">Jucării</Link></li>
-                        <li><a href="/llms.txt" className="hover:text-teal-600 transition-colors inline-block py-2">llms.txt</a></li>
                     </ul>
                 </div>
 
                 <div>
                     <h4 className="font-bold text-slate-900 mb-4">Legal</h4>
                     <ul className="space-y-3">
-                        <li><Link href="/termeni" className="hover:text-teal-600 transition-colors inline-block py-2">Termeni și Condiții</Link></li>
-                        <li><Link href="/confidentialitate" className="hover:text-teal-600 transition-colors inline-block py-2">Politica de Confidențialitate</Link></li>
-                        <li><Link href="/cookies" className="hover:text-teal-600 transition-colors inline-block py-2">Politica Cookies</Link></li>
+                        <li><LegalLink doc="termeni" className="hover:text-teal-600 transition-colors inline-block py-2 text-left">Termeni și Condiții</LegalLink></li>
+                        <li><LegalLink doc="confidentialitate" className="hover:text-teal-600 transition-colors inline-block py-2 text-left">Politica de Confidențialitate</LegalLink></li>
+                        <li><LegalLink doc="cookies" className="hover:text-teal-600 transition-colors inline-block py-2 text-left">Politica Cookies</LegalLink></li>
                     </ul>
                 </div>
             </div>
@@ -114,9 +117,11 @@ export function SiteFooter() {
                     <Button asChild variant="outline" size="sm" className="h-10 px-4">
                         <Link href="/admin">Acces Admin</Link>
                     </Button>
-                    <Button asChild size="sm" className="h-10 px-4 bg-slate-800 hover:bg-slate-900">
-                        <Link href="/partner">Acces Parteneri</Link>
-                    </Button>
+                    {showPartnerAccess ? (
+                        <Button asChild size="sm" className="h-10 px-4 bg-slate-800 hover:bg-slate-900">
+                            <Link href="/partner">Acces Parteneri</Link>
+                        </Button>
+                    ) : null}
                 </div>
             </div>
         </footer>

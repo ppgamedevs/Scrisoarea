@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { SignaturePad, SignaturePadRef } from "@/components/ui/signature-pad"
 import { validateCUI } from "@/lib/validations/ro-tax"
 import { normalizeCuiInput } from "@/lib/validations/cui"
+import { LegalLink } from "@/components/legal/legal-dialog"
 
 type TaxRegime = "PROFIT_TAX" | "MICROENTERPRISE" | "UNKNOWN"
 
@@ -309,9 +310,9 @@ export default function DirectSponsorshipForm() {
                     />
                     <span>
                         Sunt de acord cu{" "}
-                        <a href="/termeni" className="text-blue-600 underline">
+                        <LegalLink doc="termeni" className="text-blue-600 underline">
                             Termenii
-                        </a>{" "}
+                        </LegalLink>{" "}
                         contractului de sponsorizare.
                     </span>
                 </label>

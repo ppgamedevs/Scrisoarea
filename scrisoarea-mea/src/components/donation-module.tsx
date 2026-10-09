@@ -1,10 +1,12 @@
 "use client"
 
 import { useState } from "react"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { formatCurrency } from "@/lib/utils"
 import { startStripeDonation } from "@/app/actions/donate"
+import { amountExceedsMaxMessage, MAX_APPROVED_TARGET_RON } from "@/lib/letter-moderation"
 
 export default function DonationModule({
     scrisoareId,
@@ -27,7 +29,8 @@ export default function DonationModule({
     const [lastName, setLastName] = useState("")
     const [email, setEmail] = useState(userEmail || "")
 
-    const presets = [50, 100, 200].filter((preset) => preset <= remainingAmount)
+    const payableMax = Math.min(remainingAmount, MAX_APPROVED_TARGET_RON)
+    const presets = [50, 100, 200].filter((preset) => preset <= payableMax)
 
     const handleDonate = async () => {
         setLoading(true)
@@ -35,6 +38,11 @@ export default function DonationModule({
         try {
             const amount = Number(customAmount)
             if (!amount || amount < 5) throw new Error("Minim 5 RON")
+            if (amount > MAX_APPROVED_TARGET_RON) {
+                toast.warning(amountExceedsMaxMessage(), { id: "amount-limit" })
+                setLoading(false)
+                return
+            }
             if (amount > remainingAmount) throw new Error("Suma depășește necesarul.")
             if (!isAnonymous && (!firstName.trim() || !lastName.trim() || !email.trim())) {
                 throw new Error("Completează prenumele, numele și emailul, sau bifează donația anonimă.")
@@ -54,7 +62,14 @@ export default function DonationModule({
             }
             window.location.assign(result.url)
         } catch (e: unknown) {
-            setError(e instanceof Error ? e.message : "Plata nu a putut fi inițiată.")
+            const message = e instanceof Error ? e.message : "Plata nu a putut fi inițiată."
+            const raw = message.startsWith("0:") || message.includes('{"digest"') || message.includes('{"a":')
+                ? "A apărut o eroare. Verifică suma și încearcă din nou."
+                : message
+            if (raw.includes("depășește maximum")) {
+                toast.warning(raw, { id: "amount-limit" })
+            }
+            setError(raw)
             setLoading(false)
         }
     }
@@ -64,7 +79,16 @@ export default function DonationModule({
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.value === "") {
+            setCustomAmount("")
+            return
+        }
         let val = Number(e.target.value)
+        if (!Number.isFinite(val)) return
+        if (val > MAX_APPROVED_TARGET_RON) {
+            toast.warning(amountExceedsMaxMessage(), { id: "amount-limit" })
+            val = MAX_APPROVED_TARGET_RON
+        }
         if (val > remainingAmount) val = remainingAmount
         setCustomAmount(val.toString())
     }
@@ -111,11 +135,11 @@ export default function DonationModule({
                         {preset} LEI
                     </Button>
                 ))}
-                {remainingAmount > 0 && !presets.includes(remainingAmount) && (
+                {payableMax > 0 && !presets.includes(payableMax) && (
                     <Button
-                        variant={Number(customAmount) === remainingAmount ? "default" : "outline"}
-                        className={`min-h-[44px] ${Number(customAmount) === remainingAmount ? "bg-blue-600 hover:bg-blue-700" : "hover:bg-blue-50 hover:text-blue-600 border-slate-200"}`}
-                        onClick={() => handlePreset(remainingAmount)}
+                        variant={Number(customAmount) === payableMax ? "default" : "outline"}
+                        className={`min-h-[44px] ${Number(customAmount) === payableMax ? "bg-blue-600 hover:bg-blue-700" : "hover:bg-blue-50 hover:text-blue-600 border-slate-200"}`}
+                        onClick={() => handlePreset(payableMax)}
                     >
                         Integral
                     </Button>
@@ -131,7 +155,7 @@ export default function DonationModule({
                         value={customAmount}
                         onChange={handleInputChange}
                         min={5}
-                        max={remainingAmount}
+                        max={payableMax}
                         className="pr-12 text-lg"
                     />
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">RON</span>

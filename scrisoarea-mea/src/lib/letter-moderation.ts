@@ -16,6 +16,10 @@ export type LetterModerationStatus =
 export const MAX_APPROVED_TARGET_RON = 500
 export const MIN_APPROVED_TARGET_RON = 1
 
+export function amountExceedsMaxMessage(limit = MAX_APPROVED_TARGET_RON) {
+    return `Suma depășește maximum de ${limit} lei.`
+}
+
 /** Legacy values from before the approval workflow rename. */
 const LEGACY_MODERATION: Record<string, LetterModerationStatus> = {
     DRAFT: LetterModeration.DRAFT,
@@ -107,7 +111,7 @@ export function validateApproval(input: {
         return `Suma țintă trebuie să fie cel puțin ${MIN_APPROVED_TARGET_RON} RON.`
     }
     if (amount > MAX_APPROVED_TARGET_RON) {
-        return `Suma țintă nu poate depăși ${MAX_APPROVED_TARGET_RON} RON.`
+        return amountExceedsMaxMessage()
     }
     return null
 }

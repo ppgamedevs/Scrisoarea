@@ -2,6 +2,7 @@ import type { Viewport } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { Toaster } from "sonner"
+import { LegalDialogProvider } from "@/components/legal/legal-dialog"
 import { GoogleAnalytics } from "@/components/analytics/google-analytics"
 import { JsonLd } from "@/components/seo/json-ld"
 import { defaultMetadata } from "@/lib/seo/metadata"
@@ -32,10 +33,12 @@ export default function RootLayout({
     return (
         <html lang="ro">
             <body className={inter.className} suppressHydrationWarning>
-                <JsonLd data={[generateOrganizationSchema(), generateWebsiteSchema()]} />
-                <GoogleAnalytics />
-                {children}
-                <Toaster position="top-center" richColors />
+                <LegalDialogProvider>
+                    <JsonLd data={[generateOrganizationSchema(), generateWebsiteSchema()]} />
+                    <GoogleAnalytics />
+                    {children}
+                    <Toaster position="top-center" richColors />
+                </LegalDialogProvider>
             </body>
         </html>
     )

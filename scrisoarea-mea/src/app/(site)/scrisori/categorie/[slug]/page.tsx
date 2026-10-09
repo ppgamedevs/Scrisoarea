@@ -7,6 +7,7 @@ import { publicWishlistWhere } from "@/lib/letter-moderation"
 import { LETTER_CATEGORIES, resolveCategory } from "@/lib/seo/categories"
 import { generateBreadcrumbSchema, generateCollectionPageSchema, generateItemListSchema } from "@/lib/seo/jsonld"
 import { pageMetadata } from "@/lib/seo/metadata"
+import { pendingReservationInclude } from "@/lib/letters"
 
 export const revalidate = 1800
 
@@ -37,7 +38,7 @@ export default async function CategoryLettersPage({ params }: { params: Promise<
             category: category.value,
         },
         orderBy: { createdAt: "desc" },
-        include: { institution: true, campaign: true },
+        include: { institution: true, campaign: true, fulfillmentClaims: pendingReservationInclude() },
     })
 
     return (

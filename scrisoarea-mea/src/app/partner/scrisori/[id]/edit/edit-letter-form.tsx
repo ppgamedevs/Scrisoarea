@@ -1,7 +1,10 @@
 "use client"
 
 import { useState } from "react"
+import { toast } from "sonner"
 import { updateScrisoare } from "@/app/actions/partner-actions"
+import { amountExceedsMaxMessage } from "@/lib/letter-moderation"
+import { uploadLetterFile } from "@/lib/upload-letter-media"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -62,6 +65,12 @@ export default function EditScrisoareForm({
         const newItems = [...items]
         newItems[index] = { ...newItems[index], [field]: val }
         setItems(newItems)
+        if (field === "estimatedValue") {
+            const nextTotal = newItems.reduce((acc, i) => acc + Number(i.estimatedValue || 0), 0)
+            if (nextTotal > limit) {
+                toast.warning(amountExceedsMaxMessage(limit), { id: "amount-limit" })
+            }
+        }
     }
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,6 +100,10 @@ export default function EditScrisoareForm({
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
+        if (total > limit) {
+            toast.warning(amountExceedsMaxMessage(limit), { id: "amount-limit" })
+            return
+        }
         setLoading(true)
         const formData = new FormData(e.currentTarget)
         const submitButton = (e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement
@@ -109,20 +122,15 @@ export default function EditScrisoareForm({
             if (selectedFile) {
                 const isVideo = selectedFile.type.startsWith("video/")
                 formData.set("mediaType", isVideo ? "VIDEO" : "IMAGE")
-                const { upload } = await import("@vercel/blob/client")
-                const safeName = selectedFile.name.replace(/[^a-zA-Z0-9._-]/g, "_")
-                const newBlob = await upload(
-                    `letters/${crypto.randomUUID()}-${safeName}`,
-                    selectedFile,
-                    {
-                        access: "public",
-                        handleUploadUrl: "/api/upload",
-                    }
-                )
-                formData.append("mediaUrl", newBlob.url)
+                formData.append("mediaUrl", await uploadLetterFile(selectedFile))
             }
 
-            await updateScrisoare(letter.id, formData)
+            const result = await updateScrisoare(letter.id, formData)
+            if (result?.error) {
+                toast.warning(result.error, { id: "amount-limit" })
+                setLoading(false)
+                return
+            }
         } catch (err: any) {
             if (
                 err.message === "NEXT_REDIRECT" ||
@@ -132,7 +140,11 @@ export default function EditScrisoareForm({
                 return
             }
             console.error(err)
-            alert(err.message || "A apărut o eroare.")
+            const raw = typeof err?.message === "string" ? err.message : ""
+            const safe = raw.startsWith("0:") || raw.includes('{"digest"') || raw.includes('{"a":')
+                ? "A apărut o eroare. Verifică suma și încearcă din nou."
+                : raw || "A apărut o eroare."
+            toast.error(safe)
             setLoading(false)
         }
     }
@@ -330,7 +342,7 @@ export default function EditScrisoareForm({
                                 type="submit"
                                 value="submit"
                                 size="lg"
-                                disabled={loading || total > limit}
+                                disabled={loading}
                             >
                                 {loading ? "Se salvează..." : "Retrimite spre Aprobare"}
                             </Button>

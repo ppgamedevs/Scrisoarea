@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { authClient } from "@/lib/auth-client"
+import { LegalLink } from "@/components/legal/legal-dialog"
 
 export default function DonorRegisterPage() {
     const router = useRouter()
@@ -154,13 +155,13 @@ export default function DonorRegisterPage() {
                         />
                         <span>
                             Sunt de acord cu{" "}
-                            <Link href="/termeni" className="underline">
+                            <LegalLink doc="termeni" className="underline">
                                 Termenii și Condițiile
-                            </Link>{" "}
+                            </LegalLink>{" "}
                             și{" "}
-                            <Link href="/confidentialitate" className="underline">
+                            <LegalLink doc="confidentialitate" className="underline">
                                 Politica de Confidențialitate
-                            </Link>
+                            </LegalLink>
                             .
                         </span>
                     </label>

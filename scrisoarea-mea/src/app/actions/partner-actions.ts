@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma"
 import { redirect } from "next/navigation"
 import { getSession } from "@/lib/auth"
 import { saveFile } from "@/lib/storage"
-import { LetterModeration, canPartnerEdit } from "@/lib/letter-moderation"
+import { amountExceedsMaxMessage, LetterModeration, canPartnerEdit } from "@/lib/letter-moderation"
 import {
     itemsFromPartnerForm,
     serializeWishlistItems,
@@ -134,12 +134,10 @@ export async function createScrisoare(formData: FormData) {
 
     const submittedTotal = sumSubmittedEstimates(items)
     if (submittedTotal > limit) {
-        throw new Error(
-            `Suma estimată depășește limita de ${limit} RON pentru tipul de cerere selectat.`
-        )
+        return { error: amountExceedsMaxMessage(limit) }
     }
     if (items.length < 1 && actionType === "submit") {
-        throw new Error("Adaugă cel puțin un obiect solicitat.")
+        return { error: "Adaugă cel puțin un obiect solicitat." }
     }
 
     const { mediaUrl, mediaType } = await resolveMedia(formData)
@@ -208,12 +206,10 @@ export async function updateScrisoare(id: string, formData: FormData) {
 
     const submittedTotal = sumSubmittedEstimates(items)
     if (submittedTotal > limit) {
-        throw new Error(
-            `Suma estimată depășește limita de ${limit} RON pentru tipul de cerere selectat.`
-        )
+        return { error: amountExceedsMaxMessage(limit) }
     }
     if (items.length < 1 && actionType === "submit") {
-        throw new Error("Adaugă cel puțin un obiect solicitat.")
+        return { error: "Adaugă cel puțin un obiect solicitat." }
     }
 
     const mediaUrlParam = formData.get("mediaUrl") as string | null

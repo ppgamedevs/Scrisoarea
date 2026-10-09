@@ -1,4 +1,4 @@
-import { TEAM_MEMBERS } from "@/lib/constants"
+import prisma from "@/lib/prisma"
 import { pageMetadata } from "@/lib/seo/metadata"
 
 export const metadata = pageMetadata({
@@ -10,7 +10,11 @@ export const metadata = pageMetadata({
 })
 import { Users2, Target, Heart, Scale } from "lucide-react"
 
-export default function DesprePage() {
+export default async function DesprePage() {
+    const team = await prisma.teamMember.findMany({
+        orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+    })
+
     return (
         <main className="min-h-screen bg-white">
             <section className="bg-slate-50 py-20 px-4 border-b">
@@ -60,13 +64,21 @@ export default function DesprePage() {
                 <div className="mb-24">
                     <h2 className="text-3xl font-bold mb-12 text-center">Echipa</h2>
                     <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                        {TEAM_MEMBERS.map((m, idx) => (
-                            <div key={idx} className="bg-white border rounded-xl p-6 text-center hover:shadow-md transition-shadow">
-                                <div className="w-20 h-20 bg-slate-100 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-bold text-slate-400">
-                                    {m.name.charAt(0)}
-                                </div>
+                        {team.map((m) => (
+                            <div key={m.id} className="bg-white border rounded-xl p-6 text-center hover:shadow-md transition-shadow">
+                                {m.imageUrl ? (
+                                    <img
+                                        src={m.imageUrl}
+                                        alt={m.name}
+                                        className="w-20 h-20 rounded-full mx-auto mb-4 object-cover bg-slate-100"
+                                    />
+                                ) : (
+                                    <div className="w-20 h-20 bg-slate-100 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-bold text-slate-400">
+                                        {m.name.charAt(0)}
+                                    </div>
+                                )}
                                 <h3 className="font-bold text-lg">{m.name}</h3>
-                                <p className="text-sm text-slate-500">{m.role}</p>
+                                <p className="text-sm text-slate-500">{m.title}</p>
                             </div>
                         ))}
                     </div>

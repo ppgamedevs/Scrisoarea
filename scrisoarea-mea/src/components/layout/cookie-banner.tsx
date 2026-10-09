@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { useState, useEffect } from "react"
-import Link from "next/link"
+import { LegalLink } from "@/components/legal/legal-dialog"
 
 export function CookieBanner() {
     const [visible, setVisible] = useState(false)
@@ -35,7 +35,7 @@ export function CookieBanner() {
                     <p>
                         Folosim cookie-uri pentru a analiza traficul și a îmbunătăți experiența utilizatorilor.
                         Poți alege să accepți toate cookie-urile sau doar pe cele strict necesare funcționării site-ului.
-                        Mai multe detalii în <Link href="/cookies" className="underline hover:text-slate-900 font-medium">Politica de Cookies</Link>.
+                        Mai multe detalii în <LegalLink doc="cookies" className="underline hover:text-slate-900 font-medium">Politica de Cookies</LegalLink>.
                     </p>
                 </div>
                 <div className="flex gap-3 w-full md:w-auto shrink-0">

@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma"
 import { getSession } from "@/lib/auth"
 import { canDonate } from "@/lib/permissions"
-import { isApprovedPublic, publicTargetAmount } from "@/lib/letter-moderation"
+import { amountExceedsMaxMessage, isApprovedPublic, MAX_APPROVED_TARGET_RON, publicTargetAmount } from "@/lib/letter-moderation"
 import { SITE_URL } from "@/lib/seo/site"
 import { getStripe, isStripeConfigured } from "@/lib/stripe"
 import { checkoutHoldSince, failPendingDonation } from "@/lib/donations"
@@ -36,6 +36,7 @@ export async function startStripeDonation(formData: FormData): Promise<StartResu
     if (!Number.isFinite(rawAmount)) return fail("Suma invalidă.")
     const amount = Math.round(rawAmount * 100) / 100
     if (amount < 5) return fail("Minim 5 RON.")
+    if (amount > MAX_APPROVED_TARGET_RON) return fail(amountExceedsMaxMessage())
 
     if (!isAnonymous) {
         if (firstName.length < 2 || lastName.length < 2) {

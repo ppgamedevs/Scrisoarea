@@ -44,10 +44,3 @@ export const FAQ_ITEMS = [
         a: "Da. Companiile plătitoare de impozit pe profit pot face o sponsorizare directă (contract) sau, dacă sunt eligibile, pot solicita redirecționarea sumei rămase prin Formularul 177. Plafonul fiscal este minimul dintre 0,75% din cifra de afaceri și 20% din impozitul pe profit datorat — confirmă suma cu contabilul."
     }
 ]
-
-export const TEAM_MEMBERS = [
-    { name: "Andrei Popescu", role: "Co-fondator & Director Executiv" },
-    { name: "Maria Ionescu", role: "Co-fondator & Director Operațional" },
-    { name: "Elena Dumitrescu", role: "Manager Parteneriate Sociale" },
-    { name: "Radu Stanciu", role: "Coordonator Tehnic" }
-]

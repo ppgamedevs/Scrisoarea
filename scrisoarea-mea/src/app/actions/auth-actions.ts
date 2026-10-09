@@ -20,32 +20,27 @@ function slugify(text: string) {
         .slice(0, 60)
 }
 
-export async function logout() {
+async function signOutAndGoHome() {
     await auth.api.signOut({
         headers: await headers(),
     })
     redirect("/")
+}
+
+export async function logout() {
+    await signOutAndGoHome()
 }
 
 export async function logoutDonor() {
-    await auth.api.signOut({
-        headers: await headers(),
-    })
-    redirect("/")
+    await signOutAndGoHome()
 }
 
 export async function logoutPartner() {
-    await auth.api.signOut({
-        headers: await headers(),
-    })
-    redirect("/partner/login")
+    await signOutAndGoHome()
 }
 
 export async function logoutAdmin() {
-    await auth.api.signOut({
-        headers: await headers(),
-    })
-    redirect("/admin/login")
+    await signOutAndGoHome()
 }
 
 const partnerSchema = z.object({

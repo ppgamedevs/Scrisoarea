@@ -5,6 +5,7 @@ import prisma from "@/lib/prisma"
 import { redirect } from "next/navigation"
 import { getSession } from "@/lib/auth"
 import {
+    amountExceedsMaxMessage,
     LetterModeration,
     MAX_APPROVED_TARGET_RON,
     MIN_APPROVED_TARGET_RON,
@@ -53,10 +54,11 @@ export async function saveLetterModeration(id: string, formData: FormData) {
     }
 
     if (approvedTarget != null) {
-        if (approvedTarget < MIN_APPROVED_TARGET_RON || approvedTarget > MAX_APPROVED_TARGET_RON) {
-            throw new Error(
-                `Suma țintă aprobată trebuie să fie între ${MIN_APPROVED_TARGET_RON} și ${MAX_APPROVED_TARGET_RON} RON.`
-            )
+        if (approvedTarget < MIN_APPROVED_TARGET_RON) {
+            return { error: `Suma țintă trebuie să fie cel puțin ${MIN_APPROVED_TARGET_RON} lei.` }
+        }
+        if (approvedTarget > MAX_APPROVED_TARGET_RON) {
+            return { error: amountExceedsMaxMessage(MAX_APPROVED_TARGET_RON) }
         }
     }
 
@@ -84,7 +86,8 @@ export async function approveScrisoare(id: string, formData?: FormData) {
     const session = await requireAdmin()
 
     if (formData) {
-        await saveLetterModeration(id, formData)
+        const saved = await saveLetterModeration(id, formData)
+        if (saved?.error) return saved
     }
 
     const letter = await prisma.scrisoare.findUnique({ where: { id } })
@@ -99,7 +102,7 @@ export async function approveScrisoare(id: string, formData?: FormData) {
         itemsCount: items.length,
         approvedTargetAmount: approvedTarget,
     })
-    if (error) throw new Error(error)
+    if (error) return { error }
 
     await prisma.scrisoare.update({
         where: { id },

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { registerSponsor } from "@/app/actions/sponsor-actions"
 import { toast } from "sonner"
 import { CheckCheck } from "lucide-react"
+import { LegalLink } from "@/components/legal/legal-dialog"
 
 export default function SponsorRegistrationPage() {
     return (
@@ -77,7 +78,7 @@ export default function SponsorRegistrationPage() {
                                     className="mt-1 w-4 h-4 text-purple-600 rounded border-slate-300 focus:ring-purple-500"
                                 />
                                 <Label htmlFor="terms" className="text-sm font-normal text-slate-600 cursor-pointer select-none">
-                                    Sunt reprezentant legal al acestei companii și sunt de acord cu <a href="/termeni" className="text-purple-600 underline">Termenii și Condițiile</a> pentru sponsori.
+                                    Sunt reprezentant legal al acestei companii și sunt de acord cu <LegalLink doc="termeni" className="text-purple-600 underline">Termenii și Condițiile</LegalLink> pentru sponsori.
                                 </Label>
                             </div>
                         </div>
