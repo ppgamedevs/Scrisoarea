@@ -59,7 +59,7 @@ export function TeamMemberForm({ member, defaultPosition = 5 }: { member?: Membe
                 setPending(false)
                 return
             }
-            if (result && "ok" in result) {
+            if (result && "ok" in result && (result.ok === "created" || result.ok === "updated")) {
                 reloadWithSuccess(result.ok)
                 return
             }
@@ -143,7 +143,7 @@ export function DeleteTeamMemberButton({ id, name }: { id: string; name: string 
                 setPending(true)
                 void deleteTeamMember(id)
                     .then((result) => {
-                        if (result && "ok" in result) {
+                        if (result && "ok" in result && result.ok === "deleted") {
                             reloadWithSuccess(result.ok)
                             return
                         }
